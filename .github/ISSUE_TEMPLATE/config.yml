@@ -1,8 +1,0 @@
-blank_issues_enabled: false
-contact_links:
-  - name: Contact Team
-    url: mailto:team@basketformai.com
-    about: Contact the development team for questions or support
-  - name: Documentation
-    url: https://github.com/kr1ny77/BasketForm-AI/blob/main/README.md
-    about: Check the project documentation before creating an issue
