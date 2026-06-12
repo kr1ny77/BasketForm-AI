@@ -45,11 +45,15 @@ BasketForm-AI/
 
 ### Prerequisites
 
-- Node.js (v18 or later)
-- npm or yarn
-- Python (v3.8 or later) - for backend services
-- PostgreSQL (v14 or later)
-- Git
+#### Backend & ML
+- FastAPI
+- MediaPipe Pose
+- OpenCV
+- scikit-learn
+- LLM API
+#### Infrastructure & Collaboration
+- GitHub
+- GitHub Actions (CI/CD)
 
 ### Installation
 
