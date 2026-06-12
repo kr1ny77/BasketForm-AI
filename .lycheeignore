@@ -1,0 +1,59 @@
+# Lychee Link Checking Configuration
+
+# Excluded links with justification
+
+# 1. Localhost URLs (development only)
+http://localhost:*
+https://localhost:*
+
+# 2. Placeholder URLs (to be replaced with actual URLs)
+https://mvp-v0.example.com
+https://youtu.be/PLACEHOLDER_VIDEO_ID
+https://www.figma.com/proto/PLACEHOLDER
+
+# 3. Internal API endpoints (not publicly accessible)
+/api/health
+/api/db-status
+/api/storage-status
+
+# 4. Rate-limited or authenticated endpoints
+# (These would require authentication tokens)
+*.internal.company.com
+*.staging.example.com
+
+# 5. Temporary or unstable links
+# (Links that may change during development)
+*.vercel.app
+*.netlify.app
+*.railway.app
+
+# 6. File system paths
+file:///*
+/Users/*
+
+# 7. Email addresses (not HTTP links)
+mailto:*
+
+# 8. FTP links
+ftp://*
+
+# 9. SSH links
+ssh://*
+
+# 10. Custom protocol links
+basketformai://*
+
+# Justification for exclusions:
+# - Localhost URLs: Development environment only, not publicly accessible
+# - Placeholder URLs: Will be replaced with actual URLs before submission
+# - Internal API endpoints: Require authentication, not publicly accessible
+# - Rate-limited endpoints: May be blocked by rate limiting
+# - Temporary links: URLs may change during development
+# - File system paths: Not accessible via HTTP
+# - Email addresses: Not HTTP links
+# - FTP/SSH/Custom protocols: Not HTTP/HTTPS links
+
+# Manual verification status:
+# [ ] All excluded links have been manually verified
+# [ ] Verification date: [Date]
+# [ ] Verified by: [Team Member Name]
