@@ -1,132 +1,150 @@
-# Customer Meeting Transcript - BasketForm-AI
+# Customer Meeting Transcript - BasketForm AI
 
-**Meeting Date:** [Date]
-**Duration:** [Duration]
-**Platform:** [Zoom/Google Meet/Teams]
-**Recording Permission:** [Yes/No]
-**Transcript Publication Permission:** [Yes/No]
+**Meeting Date:** 13.06.2026
+**Duration:** 13min 20sec
+**Platform:** KTalk
+**Recording Permission:** [Yes]
+**Transcript Publication Permission:** [Yes]
 
 ## Participants
 
-- **[Customer Username]**: Customer/Product Owner
-- **[PO Username]**: Product Owner (BasketForm-AI)
-- **[SM Username]**: Scrum Master (BasketForm-AI)
-- **[Dev1 Username]**: Developer (BasketForm-AI)
-- **[Dev2 Username]**: Developer (BasketForm-AI)
+- **[Customer]**: Customer
+- **[ML Engineer 1]**: Developer (BasketForm-AI)
+- **[ML Engineer 2]**: Developer (BasketForm-AI)
 
 ---
 
 ## Transcript
 
-### Opening (00:00 - 02:30)
+### Opening (00:00 - 00:16)
 
-**[PO Username]:** Hello everyone, thank you for joining today's meeting. We're here to present our progress on BasketForm-AI and get your feedback on our user stories, prototype, and MVP v0.
+**[ML Engineer 1]** Stasya, hello! Before we begin, can I get your permission to record the meeting?
 
-**[Customer Username]:** Hi, thanks for setting this up. I'm excited to see what you've built so far.
+**[Customer]** Good Morning, yes, of course!
 
-**[SM Username]:** Before we start recording, I want to confirm - are you comfortable with us recording this meeting and creating a sanitized transcript for our instructors?
+**[ML Engineer 1]** First, we'll go through the user stories. We're waiting for your approval that everything is fine and correct. 
 
-**[Customer Username]:** Yes, that's fine. You can record and share the transcript with your instructors.
+### User Stories Presentation (00:16 - 07:52)
 
-**[SM Username]:** Thank you. Also, would you be okay with us publishing the sanitized transcript in our public repository?
+**[ML Engineer 1]** First user story is: as a beginner basketball player, I want to upload a video of my shooting form, so that the system can analyze my mechanics and provide feedback.
 
-**[Customer Username]:** Yes, that's acceptable as long as it's properly sanitized.
+**[Customer]** Yes, good, it's great that you found the guys who need it.
 
-**[SM Username]:** Perfect, we'll proceed with recording now.
+**[ML Engineer 1]** Now to the next user story, priority is Must. As a beginner basketball player,
+I want to receive an automated analysis of my uploaded shooting video, so that I can identify specific areas for improvement (e.g., elbow alignment, follow-through, release point).
 
-### User Stories Presentation (02:30 - 15:00)
+**[Customer]** Great. It's great that you found a user story where they specifically told you what kind of comments, they'd find useful. It would be great if you could implement them in your project. That's what your future users have already told you.
 
-**[PO Username]:** Let me start by presenting our user stories. We've identified 12 user stories across four user roles: Basketball Player, Coach, Sports Analyst, and Basketball Enthusiast.
+**[ML Engineer 1]** So, the next story, priority is also a Must. As a new user, I want to create a personal account so I can securely save uploaded videos, analysis history, and progress over time.
 
-**[PO Username]:** Our Must Have stories include video upload, biomechanical analysis, technique evaluation, personalized feedback, and user accounts. These form our initial MVP v1 scope.
+**[Customer]** Great. This matches our initial requirements that we discussed.
 
-**[Customer Username]:** That sounds comprehensive. Can you walk me through the video upload process?
+**[ML Engineer 1]** Next story, priority is Must. As a beginner basketball player,
+I want to receive simplified, easy-to-understand feedback on my shot, so that I am not overwhelmed by technical jargon and can make immediate, practical corrections.
 
-**[Dev1 Username]:** Certainly. Users can record directly through their device camera or upload existing videos. We support MP4, MOV, and AVI formats up to 100MB. The upload includes a progress indicator and validation.
+**[Customer]** Yeah, great. I think this review could be used to... I think this user story could be used to create a review in your app that initially shows a short description, a short, simple comment, and then allows users to read more. What do you think?
 
-**[Customer Username]:** What about mobile users? Many players will want to use this on the court.
+**[ML Engineer 1]** Yes, that sounds great. The next priority of story is Could.
+As a beginner basketball player, I want to compare my shooting form side-by-side with a professional player's form, so that I can visually understand the ideal mechanics I should be aiming for.
 
-**[Dev2 Username]:** We have US-10 for mobile app as a Should Have priority. For MVP v1, we're focusing on responsive web design that works well on mobile browsers.
+**[Customer]** That's great, but I think every player has their own style, and it's not necessary to copy them completely. So I think it's great that you've prioritized this request as the second level.
 
-**[Customer Username]:** That makes sense. I agree with the priorities you've set.
+**[ML Engineer 1]** Next story’s priority is Should.  As a beginner basketball player, I want to share my video and analysis report with my coach via a secure link, so that they can review my form and provide personalized, expert guidance..
 
-### Prototype Demonstration (15:00 - 30:00)
+**[Customer]** This is an understandable request, but quite difficult to implement this month. So it would be great if it works out and everything works as intended.
 
-**[PO Username]:** Now let me show you our Figma prototype. This demonstrates the key workflows for our MVP v1 scope.
+**[ML Engineer 1]** Next story has Should priority.  As a beginner basketball player, I want to share my shooting progress and improvement milestones with friends, so that I can celebrate achievements and maintain accountability through social support. That is, a system of achievements and the ability to show these achievements to friends.
 
-**[PO Username]:** Here's the home page with clear navigation to upload, library, and analysis sections.
+**[Customer]** It would be great, maybe even adding some kind of rating, but I'm not sure how relevant it is here. I think it's better for the developers to write here.
 
-**[Customer Username]:** The design looks clean. I like the prominent upload button.
+**[ML Engineer 1]** Yes, that would be great.
 
-**[Dev1 Username]:** This is the upload flow. Users can drag-and-drop or click to select files. We show a preview before upload and validate file types.
+**[ML Engineer 1]** Next user story has priority of Could have. As a beginner basketball player, I want to browse a public social feed of other users' shots and analyses, so that I can learn from the community and stay motivated.
 
-**[Customer Username]:** Good thinking with the preview. Can users trim videos before upload?
+**[Customer]** It's possible to implement this functionality, but only after the recognition functionality itself, the account functionality, and the functionality of being able to share your reports with your friends or coach have been implemented.
 
-**[Dev2 Username]:** That's not in our current scope, but it's a great suggestion for future iterations.
+**[ML Engineer 1]** That is, we leave this...
 
-**[PO Username]:** Here's the analysis results page. We show keypoint visualization, technique scores, and personalized feedback.
+**[Customer]** for the far-far future.
 
-**[Customer Username]:** The feedback section could be more prominent. Maybe move it higher on the page?
+**[ML Engineer 1]** And the last one, with Could have priority.  As a beginner basketball player,
+I want to export my analysis report as a PDF, so that I can keep an offline record or print it for my physical training notebook.
 
-**[PO Username]:** That's helpful feedback. We'll adjust the layout in the next iteration.
+**[Customer]** I think this can be implemented in one of the first steps.
 
-### MVP v0 Demonstration (30:00 - 40:00)
+**[Customer]** Well, I think so, this can be implemented in order to... As you remember, last time we discussed that if you have to create a project right now, and it is not ready, what should be done. And I think that such a function should be there if you do not have time to implement an account system that will save user data.
 
-**[Dev1 Username]:** Now let me show you our deployed MVP v0. This is the actual working system.
+**[Customer]** So he could save them and not lose them in the event of a reboot, for example. That's why it seems to me...
 
-**[Dev1 Username]:** As you can see, the basic navigation works. Here's the upload functionality.
+**[ML Engineer 1]** In Should Have there should be a priority, either we add a system with friends, or we add a system with PDF, right?
 
-**[Customer Username]:** It's working well. How fast is the upload?
+**[Customer]** Either a system with accounts and saving, or a system with PDF, yes.
 
-**[Dev1 Username]:** Currently about 10-15 seconds for a 50MB file. We're working on optimizing this for MVP v1.
+**[ML Engineer 1]** Well, that's all. It's all supposed to be a Should. Okay.
 
-**[Dev2 Username]:** Here's the mock analysis. For MVP v0, we're showing sample data, but the interface is ready for real analysis integration.
+**[Customer]** One of these should be a Should priority, while the other can fade into the background. That's my opinion. This is to prevent users from losing their data
 
-**[Customer Username]:** I see. The foundation looks solid. What about error handling?
+### Prototype & MVP v0 Demonstration (07:52 - 10:10)
 
-**[Dev1 Username]:** We have basic error handling for file validation, upload failures, and server errors. We're improving the error messages based on your earlier feedback.
+**[ML Engineer 1]** So, that's it for user stories. Now I'll show you the prototype we used as a basis. Your task. It turns out you can simply give feedback on it and try it out. I'll send you over now. 
 
-### Discussion and Feedback (40:00 - 50:00)
+**[Customer]** Isn't this the prototype you already sent me?
 
-**[Customer Username]:** Overall, I'm impressed with the progress. A few suggestions:
+**[Customer]** I looked at your prototype yesterday, well, I looked at it this morning in dark colors. It looks great, actually. I have a couple of questions. First, as I understand it, you're abandoning the idea of instant video recording.
 
-**[Customer Username]:** 1. The analysis results could be more visual. Maybe add charts or graphs.
+**[Customer]** Okay. That's it. The main thing is that everything else is done well. So, I haven't tried uploading videos to the site, although I understand that you can do that now. And it will give you some number.
 
-**[Customer Username]:** 2. I'd like to see progress tracking over time. How am I improving?
+**[ML Engineer 1]** Both the prototype and the website I'm about to share—the MVP we're building—are in this prototype. You can send it to both...
 
-**[Customer Username]:** 3. The mobile experience needs to be prioritized more.
+**[Customer]** What if a user sends you, for example, an image?
 
-**[PO Username]:** Those are excellent points. We'll incorporate them into our planning.
+**[ML Engineer 2]** While it's available, it seems like you can upload any media file to the first version.
 
-**[SM Username]:** Do you have any concerns about the technical approach?
+**[Customer]**  Okay. Will you do a protection for it?
 
-**[Customer Username]:** The main concern is processing speed. Real-time analysis would be ideal, but I understand that's challenging.
+**[ML Engineer 1]**  yes.
 
-**[Dev2 Username]:** We're planning to start with near real-time processing and optimize from there.
+**[Customer]**  Okay, yeah. That's it. In that case, I basically like the visuals. Of course, not all the functionality is implemented, but it looks good. That's it.
 
-### Approvals (50:00 - 55:00)
+### Discussion and Feedback (10:10 - 12:47)
 
-**[PO Username]:** Before we wrap up, we need your formal approval on a few items.
+**[ML Engineer 1]**   And then the last thing we have left to discuss is MVP version 1, not version 0, but the next version. So, we plan to find a good, suitable neural network model that will be tuned to analyze a specific...
 
-**[PO Username]:** First, do you approve the documented user stories and their MoSCoW priorities?
+**[ML Engineer 1]**  The athlete's throwing form, not just some random or arbitrary one. That's the first thing. And secondly, it'll probably be easier to initially implement a concrete implementation of the results export to a PDF document than to implement a buddy system.
 
-**[Customer Username]:** Yes, I approve the user stories and priorities.
+**[ML Engineer 1]**  So, for MVP v1, our plan is to include a working model and add an export as a PDF.
 
-**[PO Username]:** Second, do you approve the initial MVP v1 scope we proposed?
+**[Customer]**  Okay. I'd also advise you to start collecting your dataset as soon as possible, as you may need more data than you expect. You'll still need to further train the model on your data, as I've done some reading and haven't seen a model fully trained on sports mechanics.
 
-**[Customer Username]:** Yes, the five Must Have stories are the right focus for MVP v1.
+**[Customer]**  There are models that are good at recognizing the human skeleton, asanga, and the like—that is, specifically body position—but I haven't found any that work for sports. You should probably use these models, but you still need to train them on your poses, jumps, throws, and so on.
 
-**[PO Username]:** Thank you. We'll proceed with development based on your approvals.
+**[ML Engineer 1]**  Alright.
 
-### Closing (55:00 - 60:00)
+**[Customer]**  So, therefore, yes, in addition to searching for models, also search for a dataset, well, not searching, but collecting a dataset. Well, or by searching, maybe you will find some. You will find some kind of dataset with a large number of videos from basketball games, trim it as you need it, and you will already use it.
 
-**[SM Username]:** Thank you for your time and valuable feedback. We'll update our documents based on today's discussion.
+**[ML Engineer 1]**  Thanks for the feedback, then that's it, we have no more questions. Perhaps you have some for us?
 
-**[Customer Username]:** Happy to help. Let me know if you need anything else.
+**[Customer]**  No questions yet. I'd like to meet with you once you've chosen a model. I'll send you links today to where I usually look for models and weights. After that, I'd like to meet you when you've decided what you'll use and how.
 
-**[PO Username]:** We'll share the updated user stories and prototype by end of week. Thanks again!
+### Approvals (12:47 - 13:10)
 
-**[SM Username]:** Meeting adjourned. We'll stop recording now.
+**[ML Engineer 1]** Before we end, we want to ask for your formal approval on the user stories and their MoSCoW priorities.
+
+**[Customer]** Yes, I approve them with the changes we discussed.
+
+**[ML Engineer 1]** Second, do you approve the MVP v1 scope we proposed?
+
+**[Customer]** Yes, the Must stories fit for MVP v1.
+
+**[ML Engineer 1]** Thank you!
+
+### Closing (13:10 - 13:20)
+
+**[ML Engineer 1]** Thank you for your time!
+
+**[Customer]** You are welcome, bye!
+
+**[ML Engineer 1]** Goodbye!
 
 ---
 
@@ -156,6 +174,6 @@
 
 ---
 
-**Transcript Prepared by:** [Team Member Name]
-**Date:** [Current Date]
+**Transcript Prepared by:** Roman
+**Date:** 13.06.2026
 **Status:** Sanitized and ready for publication
