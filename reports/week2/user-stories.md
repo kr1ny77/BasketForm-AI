@@ -1,4 +1,4 @@
-# User Stories - BasketForm-AI
+# User Stories - BasketForm AI
 
 ## User Roles/Personas
 
@@ -9,182 +9,161 @@
 
 ## User Stories
 
-### US-01: Video Upload and Recording
+## US-01: Upload shooting form video
 
-**Requirement status:** Active
-**MoSCoW priority:** Must Have
+Requirement status: Active
+MoSCoW priority: Must Have
 
-As a basketball player,
-I want to record and upload basketball shot videos,
-so that I can analyze my shooting technique.
+As a beginner basketball player,
+I want to upload a video of my shooting form,
+so that the system can analyze my mechanics and provide feedback.
 
-#### Notes and constraints
-- Support multiple video formats (MP4, MOV, AVI)
-- Maximum file size: 100MB
-- Mobile and desktop upload support
-- Progress indicator during upload
+### Notes and constraints
+- Supported video formats should be limited to common web formats (e.g., MP4, MOV) to ensure compatibility.
+- The upload process must include clear visual guides on camera positioning (e.g., side profile, full body in frame).
+- Client-side compression or size warnings should be implemented to improve upload reliability.
 
-### US-02: Biomechanical Keypoint Extraction
+---
 
-**Requirement status:** Active
-**MoSCoW priority:** Must Have
+## US-02: View automated form analysis
 
-As a basketball coach,
-I want the system to automatically extract biomechanical keypoints from videos,
-so that I can analyze shooting form without manual annotation.
+Requirement status: Active
+MoSCoW priority: Must Have
 
-#### Notes and constraints
-- Use MediaPipe or similar pose estimation
-- Extract key joints: shoulders, elbows, wrists, hips, knees, ankles
-- Process videos in real-time or near real-time
-- Provide confidence scores for keypoints
+As a beginner basketball player,
+I want to receive an automated analysis of my uploaded shooting video,
+so that I can identify specific areas for improvement (e.g., elbow alignment, follow-through, release point).
 
-### US-03: Shooting Technique Evaluation
+### Notes and constraints
+- The analysis should highlight key biomechanical checkpoints using visual overlays or timestamped markers on the video.
+- Processing time should remain under 2 minutes for standard mobile recordings.
+- Open question: Will the analysis run server-side via cloud inference or on-device via WebAssembly? (To be decided in Assignment 3).
 
-**Requirement status:** Active
-**MoSCoW priority:** Must Have
+---
 
-As a basketball player,
-I want to receive an evaluation of my shooting technique,
-so that I can understand my strengths and areas for improvement.
+## US-03: Create and manage a user account
 
-#### Notes and constraints
-- Compare against ideal shooting form
-- Provide scores for different aspects: stance, arm angle, release point, follow-through
-- Visual feedback with highlighted areas
-- Historical comparison over time
+Requirement status: Active
+MoSCoW priority: Must Have
 
-### US-04: Personalized Feedback Generation
+As a new user,
+I want to create a personal account,
+so that I can securely save my uploaded videos, analysis history, and progress over time.
 
-**Requirement status:** Active
-**MoSCoW priority:** Must Have
+### Notes and constraints
+- Account creation should support email/password and at least one OAuth provider (Google or Apple) for low friction.
+- Basic data privacy compliance (GDPR/CCPA-ready structure) should be considered from day one.
+- Users must be able to delete their account and associated data per privacy requirements.
 
-As a basketball player,
-I want to receive personalized feedback and drills,
-so that I can specifically address my technique weaknesses.
+---
 
-#### Notes and constraints
-- AI-generated recommendations based on analysis
-- Suggest specific drills for improvement
-- Progress tracking over time
-- Customized training plans
+## US-04: Receive simplified, actionable feedback
 
-### US-05: User Account Management
+Requirement status: Active
+MoSCoW priority: Must Have
 
-**Requirement status:** Active
-**MoSCoW priority:** Must Have
+As a beginner basketball player,
+I want to receive simplified, easy-to-understand feedback on my shot,
+so that I am not overwhelmed by technical jargon and can make immediate, practical corrections.
 
-As a basketball player,
-I want to create and manage my account,
-so that I can save my analysis history and track progress.
+### Notes and constraints
+- Feedback should be presented in plain language with a maximum of 3 prioritized, actionable takeaways per analysis.
+- A glossary or "tap-to-learn-more" toggle can be added later if technical terms are necessary.
 
-#### Notes and constraints
-- Email/password authentication
-- Social login options (Google, Apple)
-- Profile management
-- Password reset functionality
+---
 
-### US-06: Video Library Management
+## US-05: Compare form with professional players
 
-**Requirement status:** Active
-**MoSCoW priority:** Should Have
+Requirement status: Active
+MoSCoW priority: Could Have
 
-As a basketball player,
-I want to organize my videos into collections,
-so that I can easily find and compare past analyses.
+As a beginner basketball player,
+I want to compare my shooting form side-by-side with a professional player's form,
+so that I can visually understand the ideal mechanics I should be aiming for.
 
-#### Notes and constraints
-- Create folders/collections
-- Tag videos with metadata
-- Search and filter functionality
-- Bulk operations
+### Notes and constraints
+- Requires a curated, legally cleared library of professional shooting clips.
+- Video players must support synchronized playback or independent frame-by-frame scrubbing.
+- Aspect ratio normalization will be needed to ensure accurate visual comparison.
 
-### US-07: Real-time Analysis
+---
 
-**Requirement status:** Active
-**MoSCoW priority:** Should Have
+## US-06: Share analysis report with a coach
 
-As a basketball coach,
-I want to analyze shots in real-time during practice,
-so that I can provide immediate feedback to players.
+Requirement status: Active
+MoSCoW priority: Should Have
 
-#### Notes and constraints
-- Live camera feed analysis
-- Low latency processing
-- Mobile-friendly interface
-- Offline capability for basic analysis
+As a beginner basketball player,
+I want to share my video and analysis report with my coach via a secure link,
+so that they can review my form and provide personalized, expert guidance.
 
-### US-08: Team Management
+### Notes and constraints
+- Shared links should grant view-only access to the specific video/analysis pair.
+- Links should expire after 30 days by default for security and storage hygiene.
+- Coach account creation should not be required to view shared reports.
 
-**Requirement status:** Active
-**MoSCoW priority:** Could Have
+---
 
-As a basketball coach,
-I want to manage my team and compare player performance,
-so that I can identify team-wide trends and individual needs.
+## US-07: Share progress with friends
 
-#### Notes and constraints
-- Create team rosters
-- Compare players side-by-side
-- Team performance dashboards
-- Export reports
+Requirement status: Active
+MoSCoW priority: Should Have
 
-### US-09: Social Sharing
+As a beginner basketball player,
+I want to share my shooting progress and improvement milestones with friends,
+so that I can celebrate achievements and maintain accountability through social support.
 
-**Requirement status:** Removed
-**Previous MoSCoW priority:** Could Have
+### Notes and constraints
+- Sharing should generate a clean, non-editable summary card containing a before/after thumbnail, date range, and key metric improvements.
+- Requires explicit user consent per
 
-As a basketball enthusiast,
-I want to share my analysis results on social media,
-so that I can show my progress and get feedback from friends.
+This scope provides the core functionality for analyzing basketball shooting technique while remaining small enough to prototype and discuss meaningfully with the customer.
+shared item to maintain privacy controls.
+- External sharing (email, social media) and in-app sharing (if friend lists are implemented later) should be architected separately.
 
-**Reason:** Removed due to privacy concerns and limited technical value for core product goals.
+---
 
-### US-10: Mobile App
+## US-08: Track shooting progress over time
 
-**Requirement status:** Active
-**MoSCoW priority:** Should Have
+Requirement status: Active
+MoSCoW priority: Should Have
 
-As a basketball player,
-I want to use the service on my mobile phone,
-so that I can record and analyze shots on the court.
+As a beginner basketball player,
+I want to track my shooting progress over time with visual charts,
+so that I can stay motivated and see tangible evidence of my improvement.
 
-#### Notes and constraints
-- Responsive web design or native app
-- Camera integration
-- Offline basic analysis
-- Push notifications for completed analyses
+### Notes and constraints
+- Progress should be visualized using simple line or bar charts mapping key metrics (e.g., elbow angle consistency, release timing) across dates.
+- Requires a minimum of 3-4 successful analyses to render meaningful trends.
+- Users should be able to filter progress by specific mechanical categories.
 
-### US-11: API Access
+---
 
-**Requirement status:** Active
-**MoSCoW priority:** Could Have
+## US-09: Public social feed of user shots
 
-As a sports analyst,
-I want to access the analysis API programmatically,
-so that I can integrate the service into my own workflows.
+Requirement status: Removed
+Previous MoSCoW priority: Could Have
 
-#### Notes and constraints
-- RESTful API with documentation
-- API key authentication
-- Rate limiting
-- Webhook support for completion notifications
+As a beginner basketball player,
+I want to browse a public social feed of other users' shots and analyses,
+so that I can learn from the community and stay motivated.
 
-### US-12: Data Export
+Reason: Out of scope for the core value proposition of individual form analysis. It introduces significant privacy, content moderation, community management, and scope creep issues that are not required for the initial product or course timeline.
 
-**Requirement status:** Active
-**MoSCoW priority:** Could Have
+---
 
-As a sports analyst,
-I want to export my analysis data in various formats,
-so that I can perform custom analysis in external tools.
+## US-10: Export analysis report as PDF
 
-#### Notes and constraints
-- Export as CSV, JSON, PDF
-- Include all keypoint data
-- Historical data export
-- Batch export functionality
+Requirement status: Active
+MoSCoW priority: Should Have
 
+As a beginner basketball player,
+I want to export my analysis report as a PDF,
+so that I can keep an offline record or print it for my physical training notebook.
+
+### Notes and constraints
+- The PDF should include a static snapshot of the video frame with analysis overlays, the key actionable takeaways, and the generation date.
+- PDF generation will rely on server-side templating to ensure consistent formatting across devices.
 ## Initial proposed MVP v1 scope
 
 Based on the active Must Have user stories, the initial proposed MVP v1 scope includes:
@@ -193,6 +172,6 @@ Based on the active Must Have user stories, the initial proposed MVP v1 scope in
 2. **US-02**: Biomechanical Keypoint Extraction
 3. **US-03**: Shooting Technique Evaluation
 4. **US-04**: Personalized Feedback Generation
-5. **US-05**: User Account Management
+5. **US-10**: PDF Export of the Feedback
 
 This scope provides the core functionality for analyzing basketball shooting technique while remaining small enough to prototype and discuss meaningfully with the customer.
