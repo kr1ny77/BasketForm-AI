@@ -1,157 +1,104 @@
-# Customer Meeting Summary - BasketForm-AI
+# Customer Meeting Summary - BasketForm AI
 
-## Meeting Details
+**Meeting Date:** 13.06.2026
+**Duration:** 13min 20sec
+**Platform:** KTalk
+**Recording Permission:** [Yes]
+**Transcript Publication Permission:** [Yes]
 
-- **Date:** [Date of meeting]
-- **Time:** [Start time] - [End time]
-- **Location:** [Location/Platform]
-- **Duration:** [Duration]
+## Participants or Roles
 
-## Participants
-
-| Name | Role | Affiliation |
-|------|------|-------------|
-| [Customer Name] | Customer/Product Owner | [Organization] |
-| [Team Member 1] | Product Owner | BasketForm-AI Team |
-| [Team Member 2] | Scrum Master | BasketForm-AI Team |
-| [Team Member 3] | Developer | BasketForm-AI Team |
-| [Team Member 4] | Developer | BasketForm-AI Team |
-
-## Artifacts Demonstrated
-
-1. **User Stories and MoSCoW Priorities**
-   - Presented 12 user stories with priority assignments
-   - Discussed initial MVP v1 scope selection
-
-2. **Interactive Prototype (Figma)**
-   - Demonstrated video upload workflow
-   - Showed analysis results display
-   - Presented feedback generation interface
-
-3. **MVP v0 Deployment**
-   - Live demonstration of uploaded system
-   - Showed basic navigation and functionality
-   - Demonstrated video upload process
-
-4. **Interface Documentation**
-   - Reviewed API specifications
-   - Discussed technical architecture
-
-## Discussion Points
-
-### User Stories and Priorities
-- Customer confirmed understanding of all user stories
-- Agreed with Must Have priorities for US-01 through US-05
-- Suggested adding mobile responsiveness as Should Have
-- Requested clarification on real-time analysis requirements
-
-### Initial MVP v1 Scope
-- Customer approved the proposed scope:
-  - US-01: Video Upload and Recording
-  - US-02: Biomechanical Keypoint Extraction
-  - US-03: Shooting Technique Evaluation
-  - US-04: Personalized Feedback Generation
-  - US-05: User Account Management
-
-### Prototype Feedback
-- Positive feedback on video upload workflow
-- Suggested simplifying the analysis results display
-- Requested more prominent feedback section
-- Asked for progress tracking visualization
-
-### MVP v0 Feedback
-- Satisfied with basic functionality
-- Requested faster video processing
-- Suggested adding video preview before upload
-- Asked for better error messages
-
-## Decisions
-
-1. **MVP v1 Scope Approved:** Customer approved the 5 user stories for MVP v1
-2. **Prototype Direction:** Proceed with current design with minor adjustments
-3. **Technical Approach:** Agreed on proposed technology stack
-4. **Timeline:** Confirmed 2-week sprint cycles
-
-## Action Points
-
-| Action Item | Responsible | Deadline | Status |
-|-------------|-------------|----------|--------|
-| Update user stories based on feedback | Product Owner | [Date] | Pending |
-| Refine prototype with suggested changes | Developer | [Date] | Pending |
-| Optimize video upload performance | Developer | [Date] | Pending |
-| Add video preview functionality | Developer | [Date] | Pending |
-| Prepare detailed technical specification | Tech Lead | [Date] | Pending |
-
-## Risks and Mitigation
-
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Video processing delays | Medium | High | Implement async processing, add progress indicators |
-| Mobile compatibility issues | Low | Medium | Test on multiple devices early |
-| AI analysis accuracy | Medium | High | Start with rule-based system, iterate with ML |
-| User adoption | Low | Medium | Focus on core value proposition |
-
-## Customer Approvals
-
-- [x] **User Stories:** Customer approved all documented user stories
-- [x] **MoSCoW Priorities:** Customer agreed with priority assignments
-- [x] **Initial MVP v1 Scope:** Customer approved the selected scope
-- [ ] **Prototype:** Customer provided feedback but approval not required
-- [x] **Public MIT License:** Customer provided written consent for MIT-licensed public development
-
-### Written Consent Confirmation
-Customer provided written consent via [Telegram/Email/Chat Service] on [Date] for:
-- Public development of the project
-- MIT licensing of team-created content
-- Repository visibility as public
-
-## Feedback Summary
-
-### Positive Feedback
-- Clear project vision and goals
-- Professional prototype presentation
-- Solid technical foundation in MVP v0
-- Good understanding of user needs
-
-### Areas for Improvement
-- Simplify analysis results display
-- Improve video processing speed
-- Add more interactive elements to prototype
-- Enhance mobile experience
-
-## Next Steps
-
-1. **Immediate (This Week):**
-   - Update user stories with customer feedback
-   - Refine prototype based on suggestions
-   - Begin MVP v1 development planning
-
-2. **Short-term (Next Sprint):**
-   - Implement video preview functionality
-   - Optimize upload performance
-   - Start biomechanical analysis development
-
-3. **Long-term (MVP v1):**
-   - Complete all 5 user stories
-   - Prepare for Assignment 3 submission
-   - Plan customer demonstration
-
-## Meeting Artifacts
-
-- **Presentation Slides:** [Link to slides]
-- **Prototype Recording:** [Link to video]
-- **Meeting Recording:** [Link to recording] (if permitted)
-- **Transcript:** [customer-meeting-transcript.md](customer-meeting-transcript.md)
-
-## Notes
-
-- Customer emphasized importance of mobile experience
-- Requested regular progress updates
-- Willing to participate in user testing
-- Available for follow-up meetings as needed
+- **[Customer]**: Customer (Stasya)
+- **[ML Engineer 1]**: Developer (BasketForm-AI)
+- **[ML Engineer 2]**: Developer (BasketForm-AI)
 
 ---
 
-**Prepared by:** [Team Member Name]
-**Date:** [Current Date]
-**Next Meeting:** [Scheduled Date]
+## Artifacts Demonstrated
+
+- **User Stories List**: Document detailing user stories with MoSCoW priorities.
+- **MVP v0 Prototype**: Visual prototype of the application in dark mode.
+
+## Discussion Points
+
+- **User Stories & MoSCoW Priorities**: Reviewed 10 user stories covering video upload, automated analysis, personal accounts, simplified feedback, sharing with coaches/friends, pro comparison, social feed, and PDF export.
+- **MVP v1 Scope**: Proposed focusing on a working neural network model tuned for basketball and PDF export.
+- **Data Collection & Model Training**: Discussed the lack of pre-trained models specifically for sports mechanics. Need to use skeleton recognition models and fine-tune them on custom datasets of basketball poses, jumps, and throws.
+- **Video Upload & Protection**: Confirmed abandoning instant video recording in favor of file uploads. Discussed the need for file type validation to prevent non-video uploads (e.g. images).
+- **UI/UX for Feedback**: Discussed how to present analysis results without overwhelming the user with technical jargon.
+
+## Decisions
+
+- Approved the MoSCoW prioritization for all user stories.
+- Approved MVP v1 scope: Must-have stories + PDF export (prioritized over the friend/buddy system to prevent data loss).
+- Dropped instant video recording; proceeding with video file uploads.
+- Decided that data persistence is critical; PDF export chosen for MVP v1 to ensure users don't lose data if the account system isn't fully ready.
+- Agreed to push the public social feed to a future release.
+
+## Action Points
+
+- Update user stories to reflect the UI decision for feedback (short description first, expandable "read more").
+- Implement file type protection/validation for the video upload feature.
+- Start collecting a custom dataset of basketball videos (poses, jumps, throws) immediately.
+- Search for and evaluate existing skeleton recognition models/weights (**[Customer]** to provide resource links).
+- Schedule a follow-up meeting once a specific ML model is selected.
+- Develop MVP v1 with the working model and PDF export functionality.
+
+## Risks
+
+- **Model Availability**: No fully trained models exist specifically for sports mechanics; reliance on general skeleton recognition models that require extensive custom training.
+- **Dataset Collection**: Gathering and trimming sufficient video data for training might take longer or require more resources than anticipated.
+- **Implementation Complexity**: Sharing reports with a coach via a secure link was noted as quite difficult to implement within the current month.
+
+## Feedback
+
+- **Prototype Visuals**: **[Customer]** liked the MVP v0 prototype, specifically the dark color theme.
+- **Feedback Presentation**: Suggested showing a short, simple comment initially, with an option to read more detailed technical feedback.
+- **Pro Comparison**: Validated the "Could" priority for side-by-side pro comparison, noting that every player has a unique style and shouldn't just copy pros.
+- **Data Persistence**: Emphasized the importance of not losing user data, suggesting PDF export as a fallback if the account system isn't ready.
+
+## Customer Approvals
+
+- Formally approved all user stories and their MoSCoW priorities (with discussed adjustments).
+- Approved the MVP v1 scope (Must-have stories + PDF export).
+- Approved the visual design of the MVP v0 prototype.
+- Granted permission for meeting recording and public transcript publication.
+
+## Resulting Changes
+
+- **User Stories**: Added UI requirement for analysis feedback to have a brief summary with an expandable detailed view.
+- **MVP v1 Scope**: Adjusted to include PDF export instead of the social/friend sharing system.
+- **Feature Removal**: Removed instant video recording from the scope; focusing entirely on video file uploads.
+- **Validation**: Added requirement for file type protection on uploads.
+
+## Linked Artifacts & Evidence
+
+- **User Stories**: 
+  - US-01: Upload shooting video (Must)
+  - US-02: Automated analysis (Must)
+  - US-03: Personal account (Must)
+  - US-04: Simplified feedback (Must)
+  - US-05: Share with coach (Should)
+  - US-06: Share milestones with friends (Should)
+  - US-07: Compare with pro (Could)
+  - US-08: Track shooting progress over time (Should)
+  - US-08: Public social feed (Could)
+  - US-09: Export as PDF (Could -> prioritized for MVP v1)
+- **Prototype Screens**: MVP v0 Prototype (Dark Mode UI)
+- **API/Interface Artifacts**: Video Upload Endpoint (requires file type validation/protection)
+
+---
+
+## Sanitization Notes
+
+- Replaced real names with GitHub/GitLab usernames
+- Removed any PII or confidential business information
+- Preserved enough context for evaluation
+- Used [inaudible] where audio was unclear
+- Used [redacted] for sensitive information
+
+---
+
+**Summary Prepared by:** Roman
+**Date:** 13.06.2026
+**Status:** Sanitized and ready for publication
