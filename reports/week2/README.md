@@ -55,17 +55,11 @@ All excluded links have been manually verified in a browser where applicable.
 
 ## Screenshots
 
-### Protected Branch Settings
-![Protected Branch Settings](images/protected-branch-settings.png)
-
-### Example Reviewed PR
-![Example Reviewed PR](images/example-reviewed-pr.png)
-
-### Figma Prototype
-![Figma Prototype](images/figma-prototype.png)
-
-### MVP v0 Deployment
-![MVP v0 Deployment](images/mvp-v0-deployment.png)
+> Screenshots to be added before final submission:
+> - Protected branch settings
+> - Example reviewed PR
+> - Figma prototype
+> - MVP v0 deployment
 
 ## Coverage
 
@@ -98,5 +92,3 @@ For detailed smoke-check scenario, see [MVP v0 Report](mvp-v0-report.md).
 ## Links
 
 - [Root README](../../README.md)
-- [Repository Requirements](../../Repository_Requirements.md)
-- [Assignment 2 Instructions](../../Assignment_02.md)
