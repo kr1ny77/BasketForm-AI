@@ -165,7 +165,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For questions or support, please contact the development team via:
 - GitHub Issues: [https://github.com/kr1ny77/BasketForm-AI/issues](https://github.com/kr1ny77/BasketForm-AI/issues)
-- Email: [team@basketformai.com](mailto:team@basketformai.com)
+- Email: [k.gimadiev@innopolis.university](mailto:k.gimadiev@innopolis.university)
 
 ## Acknowledgments
 
