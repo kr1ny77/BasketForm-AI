@@ -18,7 +18,7 @@ MVP v0 is a runnable technical foundation that demonstrates the core architectur
 
 **Video Link:** [https://youtu.be/To_1ZwAMe4M](https://youtu.be/To_1ZwAMe4M)
 
-**Duration:** 1:45
+**Duration:** 0:54
 
 ## Relationship to Prototype and MVP v1 Stories
 
