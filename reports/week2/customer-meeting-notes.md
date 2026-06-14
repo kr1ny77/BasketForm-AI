@@ -12,10 +12,10 @@
 | Name | Role | Affiliation |
 |------|------|-------------|
 | [Customer] | Customer | [redacted] |
-| k.gimadiev | Product Owner | BasketForm-AI Team |
-| r.santalov | Scrum Master | BasketForm-AI Team |
-| k.nizamov | Developer | BasketForm-AI Team |
-| d.galiev | Developer | BasketForm-AI Team |
+| Karim | Product Owner | BasketForm-AI Team |
+| Roman | Scrum Master | BasketForm-AI Team |
+| Kamil | Developer | BasketForm-AI Team |
+| Damir | Developer | BasketForm-AI Team |
 
 ## Meeting Agenda
 
@@ -31,21 +31,21 @@
 
 ### 1. Introduction (00:00 - 05:00)
 
-**k.gimadiev:** Welcomed participants and introduced team members. Explained the purpose of the meeting: to present progress on BasketForm-AI and gather customer feedback.
+**Karim:** Welcomed participants and introduced team members. Explained the purpose of the meeting: to present progress on BasketForm-AI and gather customer feedback.
 
 **[Customer]:** Expressed excitement about seeing the progress. Confirmed understanding of the project goals.
 
-**r.santalov:** Explained that due to privacy concerns, recording would not be conducted. Instead, detailed meeting notes would be prepared and shared with instructors.
+**Roman:** Explained that due to privacy concerns, recording would not be conducted. Instead, detailed meeting notes would be prepared and shared with instructors.
 
 ### 2. User Stories Presentation (05:00 - 20:00)
 
-**k.gimadiev:** Presented 12 user stories across four user roles:
+**Karim:** Presented 12 user stories across four user roles:
 - Basketball Player
 - Basketball Coach  
 - Sports Analyst
 - Basketball Enthusiast
 
-**k.gimadiev:** Explained MoSCoW prioritization:
+**Karim:** Explained MoSCoW prioritization:
 - Must Have: 5 stories (US-01 to US-05)
 - Should Have: 3 stories (US-06, US-07, US-10)
 - Could Have: 3 stories (US-08, US-11, US-12)
@@ -60,7 +60,7 @@
 
 ### 3. Prototype Demonstration (20:00 - 35:00)
 
-**k.nizamov:** Demonstrated Figma prototype showing:
+**Kamil:** Demonstrated Figma prototype showing:
 - Home page with clear navigation
 - Video upload workflow with drag-and-drop
 - Analysis results display with keypoint visualization
@@ -72,11 +72,11 @@
 - "Feedback section should be more prominent on the page"
 - "Consider adding progress tracking over time"
 
-**d.galiev:** Explained technical constraints and future possibilities for implementing suggested improvements.
+**Damir:** Explained technical constraints and future possibilities for implementing suggested improvements.
 
 ### 4. MVP v0 Demonstration (35:00 - 50:00)
 
-**k.nizamov:** Demonstrated deployed MVP v0:
+**Kamil:** Demonstrated deployed MVP v0:
 - Basic navigation functionality
 - Video upload process with progress indicator
 - Mock analysis results display
@@ -88,7 +88,7 @@
 - "Error messages need improvement"
 - "Good start for further development"
 
-**d.galiev:** Explained current limitations and optimization plans for MVP v1.
+**Damir:** Explained current limitations and optimization plans for MVP v1.
 
 ### 5. Customer Feedback and Discussion (50:00 - 65:00)
 
@@ -112,30 +112,30 @@
 - Implement progress tracking
 - Improve error handling and messaging
 
-**k.gimadiev:** Asked about specific technical requirements:
+**Karim:** Asked about specific technical requirements:
 - Real-time analysis expectations (near real-time acceptable)
 - Additional video format support (current formats sufficient)
 - Data retention policies (to be determined)
 
 ### 6. Formal Approvals (65:00 - 70:00)
 
-**k.gimadiev:** Requested formal approvals:
+**Karim:** Requested formal approvals:
 
 **Approval 1: User Stories**
-- k.gimadiev: "Do you approve the documented user stories and their MoSCoW priorities?"
+- Karim: "Do you approve the documented user stories and their MoSCoW priorities?"
 - [Customer]: "Yes, I approve the user stories and priorities."
 
 **Approval 2: MVP v1 Scope**
-- k.gimadiev: "Do you approve the initial MVP v1 scope we proposed?"
+- Karim: "Do you approve the initial MVP v1 scope we proposed?"
 - [Customer]: "Yes, the five Must Have stories are the right focus for MVP v1."
 
 **Approval 3: Public MIT License**
-- k.gimadiev: "Do you consent to public MIT-licensed development of the project?"
+- Karim: "Do you consent to public MIT-licensed development of the project?"
 - [Customer]: "Yes, I consent to public development with MIT licensing."
 
 ### 7. Next Steps and Action Items (70:00 - 75:00)
 
-**r.santalov:** Summarized action items:
+**Roman:** Summarized action items:
 1. Update user stories with customer feedback
 2. Refine prototype based on suggestions
 3. Prioritize mobile responsiveness
@@ -144,7 +144,7 @@
 
 **[Customer]:** Confirmed availability for future feedback sessions.
 
-**k.gimadiev:** Thanked customer for time and valuable input.
+**Karim:** Thanked customer for time and valuable input.
 
 ## Key Decisions Made
 
@@ -210,6 +210,6 @@ Customer expressed satisfaction with progress and provided constructive feedback
 
 ---
 
-**Notes Prepared by:** k.gimadiev
+**Notes Prepared by:** Karim
 **Date:** 13.06.2026
 **Status:** Sanitized and ready for instructor review
