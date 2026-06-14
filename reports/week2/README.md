@@ -21,7 +21,7 @@
 ### MVP v0
 - [MVP v0 Report](mvp-v0-report.md)
 - **Deployment URL:** [http://80.74.30.14/](http://80.74.30.14/)
-- **Video Demonstration:** [Video Link](https://youtu.be/PLACEHOLDER_VIDEO_ID)
+- **Video Demonstration:** [Video Link](https://youtu.be/To_1ZwAMe4M)
 
 ### Customer Review
 - [Customer Meeting Summary](customer-meeting-summary.md)
@@ -49,7 +49,7 @@
 - `mvp-v0.example.com` — Placeholder URL, not yet replaced with actual deployment
 - `mvp-v0.basketformai.com` — Custom domain not yet configured
 - `staging.mvp-v0.basketformai.com` — Custom domain not yet configured
-- `https://youtu.be/PLACEHOLDER_VIDEO_ID` — Video to be recorded and linked before final submission
+- ~~`https://youtu.be/PLACEHOLDER_VIDEO_ID`~~ — Video recorded and linked
 
 All excluded links have been manually verified in a browser where applicable.
 
