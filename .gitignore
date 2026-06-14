@@ -1,0 +1,80 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+build/
+dist/
+out/
+.next/
+.nuxt/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Misc
+*.tgz
+*.tar.gz
+*.zip
+
+# ML/AI model weights and large files
+*.h5
+*.hdf5
+*.pb
+*.onnx
+*.pt
+*.pth
+*.weights
+models/
+datasets/
+*.pkl
+*.pickle
+
+# Video files (large binaries)
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+
+# recordings and large media
+recordings/
+uploads/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Docker
+docker-compose.override.yml

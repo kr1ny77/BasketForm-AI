@@ -12,9 +12,7 @@ MVP v0 is a runnable technical foundation that demonstrates the core architectur
 
 ## Deployment URL
 
-**Production:** [https://mvp-v0.basketformai.com](https://mvp-v0.basketformai.com)
-
-**Staging:** [https://staging.mvp-v0.basketformai.com](https://staging.mvp-v0.basketformai.com)
+**Production:** [http://80.74.30.14/](http://80.74.30.14/)
 
 ## Public Video Demonstration
 
@@ -140,7 +138,7 @@ MVP v0 establishes:
 **Steps:**
 
 1. **Access the application**
-   - Navigate to [https://mvp-v0.basketformai.com](https://mvp-v0.basketformai.com)
+   - Navigate to [http://80.74.30.14/](http://80.74.30.14/)
    - **Expected Result:** Homepage loads with navigation menu
 
 2. **Navigate to upload page**
@@ -185,19 +183,19 @@ MVP v0 establishes:
 
 **API Health Check:**
 ```bash
-curl https://mvp-v0.basketformai.com/api/health
+curl http://80.74.30.14/api/health
 # Expected: {"status": "healthy", "version": "0.1.0"}
 ```
 
 **Database Connection:**
 ```bash
-curl https://mvp-v0.basketformai.com/api/db-status
+curl http://80.74.30.14/api/db-status
 # Expected: {"connected": true, "tables": 5}
 ```
 
 **File Storage:**
 ```bash
-curl https://mvp-v0.basketformai.com/api/storage-status
+curl http://80.74.30.14/api/storage-status
 # Expected: {"connected": true, "bucket": "basketformai-videos"}
 ```
 
