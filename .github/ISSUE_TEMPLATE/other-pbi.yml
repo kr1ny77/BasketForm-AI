@@ -1,0 +1,47 @@
+name: Other PBI / Course Task
+description: For product backlog items or course-related tasks
+title: "[PBI] "
+labels: ["task"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## PBI / Course Task Template
+        Use this template for product backlog items or course tasks that are not user stories or bugs.
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Issue Type
+      description: What type of task is this?
+      options:
+        - Course Task
+        - Technical Debt
+        - Refactoring
+        - Documentation
+        - Research
+        - Infrastructure
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A detailed description of the task
+      placeholder: "Describe what needs to be done..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance / Completion Criteria
+      description: What criteria must be met to consider this task complete?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
+    validations:
+      required: true
