@@ -8,7 +8,7 @@
 
 ## Participants or Roles
 
-- **[Customer]**: Customer (Stasya)
+- **[Customer]**: Customer
 - **[ML Engineer 1]**: Developer (BasketForm-AI)
 - **[ML Engineer 2]**: Developer (BasketForm-AI)
 
