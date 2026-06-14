@@ -174,6 +174,6 @@ I want to export my analysis report as a PDF, so that I can keep an offline reco
 
 ---
 
-**Transcript Prepared by:** Roman
+**Transcript Prepared by:** Roman Santalov
 **Date:** 13.06.2026
 **Status:** Sanitized and ready for publication

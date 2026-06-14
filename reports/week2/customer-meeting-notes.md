@@ -11,11 +11,11 @@
 
 | Name | Role | Affiliation |
 |------|------|-------------|
-| [Customer] | Customer | [redacted] |
-| Karim | Product Owner | BasketForm-AI Team |
-| Roman | Scrum Master | BasketForm-AI Team |
-| Kamil | Developer | BasketForm-AI Team |
-| Damir | Developer | BasketForm-AI Team |
+| Anastasia Malakhova | Customer, Supervisor | Innopolis University |
+| Karim Gimadiev | Project Manager | BasketForm-AI Team |
+| Roman Santalov | ML Engineer | BasketForm-AI Team |
+| Kamil Nizamov | ML Engineer | BasketForm-AI Team |
+| Damir Galiev | ML Analyst | BasketForm-AI Team |
 
 ## Meeting Agenda
 
@@ -210,6 +210,6 @@ Customer expressed satisfaction with progress and provided constructive feedback
 
 ---
 
-**Notes Prepared by:** Karim
+**Notes Prepared by:** Karim Gimadiev
 **Date:** 13.06.2026
 **Status:** Sanitized and ready for instructor review
