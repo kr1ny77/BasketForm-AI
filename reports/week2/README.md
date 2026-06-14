@@ -84,6 +84,7 @@ For detailed smoke-check scenario, see [MVP v0 Report](mvp-v0-report.md).
 | [Name] | Scrum Master | Process management | Sprint planning, documentation |
 | [Name] | Developer | Frontend | Figma prototype, UI implementation |
 | [Name] | Developer | Backend | API development, MVP v0 deployment |
+| [Name] | Developer | Backend | API development, MVP v0 deployment |
 
 ## Links
 
