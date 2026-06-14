@@ -193,6 +193,6 @@ The team maintained appropriate balance between AI assistance and human contribu
 
 ---
 
-**Report Prepared by:** Karim
+**Report Prepared by:** Karim Gimadiev
 **Date:** 14.06.2026
-**Reviewed by:** Roman
+**Reviewed by:** Roman Santalov
