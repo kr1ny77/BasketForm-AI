@@ -11,7 +11,7 @@
 
 | Name | Role | Affiliation |
 |------|------|-------------|
-| Anastasia Malakhova | Customer, Supervisor | Innopolis University |
+| Anastasia Malakhova | Customer| Innopolis University |
 | Karim Gimadiev | Project Manager | BasketForm-AI Team |
 | Roman Santalov | ML Engineer | BasketForm-AI Team |
 | Kamil Nizamov | ML Engineer | BasketForm-AI Team |
