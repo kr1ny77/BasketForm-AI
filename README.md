@@ -132,7 +132,7 @@ BasketForm-AI/
 
 ### MVP v0
 - **Production URL:** [http://80.74.30.14/](http://80.74.30.14/)
-- **Video Demonstration:** [https://youtu.be/PLACEHOLDER_VIDEO_ID](https://youtu.be/PLACEHOLDER_VIDEO_ID)
+- **Video Demonstration:** [https://youtu.be/To_1ZwAMe4M](https://youtu.be/To_1ZwAMe4M)
 
 For detailed deployment instructions, see [MVP v0 Report](reports/week2/mvp-v0-report.md).
 
