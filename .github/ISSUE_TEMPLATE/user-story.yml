@@ -1,0 +1,58 @@
+name: User Story
+description: Create a user story with role, action, and value
+title: "[US] "
+labels: ["user-story"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## User Story Template
+        Describe the user story using the format: **As a** [role], **I want** [action], **so that** [value].
+
+  - type: input
+    id: role
+    attributes:
+      label: User Role/Persona
+      description: Who is the user?
+      placeholder: "e.g., Basketball player, Coach, Admin"
+    validations:
+      required: true
+
+  - type: textarea
+    id: desired-action
+    attributes:
+      label: Desired Action
+      description: What does the user want to do?
+      placeholder: "e.g., Upload a video of my shooting form"
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-value
+    attributes:
+      label: Expected Value
+      description: Why does the user want this? What value does it provide?
+      placeholder: "e.g., So I can get feedback on my technique"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Additional context or details about this user story
+      placeholder: "Provide any additional context, constraints, or notes..."
+    validations:
+      required: false
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: List the criteria that must be met for this story to be considered complete
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+        - [ ] Criterion 3
+    validations:
+      required: true
