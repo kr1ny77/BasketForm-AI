@@ -13,13 +13,15 @@
 - [User Stories and MoSCoW Priorities](user-stories.md)
 
 ### Interface Design
-- **Interactive Prototype:** [Figma Prototype](https://www.figma.com/proto/PLACEHOLDER)
+- **Interactive Prototype:** [Figma Prototype](https://silk-sadly-37202889.figma.site)
 - **Interface Documentation:** [docs/interface.md](../../docs/interface.md)
+- **OpenAPI Specification:** [api/openapi.yaml](../../api/openapi.yaml)
+- **Postman Collection:** [api/postman_collection.json](../../api/postman_collection.json)
 
 ### MVP v0
 - [MVP v0 Report](mvp-v0-report.md)
-- **Deployment URL:** [https://mvp-v0.example.com](https://mvp-v0.example.com)
-- **Video Demonstration:** [Video Link](https://youtu.be/PLACEHOLDER)
+- **Deployment URL:** [http://80.74.30.14/](http://80.74.30.14/)
+- **Video Demonstration:** [Video Link](https://youtu.be/PLACEHOLDER_VIDEO_ID)
 
 ### Customer Review
 - [Customer Meeting Summary](customer-meeting-summary.md)
@@ -39,10 +41,17 @@
 
 ### Lychee Link Checking
 - Configuration: [`.lycheeignore`](../../.lycheeignore)
+- CI Workflow: [`.github/workflows/lychee.yml`](../../.github/workflows/lychee.yml)
 - Latest successful run: [Link to CI run](https://github.com/kr1ny77/BasketForm-AI/actions)
 
 ### Excluded Links
-- [List of excluded links with justification](#excluded-links)
+- `http://80.74.30.14` — Local/dev server IP, not publicly routable domain; verified accessible in browser
+- `mvp-v0.example.com` — Placeholder URL, not yet replaced with actual deployment
+- `mvp-v0.basketformai.com` — Custom domain not yet configured
+- `staging.mvp-v0.basketformai.com` — Custom domain not yet configured
+- `https://youtu.be/PLACEHOLDER_VIDEO_ID` — Video to be recorded and linked before final submission
+
+All excluded links have been manually verified in a browser where applicable.
 
 ## Screenshots
 
@@ -80,11 +89,11 @@ For detailed smoke-check scenario, see [MVP v0 Report](mvp-v0-report.md).
 
 | Team Member | Role | Responsibilities | Contributions |
 |-------------|------|------------------|---------------|
-| [Name] | Product Owner | Product management | User stories, customer review |
-| [Name] | Scrum Master | Process management | Sprint planning, documentation |
-| [Name] | Developer | Frontend | Figma prototype, UI implementation |
-| [Name] | Developer | Backend | API development, MVP v0 deployment |
-| [Name] | Developer | Backend | API development, MVP v0 deployment |
+| Karim Gimadiev | Product Owner | Product management | User stories, customer review, sprint planning |
+| Roman Santalov | Scrum Master | Process management, ML Engineering | Documentation, ML research, customer meeting |
+| Kamil Nizamov | Developer | ML Engineering | Backend development, MVP v0 deployment |
+| Arseniy Fedorov | Developer | ML Analysis | Data analysis, prototype review |
+| Damir Galiev | Developer | ML Analysis | Research, documentation support |
 
 ## Links
 

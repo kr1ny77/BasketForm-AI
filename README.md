@@ -37,8 +37,13 @@ BasketForm-AI/
 │       └── images/           # Screenshots and images
 ├── docs/
 │   └── interface.md          # Interface documentation
+├── api/
+│   ├── openapi.yaml          # OpenAPI specification
+│   └── postman_collection.json # Postman collection
 └── .github/
-    └── pull_request_template.md
+    ├── pull_request_template.md
+    └── workflows/
+        └── lychee.yml        # Lychee link checking CI
 ```
 
 ## Local Development Setup
@@ -126,8 +131,7 @@ BasketForm-AI/
 ## Deployment
 
 ### MVP v0
-- **Production URL:** [https://mvp-v0.basketformai.com](https://mvp-v0.basketformai.com)
-- **Staging URL:** [https://staging.mvp-v0.basketformai.com](https://staging.mvp-v0.basketformai.com)
+- **Production URL:** [http://80.74.30.14/](http://80.74.30.14/)
 - **Video Demonstration:** [https://youtu.be/PLACEHOLDER_VIDEO_ID](https://youtu.be/PLACEHOLDER_VIDEO_ID)
 
 For detailed deployment instructions, see [MVP v0 Report](reports/week2/mvp-v0-report.md).
@@ -135,8 +139,8 @@ For detailed deployment instructions, see [MVP v0 Report](reports/week2/mvp-v0-r
 ### Smoke Check
 To verify the deployment is working:
 ```bash
-curl https://mvp-v0.basketformai.com/api/health
-# Expected: {"status": "healthy", "version": "0.1.0"}
+curl http://80.74.30.14/
+# Expected: Application homepage loads
 ```
 
 ## Contributing

@@ -1,0 +1,66 @@
+name: Lychee Link Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Lychee Link Checker
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >
+            --verbose
+            --no-progress
+            --exclude-loopback
+            --exclude 'http://localhost'
+            --exclude 'http://127.0.0.1'
+            --exclude 'http://0.0.0.0'
+            --exclude 'http://80.74.30.14'
+            --exclude 'mailto:'
+            --exclude 'mvp-v0.example.com'
+            --exclude 'mvp-v0.basketformai.com'
+            --exclude 'staging.mvp-v0.basketformai.com'
+            --exclude 'PLACEHOLDER_VIDEO_ID'
+            --exclude 'youtu.be'
+            --exclude 'figma.site'
+            --exclude 'editor.swagger.io'
+            --format markdown
+            './**/*.md'
+          fail: true
+
+      - name: Lychee Report
+        if: always()
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: >
+            --verbose
+            --no-progress
+            --exclude-loopback
+            --exclude 'http://localhost'
+            --exclude 'http://127.0.0.1'
+            --exclude 'http://0.0.0.0'
+            --exclude 'http://80.74.30.14'
+            --exclude 'mailto:'
+            --exclude 'mvp-v0.example.com'
+            --exclude 'mvp-v0.basketformai.com'
+            --exclude 'staging.mvp-v0.basketformai.com'
+            --exclude 'PLACEHOLDER_VIDEO_ID'
+            --exclude 'youtu.be'
+            --exclude 'figma.site'
+            --exclude 'editor.swagger.io'
+            --format markdown
+            './**/*.md'
+          output: lychee/out.md
+          fail: false

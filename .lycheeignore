@@ -1,0 +1,17 @@
+# Exclude local/development URLs
+http://localhost
+http://127.0.0.1
+http://0.0.0.0
+http://80.74.30.14
+
+# Exclude placeholder URLs
+mvp-v0.example.com
+mvp-v0.basketformai.com
+staging.mvp-v0.basketformai.com
+PLACEHOLDER_VIDEO_ID
+
+# Exclude mailto links
+mailto:
+
+# Exclude anchors
+#
