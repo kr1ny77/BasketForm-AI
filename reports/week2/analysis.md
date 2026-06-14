@@ -108,6 +108,6 @@ The initial MVP v1 scope is approved and ready for detailed planning in Assignme
 
 ---
 
-**Analysis Prepared by:** Karim
+**Analysis Prepared by:** Karim Gimadiev
 **Date:** 14.06.2026
 **Next Review:** 21.06.2026

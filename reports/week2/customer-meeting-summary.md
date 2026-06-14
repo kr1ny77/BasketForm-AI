@@ -99,6 +99,6 @@
 
 ---
 
-**Summary Prepared by:** Roman
+**Summary Prepared by:** Roman Santalov
 **Date:** 13.06.2026
 **Status:** Sanitized and ready for publication
