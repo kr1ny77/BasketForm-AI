@@ -18,7 +18,7 @@
 
 ### Opening (00:00 - 00:16)
 
-**[ML Engineer 1]** Stasya, hello! Before we begin, can I get your permission to record the meeting?
+**[ML Engineer 1]** Hello! Before we begin, can I get your permission to record the meeting?
 
 **[Customer]** Good Morning, yes, of course!
 
