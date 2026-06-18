@@ -35,6 +35,7 @@ jobs:
             --exclude 'youtu.be'
             --exclude 'figma.site'
             --exclude 'editor.swagger.io'
+            --exclude 'github.com/users/.*/projects'
             --format markdown
             './**/*.md'
           fail: true
@@ -58,6 +59,7 @@ jobs:
             --exclude 'youtu.be'
             --exclude 'figma.site'
             --exclude 'editor.swagger.io'
+            --exclude 'github.com/users/.*/projects'
             --format markdown
             './**/*.md'
           output: lychee/out.md
