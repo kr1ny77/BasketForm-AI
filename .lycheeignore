@@ -9,6 +9,9 @@ mvp-v0.example.com
 mvp-v0.basketformai.com
 staging.mvp-v0.basketformai.com
 
+# Exclude GitHub Projects URLs (require authentication)
+https://github.com/users/*/projects
+
 # Exclude mailto links
 mailto:
 
