@@ -16,6 +16,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - PR template for pull request workflow
 - Lychee link checking CI configuration
 - OpenAPI specification and Postman collection for API interface
+- Issue templates: User Story, Bug Report, Other PBI/Course Task
+- Extended PR template with related issue, acceptance criteria, and changelog checklist
+- Assignment 3 documentation: user stories index, definition of done, product roadmap
+- Week 3 report structure with customer review, reflection, and retrospective templates
+- GitHub Issues for all active user stories (US-001 to US-010)
+- Sprint 1 milestone for MVP v1 delivery
 
 ### Changed
 - Updated user stories based on customer meeting feedback
