@@ -53,8 +53,11 @@
 ### ✅ Pull Requests Created
 | PR | Title | Status |
 |----|-------|--------|
-| #44 | feat: Add Assignment 3 documentation and project structure | Open |
-| #45 | docs: Update CHANGELOG with Assignment 3 documentation | Open |
+| #44 | feat: Add Assignment 3 documentation and project structure | ❌ Closed (not merged) |
+| #45 | docs: Update CHANGELOG with Assignment 3 documentation | ✅ Merged |
+| #46 | docs: Add Assignment 3 progress tracker | ✅ Merged |
+| #47 | fix: Resolve Lychee link check errors | ✅ Merged |
+| #48 | feat: Add Assignment 3 documentation and report files | 🟡 Open |
 
 ### ✅ Milestone Created
 - **Sprint 1 - MVP v1** (Due: 2026-07-02)
@@ -64,16 +67,18 @@
 ## Step-by-Step Plan to Complete Assignment 3
 
 ### Phase 1: Repository Setup & Workflow (Days 1-2)
-**Owner:** Team Lead (Kamil)
+**Owner:** Karim Gimadiev (Project Manager)
 
-- [ ] **1.1** Review and merge PR #44 (documentation)
-- [ ] **1.2** Review and merge PR #45 (CHANGELOG)
-- [ ] **1.3** Verify issue templates are working correctly
-- [ ] **1.4** Verify PR template is complete
-- [ ] **1.5** Set up branch protection rules (if not already)
-- [ ] **1.6** Create GitHub Project board for Product Backlog
-- [ ] **1.7** Create Sprint Backlog view in GitHub Projects
-- [ ] **1.8** Verify Lychee CI is passing
+- [x] **1.1** Merge PR #45 (CHANGELOG)
+- [x] **1.2** Merge PR #46 (progress tracker)
+- [x] **1.3** Merge PR #47 (Lychee fixes)
+- [ ] **1.4** Review and merge PR #48 (documentation)
+- [ ] **1.5** Verify issue templates are working correctly
+- [ ] **1.6** Verify PR template is complete
+- [ ] **1.7** Set up branch protection rules (if not already)
+- [ ] **1.8** Create GitHub Project board for Product Backlog
+- [ ] **1.9** Create Sprint Backlog view in GitHub Projects
+- [ ] **1.10** Verify Lychee CI is passing
 
 ### Phase 2: Product Backlog Refinement (Days 2-3)
 **Owner:** Product Owner (Anastasia + Team)
@@ -88,7 +93,7 @@
 - [ ] **2.8** Update `docs/user-stories.md` with issue links
 
 ### Phase 3: Sprint Planning (Day 3)
-**Owner:** Scrum Master (Roman)
+**Owner:** Karim Gimadiev (Project Manager)
 
 - [ ] **3.1** Conduct Sprint Planning meeting
 - [ ] **3.2** Define Sprint Goal in milestone description
@@ -102,31 +107,34 @@
 ### Phase 4: MVP v1 Implementation (Days 4-10)
 **Owner:** Development Team
 
-#### Backend (Arseniy + Karim)
+#### Backend - AI/ML (Roman Santalov - ML Engineer)
 - [ ] **4.1** Set up FastAPI project structure (#29)
-- [ ] **4.2** Create PostgreSQL database schema (#36)
-- [ ] **4.3** Implement video upload endpoint (#29)
-- [ ] **4.4** Integrate MediaPipe pose estimation (#30)
-- [ ] **4.5** Implement shooting technique evaluation (#31)
-- [ ] **4.6** Implement personalized feedback generation (#32)
-- [ ] **4.7** Implement PDF export endpoint (#33)
-- [ ] **4.8** Implement user authentication (#37)
-- [ ] **4.9** Create API documentation (#39)
+- [ ] **4.2** Integrate MediaPipe pose estimation (#30)
+- [ ] **4.3** Implement shooting technique evaluation (#31)
+- [ ] **4.4** Implement personalized feedback generation (#32)
+- [ ] **4.5** Implement PDF export endpoint (#33)
 
-#### Frontend (Kamil + Damir)
-- [ ] **4.10** Create React project structure (#34)
-- [ ] **4.11** Build video upload UI (#34)
-- [ ] **4.12** Build analysis results page (#35)
-- [ ] **4.13** Build user account management page (#41)
-- [ ] **4.14** Build video upload progress page (#42)
-- [ ] **4.15** Build PDF export page (#45)
-- [ ] **4.16** Implement responsive design
+#### Backend - API & Database (Kamil Nizamov - ML Engineer)
+- [ ] **4.6** Create PostgreSQL database schema (#36)
+- [ ] **4.7** Implement user authentication (#37)
+- [ ] **4.8** Create API documentation (#39)
 
-#### Testing (Damir)
+#### Frontend (Arseniy Fedorov - Frontend Developer)
+- [ ] **4.9** Create React project structure (#34)
+- [ ] **4.10** Build video upload UI (#34)
+- [ ] **4.11** Build analysis results page (#35)
+- [ ] **4.12** Build user account management page (#41)
+- [ ] **4.13** Build video upload progress page (#42)
+- [ ] **4.14** Build PDF export page (#43)
+- [ ] **4.15** Implement responsive design
+- [ ] **4.16** Deploy MVP v1 to production (#38)
+
+#### Testing & Documentation (Damir Galiev - ML Analyst)
 - [ ] **4.17** Write unit tests for backend (#40)
 - [ ] **4.18** Write unit tests for frontend
 - [ ] **4.19** Perform manual testing
 - [ ] **4.20** Test edge cases
+- [ ] **4.21** Update documentation
 
 ### Phase 5: Code Review & Merge (Days 8-12)
 **Owner:** All Team Members
@@ -140,7 +148,7 @@
 - [ ] **5.7** Update CHANGELOG for each user-visible change
 
 ### Phase 6: Deployment & Testing (Days 12-14)
-**Owner:** DevOps (Arseniy)
+**Owner:** Arseniy Fedorov (Frontend Developer)
 
 - [ ] **6.1** Deploy MVP v1 to production (#38)
 - [ ] **6.2** Verify deployment at http://80.74.30.14/
@@ -150,7 +158,7 @@
 - [ ] **6.6** Tag release on main branch
 
 ### Phase 7: Documentation & Reports (Days 13-14)
-**Owner:** Documentation Lead (Damir)
+**Owner:** Damir Galiev (ML Analyst)
 
 - [ ] **7.1** Update README.md with MVP v1 instructions
 - [ ] **7.2** Update CHANGELOG.md for release
@@ -183,7 +191,7 @@
 - [ ] **9.6** Final review of all artifacts
 
 ### Phase 10: Submission (Day 14)
-**Owner:** Team Lead (Kamil)
+**Owner:** Karim Gimadiev (Project Manager)
 
 - [ ] **10.1** Commit all changes to main branch
 - [ ] **10.2** Create final PR and merge
@@ -196,13 +204,14 @@
 
 ## Team Member Responsibilities
 
-| Member | Primary Role | Assigned Issues |
-|--------|--------------|-----------------|
-| **Kamil Nizamov** | Frontend Lead | #34, #35, #41, #42, #43 |
-| **Roman Santalov** | Backend Lead | #29, #30, #31, #32 |
-| **Arseniy Fedorov** | DevOps/Backend | #36, #37, #38, #39 |
-| **Karim Gimadiev** | AI/ML Lead | #30, #31, #32 |
-| **Damir Galiev** | Testing/Docs | #40, reports |
+| Member | Role | Responsibilities |
+|--------|------|------------------|
+| **Roman Santalov** | ML Engineer | Backend AI/ML implementation, MediaPipe integration, technique evaluation |
+| **Kamil Nizamov** | ML Engineer | Backend API development, database design, authentication |
+| **Arseniy Fedorov** | Frontend Developer | Frontend UI, React components, deployment to server |
+| **Karim Gimadiev** | Project Manager | Sprint planning, customer communication, coordination |
+| **Damir Galiev** | ML Analyst | Testing, documentation, quality assurance |
+| **Anastasia Malakhova** | Customer | Product owner, requirements, acceptance |
 
 ---
 
@@ -281,7 +290,7 @@
 
 ## Notes for Next Session
 
-1. **PR #44 and #45 need review** - Check if they've been merged
+1. **PR #48 needs review** - Merge to complete documentation setup
 2. **Issues need assignment** - Assign team members to Sprint 1 issues
 3. **GitHub Project board** - Create Product Backlog and Sprint Backlog views
 4. **Start implementation** - Begin with backend setup (#29)
