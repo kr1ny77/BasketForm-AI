@@ -57,7 +57,8 @@
 | #45 | docs: Update CHANGELOG with Assignment 3 documentation | ✅ Merged |
 | #46 | docs: Add Assignment 3 progress tracker | ✅ Merged |
 | #47 | fix: Resolve Lychee link check errors | ✅ Merged |
-| #48 | feat: Add Assignment 3 documentation and report files | 🟡 Open |
+| #48 | feat: Add Assignment 3 documentation and report files | ✅ Merged |
+| #50 | docs: Correct Arseniy Fedorov role to Frontend Developer | ✅ Merged |
 
 ### ✅ Milestone Created
 - **Sprint 1 - MVP v1** (Due: 2026-07-02)
@@ -72,13 +73,13 @@
 - [x] **1.1** Merge PR #45 (CHANGELOG)
 - [x] **1.2** Merge PR #46 (progress tracker)
 - [x] **1.3** Merge PR #47 (Lychee fixes)
-- [x] **1.4** Review and merge PR #48 (documentation)
-- [x] **1.5** Verify issue templates are working correctly
-- [x] **1.6** Verify PR template is complete
-- [x] **1.7** Set up branch protection rules (if not already)
-- [ ] **1.8** Create GitHub Project board for Product Backlog
-- [ ] **1.9** Create Sprint Backlog view in GitHub Projects
-- [ ] **1.10** Verify Lychee CI is passing
+- [x] **1.4** Merge PR #48 (documentation)
+- [x] **1.5** Merge PR #50 (tracker role fix)
+- [ ] **1.6** Verify issue templates are working correctly
+- [ ] **1.7** Verify PR template is complete
+- [x] **1.8** Create GitHub Project board for Product Backlog ✅
+- [x] **1.9** Create Sprint Backlog view in GitHub Projects ✅
+- [x] **1.10** Verify Lychee CI is passing ✅
 
 ### Phase 2: Product Backlog Refinement (Days 2-3)
 **Owner:** Product Owner (Anastasia + Team)
@@ -224,6 +225,7 @@
 
 ### Issues & PRs
 - **Product Backlog:** https://github.com/kr1ny77/BasketForm-AI/issues
+- **Product Backlog Board:** https://github.com/users/Koomaz/projects/1
 - **Sprint 1 Milestone:** https://github.com/kr1ny77/BasketForm-AI/milestone/1
 - **Open PRs:** https://github.com/kr1ny77/BasketForm-AI/pulls
 
