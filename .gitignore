@@ -72,5 +72,7 @@ datasets/
 recordings/
 
 # Application data (local storage)
-uploads/
-results/
+uploads/*
+!uploads/.gitkeep
+results/*
+!results/.gitkeep

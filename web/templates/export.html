@@ -1,0 +1,48 @@
+{{define "title"}}Export{{end}}
+
+{{define "content"}}
+<section class="page-header">
+    <h1>Export Report</h1>
+    <p>Download analysis reports as PDF</p>
+</section>
+<section class="form-card">
+    <div class="form-group">
+        <label for="videoSelect">Select a completed analysis:</label>
+        <select id="videoSelect" class="select-input">
+            <option value="">Loading...</option>
+        </select>
+    </div>
+    <button class="btn" id="exportBtn" disabled>Download PDF</button>
+</section>
+{{end}}
+
+{{define "scripts"}}
+<script>
+const select = document.getElementById('videoSelect');
+const btn = document.getElementById('exportBtn');
+
+fetch('/api/videos')
+    .then(r => r.json())
+    .then(videos => {
+        const done = videos.filter(v => v.status === 'done');
+        select.innerHTML = done.length
+            ? '<option value="">Choose...</option>'
+            : '<option value="">No completed analyses</option>';
+        done.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.id;
+            opt.textContent = v.filename + ' (' + v.id + ')';
+            select.appendChild(opt);
+        });
+    });
+
+select.addEventListener('change', () => {
+    btn.disabled = !select.value;
+});
+
+btn.addEventListener('click', () => {
+    if (!select.value) return;
+    alert('PDF export will be implemented in a later stage.');
+});
+</script>
+{{end}}

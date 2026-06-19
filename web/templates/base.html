@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{template "title" .}} — BasketForm-AI</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">BasketForm-AI</a>
+        <ul class="nav-links">
+            <li><a href="/upload" {{if eq .CurrentPage "upload"}}class="active"{{end}}>Upload</a></li>
+            <li><a href="/results" {{if eq .CurrentPage "results"}}class="active"{{end}}>Results</a></li>
+            <li><a href="/progress" {{if eq .CurrentPage "progress"}}class="active"{{end}}>Progress</a></li>
+            <li><a href="/export" {{if eq .CurrentPage "export"}}class="active"{{end}}>Export</a></li>
+            <li><a href="/profile" {{if eq .CurrentPage "profile"}}class="active"{{end}}>Profile</a></li>
+        </ul>
+    </nav>
+    <main class="content">
+        {{template "content" .}}
+    </main>
+    <script src="/static/js/canvas.js"></script>
+    {{template "scripts" .}}
+</body>
+</html>
