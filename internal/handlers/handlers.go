@@ -4,7 +4,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"path/filepath"
 )
 
 type Handler struct {
@@ -63,8 +62,4 @@ func (h *Handler) ProgressPageHandler(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) ExportPageHandler(w http.ResponseWriter, r *http.Request) {
 	h.render(w, "export.html", pageData{CurrentPage: "export"})
-}
-
-func (h *Handler) resultsPath(id string) string {
-	return filepath.Join(h.resultsDir, id+".json")
 }
