@@ -10,7 +10,7 @@ import (
 type Handler struct {
 	uploadDir  string
 	resultsDir string
-.templates  *template.Template
+	templates  *template.Template
 }
 
 func New(uploadDir, resultsDir string) *Handler {
@@ -23,6 +23,10 @@ func New(uploadDir, resultsDir string) *Handler {
 		resultsDir: resultsDir,
 		templates:  tmpl,
 	}
+}
+
+type pageData struct {
+	CurrentPage string
 }
 
 func (h *Handler) render(w http.ResponseWriter, name string, data any) {
@@ -42,23 +46,23 @@ func (h *Handler) IndexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) UploadPageHandler(w http.ResponseWriter, r *http.Request) {
-	h.render(w, "upload.html", nil)
+	h.render(w, "upload.html", pageData{CurrentPage: "upload"})
 }
 
 func (h *Handler) ResultsPageHandler(w http.ResponseWriter, r *http.Request) {
-	h.render(w, "results.html", nil)
+	h.render(w, "results.html", pageData{CurrentPage: "results"})
 }
 
 func (h *Handler) ProfilePageHandler(w http.ResponseWriter, r *http.Request) {
-	h.render(w, "profile.html", nil)
+	h.render(w, "profile.html", pageData{CurrentPage: "profile"})
 }
 
 func (h *Handler) ProgressPageHandler(w http.ResponseWriter, r *http.Request) {
-	h.render(w, "progress.html", nil)
+	h.render(w, "progress.html", pageData{CurrentPage: "progress"})
 }
 
 func (h *Handler) ExportPageHandler(w http.ResponseWriter, r *http.Request) {
-	h.render(w, "export.html", nil)
+	h.render(w, "export.html", pageData{CurrentPage: "export"})
 }
 
 func (h *Handler) resultsPath(id string) string {
