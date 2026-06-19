@@ -1,116 +1,113 @@
-{{define "title"}}Export{{end}}
-
-{{define "content"}}
-<section class="page-header">
-    <h1>Export Report</h1>
-    <p>Download analysis reports as PDF</p>
-</section>
-<section class="form-card">
-    <div class="form-group">
-        <label for="videoSelect">Select a completed analysis</label>
-        <select id="videoSelect" class="select-input">
-            <option value="">Loading\u2026</option>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Export — BasketForm-AI</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">BasketForm-AI</a>
+        <ul class="nav-links">
+            <li><a href="/upload" data-i18n="nav_upload">Upload</a></li>
+            <li><a href="/results" data-i18n="nav_results">Results</a></li>
+            <li><a href="/progress" data-i18n="nav_progress">Progress</a></li>
+            <li><a href="/export" class="active" data-i18n="nav_export">Export</a></li>
+            <li><a href="/profile" data-i18n="nav_profile">Profile</a></li>
+        </ul>
+        <select id="langSelect" class="lang-select" onchange="applyLang(this.value)">
+            <option value="en">EN</option>
+            <option value="ru">RU</option>
         </select>
-    </div>
-    <button class="btn" id="exportBtn" disabled>Download PDF</button>
-    <p class="export-info" id="exportInfo" style="display:none;"></p>
-</section>
-{{end}}
+    </nav>
+    <main class="content">
+        <section class="page-header">
+            <h1 data-i18n="export_title">Export Report</h1>
+            <p data-i18n="export_desc">Download analysis reports as PDF</p>
+        </section>
+        <section class="form-card">
+            <div class="form-group">
+                <label for="videoSelect" data-i18n="export_select">Select a completed analysis</label>
+                <select id="videoSelect" class="select-input">
+                    <option value="" data-i18n="export_loading">Loading...</option>
+                </select>
+            </div>
+            <button class="btn" id="exportBtn" disabled data-i18n="export_btn">Download PDF</button>
+        </section>
+    </main>
+    <script src="/static/js/i18n.js"></script>
+    <script src="/static/js/canvas.js"></script>
+    <script>
+    var select = document.getElementById('videoSelect');
+    var btn = document.getElementById('exportBtn');
+    var chosenData = null;
+    var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
 
-{{define "scripts"}}
-<script>
-var select = document.getElementById('videoSelect');
-var btn = document.getElementById('exportBtn');
-var info = document.getElementById('exportInfo');
-var chosenData = null;
-
-fetch('/api/videos')
-    .then(function (r) { return r.json(); })
-    .then(function (videos) {
-        var done = videos.filter(function (v) { return v.status === 'done'; });
-        select.innerHTML = done.length
-            ? '<option value="">Choose\u2026</option>'
-            : '<option value="">No completed analyses</option>';
-        done.forEach(function (v) {
-            var opt = document.createElement('option');
-            opt.value = v.id;
-            opt.textContent = v.filename + ' \u2014 score: ' + (v.score != null ? v.score : 'N/A');
-            select.appendChild(opt);
+    fetch('/api/videos')
+        .then(function (r) { return r.json(); })
+        .then(function (videos) {
+            var done = videos.filter(function (v) { return v.status === 'done'; });
+            select.innerHTML = done.length
+                ? '<option value="">' + (t.export_choose || 'Choose...') + '</option>'
+                : '<option value="">' + (t.export_none || 'No completed analyses') + '</option>';
+            done.forEach(function (v) {
+                var opt = document.createElement('option');
+                opt.value = v.id;
+                opt.textContent = v.filename + ' \u2014 score: ' + (v.score != null ? v.score : 'N/A');
+                select.appendChild(opt);
+            });
         });
+
+    select.addEventListener('change', function () {
+        btn.disabled = !select.value;
+        chosenData = null;
+        if (select.value) {
+            fetch('/api/result/' + select.value)
+                .then(function (r) { return r.json(); })
+                .then(function (d) { chosenData = d; })
+                .catch(function () {});
+        }
     });
 
-select.addEventListener('change', function () {
-    btn.disabled = !select.value;
-    chosenData = null;
-    info.style.display = 'none';
-    if (select.value) {
-        fetch('/api/result/' + select.value)
-            .then(function (r) { return r.json(); })
-            .then(function (d) { chosenData = d; })
-            .catch(function () {});
-    }
-});
+    btn.addEventListener('click', function () {
+        if (!select.value || !chosenData) return;
+        generatePDF(chosenData);
+    });
 
-btn.addEventListener('click', function () {
-    if (!select.value || !chosenData) return;
-    generatePDF(chosenData);
-});
-
-function generatePDF(data) {
-    var jsPDF = window.jspdf.jsPDF;
-    var doc = new jsPDF();
-    var y = 20;
-
-    doc.setFontSize(20);
-    doc.setTextColor(255, 106, 0);
-    doc.text('BasketForm-AI Analysis Report', 20, y);
-    y += 12;
-
-    doc.setFontSize(10);
-    doc.setTextColor(100);
-    doc.text('Generated: ' + new Date().toLocaleString(), 20, y);
-    y += 10;
-
-    doc.setFontSize(12);
-    doc.setTextColor(40);
-    doc.text('Video: ' + (data.filename || data.id), 20, y);
-    y += 8;
-    doc.text('Score: ' + (data.score != null ? data.score + ' / 100' : 'N/A'), 20, y);
-    y += 8;
-    doc.text('Status: ' + (data.status || 'done'), 20, y);
-    y += 8;
-    doc.text('Video ID: ' + data.id, 20, y);
-    y += 12;
-
-    doc.setFontSize(14);
-    doc.setTextColor(255, 106, 0);
-    doc.text('Feedback', 20, y);
-    y += 8;
-    doc.setFontSize(10);
-    doc.setTextColor(40);
-    var lines = doc.splitTextToSize(data.feedback || 'No feedback available.', 170);
-    doc.text(lines, 20, y);
-    y += lines.length * 5 + 10;
-
-    if (data.scores) {
+    function generatePDF(data) {
+        if (typeof window.jspdf === 'undefined') { alert('PDF library loading, try again.'); return; }
+        var jsPDF = window.jspdf.jsPDF;
+        var doc = new jsPDF();
+        var y = 20;
+        doc.setFontSize(20);
+        doc.setTextColor(255, 106, 0);
+        doc.text('BasketForm-AI Analysis Report', 20, y);
+        y += 12;
+        doc.setFontSize(10);
+        doc.setTextColor(100);
+        doc.text('Generated: ' + new Date().toLocaleString(), 20, y);
+        y += 10;
+        doc.setFontSize(12);
+        doc.setTextColor(40);
+        doc.text('Video: ' + (data.filename || data.id), 20, y);
+        y += 8;
+        doc.text('Score: ' + (data.score != null ? data.score + ' / 100' : 'N/A'), 20, y);
+        y += 8;
+        doc.text('Video ID: ' + data.id, 20, y);
+        y += 12;
         doc.setFontSize(14);
         doc.setTextColor(255, 106, 0);
-        doc.text('Score Breakdown', 20, y);
+        doc.text('Feedback', 20, y);
         y += 8;
         doc.setFontSize(10);
         doc.setTextColor(40);
-        var labels = ['Stance', 'Arm Angle', 'Release Point', 'Follow-through'];
-        labels.forEach(function (l, i) {
-            doc.text(l + ': ' + (data.scores[i] != null ? data.scores[i] : 'N/A'), 20, y);
-            y += 6;
-        });
+        var lines = doc.splitTextToSize(data.feedback || 'No feedback available.', 170);
+        doc.text(lines, 20, y);
+        doc.save('basketform-report-' + data.id.substring(0, 8) + '.pdf');
     }
-
-    doc.setFontSize(8);
-    doc.setTextColor(160);
-    doc.text('BasketForm-AI \u2014 AI-powered basketball shooting form analysis', 20, 285);
-
-    doc.save('basketform-report-' + data.id.substring(0, 8) + '.pdf');
-}
-</script>
-{{end}}
+    </script>
+</body>
+</html>

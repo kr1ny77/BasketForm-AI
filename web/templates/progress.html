@@ -1,65 +1,231 @@
-{{define "title"}}Progress{{end}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress — BasketForm-AI</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">BasketForm-AI</a>
+        <ul class="nav-links">
+            <li><a href="/upload" data-i18n="nav_upload">Upload</a></li>
+            <li><a href="/results" data-i18n="nav_results">Results</a></li>
+            <li><a href="/progress" class="active" data-i18n="nav_progress">Progress</a></li>
+            <li><a href="/export" data-i18n="nav_export">Export</a></li>
+            <li><a href="/profile" data-i18n="nav_profile">Profile</a></li>
+        </ul>
+        <select id="langSelect" class="lang-select" onchange="applyLang(this.value)">
+            <option value="en">EN</option>
+            <option value="ru">RU</option>
+        </select>
+    </nav>
+    <main class="content">
+        <section class="page-header">
+            <h1 data-i18n="progress_title">Progress</h1>
+            <p data-i18n="progress_desc">Score history for your last shots</p>
+        </section>
 
-{{define "content"}}
-<section class="page-header">
-    <h1>Processing Progress</h1>
-    <p id="progressStatus">Waiting for video ID\u2026</p>
-</section>
-<section class="progress-card">
-    <div class="progress-bar large">
-        <div class="progress-fill" id="progressFill" style="width:0%"></div>
-    </div>
-    <p class="progress-pct" id="progressPct">0%</p>
-    <div id="resultLink" style="display:none; margin-top:1.5rem;">
-        <a href="#" class="btn" id="viewResultBtn">View Results</a>
-    </div>
-    <div id="errorHint" style="display:none; margin-top:1.5rem; color:var(--text-dim); font-size:0.88rem;">
-        Something went wrong during processing.
-    </div>
-</section>
-{{end}}
+        <div class="progress-processing" id="processingCard" style="display:none;">
+            <div class="form-card">
+                <div class="processing-header">
+                    <span class="pulse-dot"></span>
+                    <span id="processingStatus" data-i18n="progress_proc">Processing video...</span>
+                </div>
+                <div class="progress-bar large">
+                    <div class="progress-fill" id="progressFill" style="width:0%"></div>
+                </div>
+                <p class="progress-pct" id="progressPct">0%</p>
+                <div id="processingDone" style="display:none; margin-top:1rem;">
+                    <a href="/results" class="btn btn-sm" data-i18n="progress_view">View Results</a>
+                </div>
+            </div>
+        </div>
 
-{{define "scripts"}}
-<script>
-var params = new URLSearchParams(window.location.search);
-var videoId = params.get('id');
-var statusEl = document.getElementById('progressStatus');
-var fillEl = document.getElementById('progressFill');
-var pctEl = document.getElementById('progressPct');
-var linkEl = document.getElementById('resultLink');
-var btnEl = document.getElementById('viewResultBtn');
-var errEl = document.getElementById('errorHint');
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value" id="statTotal">0</div>
+                <div class="stat-label" data-i18n="progress_total">Total Shots</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statAvg">&mdash;</div>
+                <div class="stat-label" data-i18n="progress_avg">Average Score</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statBest">&mdash;</div>
+                <div class="stat-label" data-i18n="progress_best">Best Score</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statLast">&mdash;</div>
+                <div class="stat-label" data-i18n="progress_last">Last Score</div>
+            </div>
+        </div>
 
-if (!videoId) {
-    statusEl.textContent = 'No video ID provided. Go to Upload to start.';
-} else {
-    statusEl.textContent = 'Analyzing video\u2026';
-    pollStatus();
-}
+        <section class="form-card">
+            <div class="table-header">
+                <h2 data-i18n="progress_table_title">Last 10 Shots</h2>
+            </div>
+            <div class="table-wrap">
+                <table class="data-table" id="historyTable">
+                    <thead>
+                        <tr>
+                            <th data-i18n="progress_th_num">#</th>
+                            <th data-i18n="progress_th_video">Video</th>
+                            <th data-i18n="progress_th_score">Score</th>
+                            <th data-i18n="progress_th_stance">Stance</th>
+                            <th data-i18n="progress_th_arm">Arm Angle</th>
+                            <th data-i18n="progress_th_release">Release</th>
+                            <th data-i18n="progress_th_follow">Follow-through</th>
+                            <th data-i18n="progress_th_date">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody">
+                        <tr><td colspan="8" class="empty-row" data-i18n="progress_empty">No shots yet. Upload a video to begin.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
-function pollStatus() {
-    fetch('/api/status/' + videoId)
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-            fillEl.style.width = data.progress + '%';
-            pctEl.textContent = data.progress + '%';
-            if (data.status === 'done') {
-                statusEl.textContent = 'Analysis complete!';
-                pctEl.textContent = '100%';
-                btnEl.href = '/results?id=' + videoId;
-                linkEl.style.display = 'inline-flex';
-            } else if (data.status === 'error') {
-                statusEl.textContent = 'Processing failed.';
-                errEl.style.display = 'block';
-            } else {
-                statusEl.textContent = 'Status: ' + data.status + '\u2026';
-                setTimeout(pollStatus, 1000);
+        <div class="form-card" style="margin-top:1.5rem;">
+            <h2 style="font-size:1rem; margin-bottom:1rem;" data-i18n="progress_trend">Score Trend</h2>
+            <canvas id="trendChart" height="160"></canvas>
+        </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <script src="/static/js/i18n.js"></script>
+    <script src="/static/js/canvas.js"></script>
+    <script>
+    var params = new URLSearchParams(window.location.search);
+    var videoId = params.get('id');
+    var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
+
+    if (videoId) {
+        document.getElementById('processingCard').style.display = 'block';
+        pollStatus();
+    }
+
+    function pollStatus() {
+        fetch('/api/status/' + videoId)
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                document.getElementById('progressFill').style.width = data.progress + '%';
+                document.getElementById('progressPct').textContent = data.progress + '%';
+                if (data.status === 'done') {
+                    document.getElementById('processingStatus').textContent = t.progress_done || 'Analysis complete!';
+                    document.getElementById('progressPct').textContent = '100%';
+                    document.getElementById('processingDone').style.display = 'block';
+                    loadHistory();
+                } else if (data.status === 'error') {
+                    document.getElementById('processingStatus').textContent = 'Processing failed.';
+                } else {
+                    document.getElementById('processingStatus').textContent = (t.progress_proc || 'Processing video...') + ' ' + data.status;
+                    setTimeout(pollStatus, 1000);
+                }
+            })
+            .catch(function () {
+                document.getElementById('processingStatus').textContent = 'Cannot reach server. Retrying...';
+                setTimeout(pollStatus, 3000);
+            });
+    }
+
+    function loadHistory() {
+        fetch('/api/videos')
+            .then(function (r) { return r.json(); })
+            .then(function (videos) {
+                var done = videos.filter(function (v) { return v.status === 'done' && v.score != null; });
+                done.sort(function (a, b) { return new Date(b.created_at) - new Date(a.created_at); });
+                var last10 = done.slice(0, 10);
+
+                var total = done.length;
+                var sum = 0, best = 0;
+                done.forEach(function (v) { sum += v.score; if (v.score > best) best = v.score; });
+
+                document.getElementById('statTotal').textContent = total;
+                document.getElementById('statAvg').textContent = total ? Math.round(sum / total) : '\u2014';
+                document.getElementById('statBest').textContent = best || '\u2014';
+                document.getElementById('statLast').textContent = last10.length ? last10[0].score : '\u2014';
+
+                var body = document.getElementById('historyBody');
+                if (!last10.length) {
+                    body.innerHTML = '<tr><td colspan="8" class="empty-row">' + escHtml(t.progress_empty || 'No shots yet.') + '</td></tr>';
+                    return;
+                }
+
+                var rows = '';
+                last10.forEach(function (v, i) {
+                    rows += '<tr>' +
+                        '<td class="col-num">' + (i + 1) + '</td>' +
+                        '<td>' + escHtml(v.filename) + '</td>' +
+                        '<td class="col-score">' + v.score + '</td>' +
+                        '<td class="col-detail">\u2014</td>' +
+                        '<td class="col-detail">\u2014</td>' +
+                        '<td class="col-detail">\u2014</td>' +
+                        '<td class="col-detail">\u2014</td>' +
+                        '<td class="col-date">' + new Date(v.created_at).toLocaleDateString() + '</td>' +
+                        '</tr>';
+                });
+                body.innerHTML = rows;
+
+                last10.forEach(function (v, i) {
+                    fetch('/api/result/' + v.id)
+                        .then(function (r) { return r.json(); })
+                        .then(function (data) {
+                            var tr = body.children[i];
+                            if (tr && data.scores && data.scores.length >= 4) {
+                                tr.children[3].textContent = data.scores[0];
+                                tr.children[4].textContent = data.scores[1];
+                                tr.children[5].textContent = data.scores[2];
+                                tr.children[6].textContent = data.scores[3];
+                            }
+                        })
+                        .catch(function () {});
+                });
+
+                drawTrend(last10.reverse());
+            })
+            .catch(function () {});
+    }
+
+    function drawTrend(data) {
+        var canvas = document.getElementById('trendChart');
+        if (!canvas || typeof Chart === 'undefined' || !data.length) return;
+        new Chart(canvas, {
+            type: 'line',
+            data: {
+                labels: data.map(function (_, i) { return '#' + (i + 1); }),
+                datasets: [{
+                    label: 'Score',
+                    data: data.map(function (v) { return v.score; }),
+                    borderColor: '#ff6a00',
+                    backgroundColor: 'rgba(255,106,0,0.08)',
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#ff6a00',
+                    pointBorderColor: '#ff6a00',
+                    pointRadius: 4,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true, max: 100, ticks: { color: '#666', backdropColor: 'transparent' }, grid: { color: 'rgba(255,255,255,0.04)' } },
+                    x: { ticks: { color: '#666' }, grid: { display: false } }
+                },
+                plugins: { legend: { display: false } },
+                responsive: true
             }
-        })
-        .catch(function () {
-            statusEl.textContent = 'Cannot reach server. Retrying\u2026';
-            setTimeout(pollStatus, 3000);
         });
-}
-</script>
-{{end}}
+    }
+
+    function escHtml(s) {
+        var d = document.createElement('div');
+        d.textContent = s || '';
+        return d.innerHTML;
+    }
+
+    if (!videoId) loadHistory();
+    </script>
+</body>
+</html>
