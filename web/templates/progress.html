@@ -1,0 +1,58 @@
+{{define "title"}}Progress{{end}}
+
+{{define "content"}}
+<section class="page-header">
+    <h1>Processing Progress</h1>
+    <p id="progressStatus">Waiting for video ID...</p>
+</section>
+<section class="progress-card">
+    <div class="progress-bar large">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <p class="progress-pct" id="progressPct">0%</p>
+    <div id="resultLink" style="display:none; margin-top:1rem;">
+        <a href="#" class="btn" id="viewResultBtn">View Results</a>
+    </div>
+</section>
+{{end}}
+
+{{define "scripts"}}
+<script>
+const params = new URLSearchParams(window.location.search);
+const videoId = params.get('id');
+const statusEl = document.getElementById('progressStatus');
+const fillEl = document.getElementById('progressFill');
+const pctEl = document.getElementById('progressPct');
+const linkEl = document.getElementById('resultLink');
+const btnEl = document.getElementById('viewResultBtn');
+
+if (!videoId) {
+    statusEl.textContent = 'No video ID provided. Go to Upload to start.';
+} else {
+    statusEl.textContent = 'Video: ' + videoId;
+    pollStatus();
+}
+
+function pollStatus() {
+    fetch('/api/status/' + videoId)
+        .then(r => r.json())
+        .then(data => {
+            fillEl.style.width = data.progress + '%';
+            pctEl.textContent = data.progress + '%';
+            if (data.status === 'done') {
+                statusEl.textContent = 'Analysis complete!';
+                btnEl.href = '/results?id=' + videoId;
+                linkEl.style.display = 'block';
+            } else if (data.status === 'error') {
+                statusEl.textContent = 'Processing failed.';
+            } else {
+                statusEl.textContent = 'Status: ' + data.status + '...';
+                setTimeout(pollStatus, 1000);
+            }
+        })
+        .catch(() => {
+            statusEl.textContent = 'Cannot reach server.';
+        });
+}
+</script>
+{{end}}

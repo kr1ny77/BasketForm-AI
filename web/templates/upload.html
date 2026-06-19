@@ -1,0 +1,77 @@
+{{define "title"}}Upload{{end}}
+
+{{define "content"}}
+<section class="page-header">
+    <h1>Upload Video</h1>
+    <p>Upload a basketball shooting video for analysis</p>
+</section>
+<section class="upload-area">
+    <div class="dropzone" id="dropzone">
+        <div class="dropzone-content">
+            <span class="dropzone-icon">+</span>
+            <p>Drag & drop your video here</p>
+            <p class="dropzone-hint">or click to browse (MP4, MOV, AVI — max 100MB)</p>
+            <input type="file" id="fileInput" accept="video/mp4,video/mov,video/avi" hidden>
+        </div>
+    </div>
+    <div class="upload-status" id="uploadStatus" style="display:none;">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <p id="uploadMessage">Uploading...</p>
+    </div>
+</section>
+{{end}}
+
+{{define "scripts"}}
+<script>
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const uploadStatus = document.getElementById('uploadStatus');
+const progressFill = document.getElementById('progressFill');
+const uploadMessage = document.getElementById('uploadMessage');
+
+dropzone.addEventListener('click', () => fileInput.click());
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+dropzone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+    if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', () => { if (fileInput.files.length) handleFile(fileInput.files[0]); });
+
+function handleFile(file) {
+    const allowed = ['video/mp4', 'video/quicktime', 'video/x-msvideo'];
+    if (!allowed.includes(file.type)) {
+        alert('Unsupported format. Use MP4, MOV, or AVI.');
+        return;
+    }
+    if (file.size > 100 * 1024 * 1024) {
+        alert('File too large. Maximum size is 100MB.');
+        return;
+    }
+    uploadStatus.style.display = 'block';
+    const formData = new FormData();
+    formData.append('video', file);
+    const xhr = new XMLHttpRequest();
+    xhr.upload.addEventListener('progress', e => {
+        if (e.lengthComputable) {
+            const pct = Math.round((e.loaded / e.total) * 100);
+            progressFill.style.width = pct + '%';
+            uploadMessage.textContent = 'Uploading... ' + pct + '%';
+        }
+    });
+    xhr.addEventListener('load', () => {
+        if (xhr.status === 201) {
+            const data = JSON.parse(xhr.responseText);
+            uploadMessage.textContent = 'Upload complete! Redirecting...';
+            setTimeout(() => { window.location.href = '/progress?id=' + data.id; }, 1000);
+        } else {
+            uploadMessage.textContent = 'Upload failed: ' + xhr.statusText;
+        }
+    });
+    xhr.addEventListener('error', () => { uploadMessage.textContent = 'Upload failed.'; });
+    xhr.open('POST', '/api/upload');
+    xhr.send(formData);
+}
+</script>
+{{end}}
