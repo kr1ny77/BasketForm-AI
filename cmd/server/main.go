@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/kr1ny77/BasketForm-AI/internal/handlers"
+	"github.com/kr1ny77/BasketForm-AI/internal/services"
 )
 
 func main() {
@@ -29,7 +30,11 @@ func main() {
 	ensureDir(uploadDir)
 	ensureDir(resultsDir)
 
+	storage := services.NewStorage(uploadDir, resultsDir)
+	processor := services.NewProcessor(storage)
+
 	h := handlers.New(uploadDir, resultsDir)
+	api := handlers.NewAPI(storage, processor, uploadDir)
 
 	mux := http.NewServeMux()
 
@@ -40,6 +45,9 @@ func main() {
 	mux.HandleFunc("/profile", h.ProfilePageHandler)
 	mux.HandleFunc("/progress", h.ProgressPageHandler)
 	mux.HandleFunc("/export", h.ExportPageHandler)
+
+	// API
+	api.Register(mux)
 
 	// Static files
 	fs := http.FileServer(http.Dir("web/static"))
