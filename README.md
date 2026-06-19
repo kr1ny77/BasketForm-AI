@@ -2,52 +2,40 @@
 
 Web service for analyzing basketball shooting form via video upload, biomechanical keypoint extraction, technique scoring, and personalized AI feedback.
 
+**Live:** http://80.74.30.14/ · [Video Demo](https://youtu.be/To_1ZwAMe4M) · [v0.1.0 Release](https://github.com/kr1ny77/BasketForm-AI/releases/tag/v0.1.0)
+
 ## Project Overview
 
 BasketForm-AI is an AI-powered platform that helps basketball players improve their shooting technique through video analysis and personalized feedback. Users upload shooting videos, the system extracts biomechanical keypoints, evaluates stance, arm angle, release point, and follow-through, then generates simplified actionable recommendations.
 
 ## Key Features
 
-- **Video Upload:** Drag-and-drop or file picker for basketball shot videos
+- **Video Upload:** Drag-and-drop or file picker for basketball shot videos (MP4, MOV, AVI)
 - **Biomechanical Analysis:** Automatic extraction of key body points from video
-- **Technique Evaluation:** Scoring of stance, arm angle, release point, and follow-through
-- **Personalized Feedback:** AI-generated recommendations and drills (max 3 actionable takeaways)
-- **Progress Tracking:** Monitor improvement over time
-- **PDF Export:** Download analysis reports for offline reference
+- **Technique Evaluation:** Scoring of stance, arm angle, release point, and follow-through (0–100)
+- **Personalized Feedback:** AI-generated recommendations (max 3 actionable takeaways)
+- **Progress Tracking:** Real-time processing status with auto-polling
+- **PDF Export:** Download analysis reports via jsPDF
+- **Canvas Animation:** Basketball-themed background (35 objects, mouse-reactive, orange waves)
 
 ## Tech Stack
 
-- **Backend:** Go 1.21+ (standard library + html/template)
-- **Frontend:** HTML + CSS + JavaScript, Canvas animations (basketball theme)
+- **Backend:** Go 1.21+ (standard library `net/http` + `html/template`)
+- **Frontend:** HTML + CSS + JavaScript, Canvas animations, Chart.js, jsPDF
 - **Storage:** Local `uploads/` and `results/` directories
-- **ML:** Mock data stub or Python script via `exec`
-- **Testing:** Go `testing` package, `httptest`
-- **CI:** GitHub Actions (golangci-lint, go test, go build, Lychee link check)
+- **ML:** Mock data pipeline (Python script available via `exec`)
+- **Testing:** Go `testing`, `httptest` (47 unit + integration tests)
+- **CI:** GitHub Actions — golangci-lint, go test, go build, Lychee link check
+- **Deployment:** Binary or Docker
 - **License:** MIT
 
-## Project Structure
+## Quick Start
 
-```
-BasketForm-AI/
-├── cmd/server/main.go          # Application entry point
-├── internal/
-│   ├── handlers/               # HTTP handlers
-│   ├── models/                 # Data structures
-│   └── services/               # Business logic
-├── web/
-│   ├── templates/              # HTML templates (html/template)
-│   └── static/                 # CSS, JS, images
-├── uploads/                    # Uploaded video files (gitignored)
-├── results/                    # Analysis result JSON files (gitignored)
-├── reports/                    # Course reports and evidence
-├── docs/                       # Project documentation
-├── scripts/                    # Helper scripts (e.g., process_video.py)
-├── tests/                      # Test files
-├── CHANGELOG.md                # Version history
-├── LICENSE                     # MIT License
-├── .gitignore                  # Git ignore rules
-├── .env.example                # Environment variables template
-└── .github/                    # CI workflows, issue/PR templates
+```bash
+git clone https://github.com/kr1ny77/BasketForm-AI.git
+cd BasketForm-AI
+go run ./cmd/server/
+# Open http://localhost:8080
 ```
 
 ## Local Development Setup
@@ -55,7 +43,7 @@ BasketForm-AI/
 ### Prerequisites
 
 - Go 1.21 or later
-- `golangci-lint` (for linting)
+- `golangci-lint` (for linting, optional)
 
 ### Installation
 
@@ -65,38 +53,34 @@ BasketForm-AI/
    cd BasketForm-AI
    ```
 
-2. **Initialize Go module (if needed):**
-   ```bash
-   go mod init github.com/kr1ny77/BasketForm-AI
-   go mod tidy
-   ```
-
-3. **Create required directories:**
-   ```bash
-   mkdir -p uploads results
-   ```
-
-4. **Run the server:**
+2. **Run the server:**
    ```bash
    go run ./cmd/server/
    ```
-   The server starts on `http://localhost:8080` by default.
 
-5. **Build a binary:**
-   ```bash
-   go build -o bin/server ./cmd/server/
-   ./bin/server
+3. **Open in browser:**
+   ```
+   http://localhost:8080
    ```
 
-6. **Run tests:**
-   ```bash
-   go test -race -coverprofile=coverage.out ./...
-   ```
+### Build
 
-7. **Run linter:**
-   ```bash
-   golangci-lint run
-   ```
+```bash
+go build -o bin/server ./cmd/server/
+PORT=8080 ./bin/server
+```
+
+### Run Tests
+
+```bash
+go test -race -coverprofile=coverage.out ./...
+```
+
+### Run Linter
+
+```bash
+golangci-lint run
+```
 
 ### Environment Variables
 
@@ -106,22 +90,97 @@ BasketForm-AI/
 | `UPLOAD_DIR` | `uploads` | Video upload directory |
 | `RESULTS_DIR` | `results` | Analysis results directory |
 
-Copy `.env.example` to `.env` and adjust as needed:
+## Deployment
+
+### Binary
+
 ```bash
-cp .env.example .env
+go build -o bin/server ./cmd/server/
+PORT=80 ./bin/server
+```
+
+### Docker
+
+```bash
+docker build -t basketform-ai .
+docker run -p 8080:8080 basketform-ai
+```
+
+### Production (systemd)
+
+```bash
+# Build
+go build -o /usr/local/bin/basketform-ai ./cmd/server/
+
+# Create service file /etc/systemd/system/basketform-ai.service
+# [Unit]
+# Description=BasketForm-AI
+# After=network.target
+#
+# [Service]
+# Type=simple
+# User=www-data
+# WorkingDirectory=/opt/basketform-ai
+# ExecStart=/usr/local/bin/basketform-ai
+# Restart=always
+# Environment=PORT=80
+# Environment=UPLOAD_DIR=uploads
+# Environment=RESULTS_DIR=results
+#
+# [Install]
+# WantedBy=multi-user.target
+
+sudo systemctl enable basketform-ai
+sudo systemctl start basketform-ai
+```
+
+### Smoke Check
+
+```bash
+curl http://localhost:8080/
+# Expected: redirects to /upload
+
+curl http://localhost:8080/api/videos
+# Expected: []
+```
+
+## Project Structure
+
+```
+BasketForm-AI/
+├── cmd/server/main.go          # Application entry point
+├── internal/
+│   ├── handlers/               # HTTP handlers (pages + API)
+│   │   ├── handlers.go         # Page handlers
+│   │   ├── api.go              # API handlers
+│   │   └── *_test.go           # Tests
+│   ├── models/                 # Data structures
+│   └── services/               # Business logic (storage, processor)
+├── web/
+│   ├── templates/              # HTML templates (html/template)
+│   └── static/                 # CSS, JS, images
+├── scripts/                    # Helper scripts (process_video.py)
+├── uploads/                    # Uploaded video files (gitignored)
+├── results/                    # Analysis result JSON files (gitignored)
+├── reports/                    # Course reports
+├── docs/                       # Project documentation
+├── Dockerfile                  # Container build
+├── CHANGELOG.md                # Version history
+└── LICENSE                     # MIT License
 ```
 
 ## Documentation
 
 ### Assignment Reports
-- [Assignment 3 Report Index](reports/week3/README.md)
+- [Assignment 3 Report](reports/week3/README.md)
 - [Customer Review Summary](reports/week3/customer-review-summary.md)
 - [Reflection](reports/week3/reflection.md)
 - [Retrospective](reports/week3/retrospective.md)
 - [LLM Usage Report](reports/week3/llm-report.md)
+- [Manual Test Checklist](reports/week3/manual-test-checklist.md)
 
 ### Assignment 2 (Historical)
-- [Assignment 2 Report Index](reports/week2/README.md)
+- [Assignment 2 Report](reports/week2/README.md)
 - [User Stories](reports/week2/user-stories.md)
 - [MVP v0 Report](reports/week2/mvp-v0-report.md)
 
@@ -132,34 +191,16 @@ cp .env.example .env
 - [Changelog](CHANGELOG.md)
 - [License](LICENSE)
 
-## Deployment
-
-### Local
-```bash
-go build -o bin/server ./cmd/server/
-PORT=8080 ./bin/server
-```
-
-### Docker
-```bash
-docker build -t basketform-ai .
-docker run -p 8080:8080 basketform-ai
-```
-
-### Production
-See the [Week 3 Report](reports/week3/README.md) for deployment instructions and the live URL.
-
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch: `<issue-number>-short-description` (e.g., `42-add-login-form`)
-3. Commit changes
-4. Push and open a Pull Request linked to the related issue
-5. Obtain at least one review approval before merging
+1. Create a feature branch: `<issue-number>-short-description`
+2. Commit changes with meaningful messages
+3. Push and open a Pull Request linked to the related issue
+4. Obtain at least one review approval before merging
 
 ### PR Requirements
 - At least one approval from another team member
-- All CI checks must pass (golangci-lint, go test, go build)
+- All CI checks must pass
 - Link to related issue
 - Update `CHANGELOG.md` if user-visible change
 - Verify acceptance criteria
@@ -167,7 +208,3 @@ See the [Week 3 Report](reports/week3/README.md) for deployment instructions and
 ## License
 
 This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
-
-## Contact
-
-- GitHub Issues: [https://github.com/kr1ny77/BasketForm-AI/issues](https://github.com/kr1ny77/BasketForm-AI/issues)
