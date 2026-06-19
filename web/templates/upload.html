@@ -8,14 +8,17 @@
 <section class="upload-area">
     <div class="dropzone" id="dropzone">
         <div class="dropzone-content">
-            <span class="dropzone-icon">+</span>
+            <span class="dropzone-icon">&#9917;</span>
             <p>Drag & drop your video here</p>
-            <p class="dropzone-hint">or click to browse (MP4, MOV, AVI — max 100MB)</p>
-            <input type="file" id="fileInput" accept="video/mp4,video/mov,video/avi" hidden>
+            <p class="dropzone-hint">or click to browse &middot; MP4, MOV, AVI &middot; max 100 MB</p>
+            <p class="dropzone-file-name" id="fileName"></p>
+            <input type="file" id="fileInput" accept="video/mp4,video/quicktime,video/x-msvideo" hidden>
         </div>
     </div>
     <div class="upload-status" id="uploadStatus" style="display:none;">
-        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <div class="progress-bar large">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
         <p id="uploadMessage">Uploading...</p>
     </div>
 </section>
@@ -23,53 +26,58 @@
 
 {{define "scripts"}}
 <script>
-const dropzone = document.getElementById('dropzone');
-const fileInput = document.getElementById('fileInput');
-const uploadStatus = document.getElementById('uploadStatus');
-const progressFill = document.getElementById('progressFill');
-const uploadMessage = document.getElementById('uploadMessage');
+var dropzone = document.getElementById('dropzone');
+var fileInput = document.getElementById('fileInput');
+var uploadStatus = document.getElementById('uploadStatus');
+var progressFill = document.getElementById('progressFill');
+var uploadMessage = document.getElementById('uploadMessage');
+var fileNameEl = document.getElementById('fileName');
 
-dropzone.addEventListener('click', () => fileInput.click());
-dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
-dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
-dropzone.addEventListener('drop', e => {
+dropzone.addEventListener('click', function () { fileInput.click(); });
+dropzone.addEventListener('dragover', function (e) { e.preventDefault(); dropzone.classList.add('dragover'); });
+dropzone.addEventListener('dragleave', function () { dropzone.classList.remove('dragover'); });
+dropzone.addEventListener('drop', function (e) {
     e.preventDefault();
     dropzone.classList.remove('dragover');
     if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
 });
-fileInput.addEventListener('change', () => { if (fileInput.files.length) handleFile(fileInput.files[0]); });
+fileInput.addEventListener('change', function () {
+    if (fileInput.files.length) handleFile(fileInput.files[0]);
+});
 
 function handleFile(file) {
-    const allowed = ['video/mp4', 'video/quicktime', 'video/x-msvideo'];
-    if (!allowed.includes(file.type)) {
+    var allowed = ['video/mp4', 'video/quicktime', 'video/x-msvideo'];
+    if (allowed.indexOf(file.type) === -1) {
         alert('Unsupported format. Use MP4, MOV, or AVI.');
         return;
     }
     if (file.size > 100 * 1024 * 1024) {
-        alert('File too large. Maximum size is 100MB.');
+        alert('File too large. Maximum size is 100 MB.');
         return;
     }
+    fileNameEl.textContent = file.name + ' (' + (file.size / 1048576).toFixed(1) + ' MB)';
     uploadStatus.style.display = 'block';
-    const formData = new FormData();
+    var formData = new FormData();
     formData.append('video', file);
-    const xhr = new XMLHttpRequest();
-    xhr.upload.addEventListener('progress', e => {
+    var xhr = new XMLHttpRequest();
+    xhr.upload.addEventListener('progress', function (e) {
         if (e.lengthComputable) {
-            const pct = Math.round((e.loaded / e.total) * 100);
+            var pct = Math.round((e.loaded / e.total) * 100);
             progressFill.style.width = pct + '%';
-            uploadMessage.textContent = 'Uploading... ' + pct + '%';
+            uploadMessage.textContent = 'Uploading\u2026 ' + pct + '%';
         }
     });
-    xhr.addEventListener('load', () => {
+    xhr.addEventListener('load', function () {
         if (xhr.status === 201) {
-            const data = JSON.parse(xhr.responseText);
-            uploadMessage.textContent = 'Upload complete! Redirecting...';
-            setTimeout(() => { window.location.href = '/progress?id=' + data.id; }, 1000);
+            var data = JSON.parse(xhr.responseText);
+            progressFill.style.width = '100%';
+            uploadMessage.textContent = 'Upload complete! Redirecting\u2026';
+            setTimeout(function () { window.location.href = '/progress?id=' + data.id; }, 800);
         } else {
             uploadMessage.textContent = 'Upload failed: ' + xhr.statusText;
         }
     });
-    xhr.addEventListener('error', () => { uploadMessage.textContent = 'Upload failed.'; });
+    xhr.addEventListener('error', function () { uploadMessage.textContent = 'Upload failed.'; });
     xhr.open('POST', '/api/upload');
     xhr.send(formData);
 }
