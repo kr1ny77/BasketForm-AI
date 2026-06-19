@@ -4,6 +4,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 
 	"github.com/kr1ny77/BasketForm-AI/internal/models"
 )
@@ -54,16 +55,18 @@ func TestStorage_GetAllVideos_Sorted(t *testing.T) {
 	s := NewStorage(upload, results)
 
 	s.CreateVideo("c", "c.mp4")
+	time.Sleep(1100 * time.Millisecond)
 	s.CreateVideo("a", "a.mp4")
+	time.Sleep(1100 * time.Millisecond)
 	s.CreateVideo("b", "b.mp4")
 
 	list := s.GetAllVideos()
 	if len(list) != 3 {
 		t.Fatalf("expected 3 videos, got %d", len(list))
 	}
-	// Newest first (c created last)
-	if list[0].ID != "c" {
-		t.Fatalf("expected c first, got %s", list[0].ID)
+	// Newest first (b created last)
+	if list[0].ID != "b" {
+		t.Fatalf("expected b first, got %s", list[0].ID)
 	}
 }
 
