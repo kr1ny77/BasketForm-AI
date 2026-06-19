@@ -1,85 +1,108 @@
-{{define "title"}}Upload{{end}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload — BasketForm-AI</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">BasketForm-AI</a>
+        <ul class="nav-links">
+            <li><a href="/upload" class="active" data-i18n="nav_upload">Upload</a></li>
+            <li><a href="/results" data-i18n="nav_results">Results</a></li>
+            <li><a href="/progress" data-i18n="nav_progress">Progress</a></li>
+            <li><a href="/export" data-i18n="nav_export">Export</a></li>
+            <li><a href="/profile" data-i18n="nav_profile">Profile</a></li>
+        </ul>
+        <select id="langSelect" class="lang-select" onchange="applyLang(this.value)">
+            <option value="en">EN</option>
+            <option value="ru">RU</option>
+        </select>
+    </nav>
+    <main class="content">
+        <section class="page-header">
+            <h1 data-i18n="upload_title">Upload Video</h1>
+            <p data-i18n="upload_desc">Upload a basketball shooting video for analysis</p>
+        </section>
+        <section class="upload-area">
+            <div class="dropzone" id="dropzone">
+                <div class="dropzone-content">
+                    <span class="dropzone-icon">&#127936;</span>
+                    <p data-i18n="upload_drag">Drag &amp; drop your video here</p>
+                    <p class="dropzone-hint" data-i18n="upload_hint">or click to browse · MP4, MOV, AVI · max 100 MB</p>
+                    <p class="dropzone-file-name" id="fileName"></p>
+                    <input type="file" id="fileInput" accept="video/mp4,video/quicktime,video/x-msvideo" hidden>
+                </div>
+            </div>
+            <div class="upload-status" id="uploadStatus" style="display:none;">
+                <div class="progress-bar large">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <p id="uploadMessage" data-i18n="upload_msg">Uploading...</p>
+            </div>
+        </section>
+    </main>
+    <script src="/static/js/i18n.js"></script>
+    <script src="/static/js/canvas.js"></script>
+    <script>
+    var dropzone = document.getElementById('dropzone');
+    var fileInput = document.getElementById('fileInput');
+    var uploadStatus = document.getElementById('uploadStatus');
+    var progressFill = document.getElementById('progressFill');
+    var uploadMessage = document.getElementById('uploadMessage');
+    var fileNameEl = document.getElementById('fileName');
 
-{{define "content"}}
-<section class="page-header">
-    <h1>Upload Video</h1>
-    <p>Upload a basketball shooting video for analysis</p>
-</section>
-<section class="upload-area">
-    <div class="dropzone" id="dropzone">
-        <div class="dropzone-content">
-            <span class="dropzone-icon">&#9917;</span>
-            <p>Drag & drop your video here</p>
-            <p class="dropzone-hint">or click to browse &middot; MP4, MOV, AVI &middot; max 100 MB</p>
-            <p class="dropzone-file-name" id="fileName"></p>
-            <input type="file" id="fileInput" accept="video/mp4,video/quicktime,video/x-msvideo" hidden>
-        </div>
-    </div>
-    <div class="upload-status" id="uploadStatus" style="display:none;">
-        <div class="progress-bar large">
-            <div class="progress-fill" id="progressFill"></div>
-        </div>
-        <p id="uploadMessage">Uploading...</p>
-    </div>
-</section>
-{{end}}
-
-{{define "scripts"}}
-<script>
-var dropzone = document.getElementById('dropzone');
-var fileInput = document.getElementById('fileInput');
-var uploadStatus = document.getElementById('uploadStatus');
-var progressFill = document.getElementById('progressFill');
-var uploadMessage = document.getElementById('uploadMessage');
-var fileNameEl = document.getElementById('fileName');
-
-dropzone.addEventListener('click', function () { fileInput.click(); });
-dropzone.addEventListener('dragover', function (e) { e.preventDefault(); dropzone.classList.add('dragover'); });
-dropzone.addEventListener('dragleave', function () { dropzone.classList.remove('dragover'); });
-dropzone.addEventListener('drop', function (e) {
-    e.preventDefault();
-    dropzone.classList.remove('dragover');
-    if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
-});
-fileInput.addEventListener('change', function () {
-    if (fileInput.files.length) handleFile(fileInput.files[0]);
-});
-
-function handleFile(file) {
-    var allowed = ['video/mp4', 'video/quicktime', 'video/x-msvideo'];
-    if (allowed.indexOf(file.type) === -1) {
-        alert('Unsupported format. Use MP4, MOV, or AVI.');
-        return;
-    }
-    if (file.size > 100 * 1024 * 1024) {
-        alert('File too large. Maximum size is 100 MB.');
-        return;
-    }
-    fileNameEl.textContent = file.name + ' (' + (file.size / 1048576).toFixed(1) + ' MB)';
-    uploadStatus.style.display = 'block';
-    var formData = new FormData();
-    formData.append('video', file);
-    var xhr = new XMLHttpRequest();
-    xhr.upload.addEventListener('progress', function (e) {
-        if (e.lengthComputable) {
-            var pct = Math.round((e.loaded / e.total) * 100);
-            progressFill.style.width = pct + '%';
-            uploadMessage.textContent = 'Uploading\u2026 ' + pct + '%';
-        }
+    dropzone.addEventListener('click', function () { fileInput.click(); });
+    dropzone.addEventListener('dragover', function (e) { e.preventDefault(); dropzone.classList.add('dragover'); });
+    dropzone.addEventListener('dragleave', function () { dropzone.classList.remove('dragover'); });
+    dropzone.addEventListener('drop', function (e) {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
     });
-    xhr.addEventListener('load', function () {
-        if (xhr.status === 201) {
-            var data = JSON.parse(xhr.responseText);
-            progressFill.style.width = '100%';
-            uploadMessage.textContent = 'Upload complete! Redirecting\u2026';
-            setTimeout(function () { window.location.href = '/progress?id=' + data.id; }, 800);
-        } else {
-            uploadMessage.textContent = 'Upload failed: ' + xhr.statusText;
-        }
+    fileInput.addEventListener('change', function () {
+        if (fileInput.files.length) handleFile(fileInput.files[0]);
     });
-    xhr.addEventListener('error', function () { uploadMessage.textContent = 'Upload failed.'; });
-    xhr.open('POST', '/api/upload');
-    xhr.send(formData);
-}
-</script>
-{{end}}
+
+    function handleFile(file) {
+        var allowed = ['video/mp4', 'video/quicktime', 'video/x-msvideo'];
+        if (allowed.indexOf(file.type) === -1) {
+            alert('Unsupported format. Use MP4, MOV, or AVI.');
+            return;
+        }
+        if (file.size > 100 * 1024 * 1024) {
+            alert('File too large. Maximum size is 100 MB.');
+            return;
+        }
+        fileNameEl.textContent = file.name + ' (' + (file.size / 1048576).toFixed(1) + ' MB)';
+        uploadStatus.style.display = 'block';
+        var formData = new FormData();
+        formData.append('video', file);
+        var xhr = new XMLHttpRequest();
+        xhr.upload.addEventListener('progress', function (e) {
+            if (e.lengthComputable) {
+                var pct = Math.round((e.loaded / e.total) * 100);
+                progressFill.style.width = pct + '%';
+                uploadMessage.textContent = 'Uploading\u2026 ' + pct + '%';
+            }
+        });
+        xhr.addEventListener('load', function () {
+            if (xhr.status === 201) {
+                var data = JSON.parse(xhr.responseText);
+                progressFill.style.width = '100%';
+                uploadMessage.textContent = 'Upload complete! Redirecting\u2026';
+                setTimeout(function () { window.location.href = '/progress?id=' + data.id; }, 800);
+            } else {
+                uploadMessage.textContent = 'Upload failed: ' + xhr.statusText;
+            }
+        });
+        xhr.addEventListener('error', function () { uploadMessage.textContent = 'Upload failed.'; });
+        xhr.open('POST', '/api/upload');
+        xhr.send(formData);
+    }
+    </script>
+</body>
+</html>

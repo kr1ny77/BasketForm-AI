@@ -2,8 +2,6 @@ package services
 
 import (
 	"testing"
-
-	"github.com/kr1ny77/BasketForm-AI/internal/models"
 )
 
 func TestClamp(t *testing.T) {
@@ -64,8 +62,8 @@ func TestFeedbacks_NonEmpty(t *testing.T) {
 		t.Fatal("feedbacks slice is empty")
 	}
 	for i, f := range feedbacks {
-		if f == "" {
-			t.Fatalf("feedback %d is empty", i)
+		if f.stance == "" || f.armAngle == "" || f.release == "" || f.follow == "" || f.drill == "" {
+			t.Fatalf("feedback %d has empty fields", i)
 		}
 	}
 }

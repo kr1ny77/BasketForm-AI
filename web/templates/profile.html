@@ -1,43 +1,67 @@
-{{define "title"}}Profile{{end}}
-
-{{define "content"}}
-<section class="page-header">
-    <h1>Profile</h1>
-    <p>Manage your account settings</p>
-</section>
-<section class="form-card">
-    <form id="profileForm" onsubmit="return false;">
-        <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" id="name" value="Player" placeholder="Your name">
-        </div>
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" value="player@example.com" placeholder="Your email">
-        </div>
-        <div class="form-group">
-            <label for="password">New Password</label>
-            <input type="password" id="password" placeholder="Leave blank to keep current">
-        </div>
-        <div class="form-group">
-            <label for="passwordConfirm">Confirm New Password</label>
-            <input type="password" id="passwordConfirm" placeholder="Repeat new password">
-        </div>
-        <button type="button" class="btn" id="saveBtn">Save Changes</button>
-    </form>
-</section>
-{{end}}
-
-{{define "scripts"}}
-<script>
-document.getElementById('saveBtn').addEventListener('click', function () {
-    var pw = document.getElementById('password').value;
-    var pw2 = document.getElementById('passwordConfirm').value;
-    if (pw && pw !== pw2) {
-        alert('Passwords do not match.');
-        return;
-    }
-    alert('Profile saved (demo).');
-});
-</script>
-{{end}}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile — BasketForm-AI</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">BasketForm-AI</a>
+        <ul class="nav-links">
+            <li><a href="/upload" data-i18n="nav_upload">Upload</a></li>
+            <li><a href="/results" data-i18n="nav_results">Results</a></li>
+            <li><a href="/progress" data-i18n="nav_progress">Progress</a></li>
+            <li><a href="/export" data-i18n="nav_export">Export</a></li>
+            <li><a href="/profile" class="active" data-i18n="nav_profile">Profile</a></li>
+        </ul>
+        <select id="langSelect" class="lang-select" onchange="applyLang(this.value)">
+            <option value="en">EN</option>
+            <option value="ru">RU</option>
+        </select>
+    </nav>
+    <main class="content">
+        <section class="page-header">
+            <h1 data-i18n="profile_title">Profile</h1>
+            <p data-i18n="profile_desc">Manage your account settings</p>
+        </section>
+        <section class="form-card">
+            <form id="profileForm" onsubmit="return false;">
+                <div class="form-group">
+                    <label for="name" data-i18n="profile_name">Name</label>
+                    <input type="text" id="name" value="Player" placeholder="Your name">
+                </div>
+                <div class="form-group">
+                    <label for="email" data-i18n="profile_email">Email</label>
+                    <input type="email" id="email" value="player@example.com" placeholder="Your email">
+                </div>
+                <div class="form-group">
+                    <label for="password" data-i18n="profile_pw">New Password</label>
+                    <input type="password" id="password" data-i18n-placeholder="profile_pw_hint" placeholder="Leave blank to keep current">
+                </div>
+                <div class="form-group">
+                    <label for="passwordConfirm" data-i18n="profile_pw2">Confirm New Password</label>
+                    <input type="password" id="passwordConfirm" data-i18n-placeholder="profile_pw_hint2" placeholder="Repeat new password">
+                </div>
+                <button type="button" class="btn" id="saveBtn" data-i18n="profile_save">Save Changes</button>
+            </form>
+        </section>
+    </main>
+    <script src="/static/js/i18n.js"></script>
+    <script src="/static/js/canvas.js"></script>
+    <script>
+    var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
+    document.getElementById('saveBtn').addEventListener('click', function () {
+        var pw = document.getElementById('password').value;
+        var pw2 = document.getElementById('passwordConfirm').value;
+        if (pw && pw !== pw2) {
+            alert(t.profile_mismatch || 'Passwords do not match.');
+            return;
+        }
+        alert(t.profile_saved || 'Profile saved (demo).');
+    });
+    </script>
+</body>
+</html>

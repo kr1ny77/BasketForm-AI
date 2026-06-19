@@ -1,39 +1,32 @@
 package handlers
 
 import (
-	"html/template"
 	"log"
 	"net/http"
+	"os"
 )
 
 type Handler struct {
 	uploadDir  string
 	resultsDir string
-	templates  *template.Template
 }
 
 func New(uploadDir, resultsDir string) *Handler {
-	tmpl, err := template.ParseGlob("web/templates/*.html")
-	if err != nil {
-		log.Fatalf("Failed to parse templates: %v", err)
-	}
 	return &Handler{
 		uploadDir:  uploadDir,
 		resultsDir: resultsDir,
-		templates:  tmpl,
 	}
 }
 
-type pageData struct {
-	CurrentPage string
-}
-
-func (h *Handler) render(w http.ResponseWriter, name string, data any) {
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	if err := h.templates.ExecuteTemplate(w, name, data); err != nil {
-		log.Printf("Template error (%s): %v", name, err)
+func serveFile(w http.ResponseWriter, path string) {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		log.Printf("Failed to read %s: %v", path, err)
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
 	}
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Write(data)
 }
 
 func (h *Handler) IndexHandler(w http.ResponseWriter, r *http.Request) {
@@ -45,21 +38,21 @@ func (h *Handler) IndexHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) UploadPageHandler(w http.ResponseWriter, r *http.Request) {
-	h.render(w, "upload.html", pageData{CurrentPage: "upload"})
+	serveFile(w, "web/templates/upload.html")
 }
 
 func (h *Handler) ResultsPageHandler(w http.ResponseWriter, r *http.Request) {
-	h.render(w, "results.html", pageData{CurrentPage: "results"})
+	serveFile(w, "web/templates/results.html")
 }
 
 func (h *Handler) ProfilePageHandler(w http.ResponseWriter, r *http.Request) {
-	h.render(w, "profile.html", pageData{CurrentPage: "profile"})
+	serveFile(w, "web/templates/profile.html")
 }
 
 func (h *Handler) ProgressPageHandler(w http.ResponseWriter, r *http.Request) {
-	h.render(w, "progress.html", pageData{CurrentPage: "progress"})
+	serveFile(w, "web/templates/progress.html")
 }
 
 func (h *Handler) ExportPageHandler(w http.ResponseWriter, r *http.Request) {
-	h.render(w, "export.html", pageData{CurrentPage: "export"})
+	serveFile(w, "web/templates/export.html")
 }
