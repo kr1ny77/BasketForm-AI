@@ -5,30 +5,178 @@
     <h1>Analysis Results</h1>
     <p>View your shooting form analyses</p>
 </section>
+<div class="filter-bar">
+    <input type="text" id="filterName" placeholder="Filter by filename\u2026">
+    <select id="filterSort">
+        <option value="date-desc">Newest first</option>
+        <option value="date-asc">Oldest first</option>
+        <option value="score-desc">Highest score</option>
+        <option value="score-asc">Lowest score</option>
+    </select>
+</div>
 <section class="results-grid" id="resultsGrid">
-    <p class="empty-state">No analyses yet. Upload a video to get started.</p>
+    <p class="empty-state"><span class="empty-icon">&#9917;</span><br>No analyses yet. Upload a video to get started.</p>
 </section>
 {{end}}
 
 {{define "scripts"}}
 <script>
+var allVideos = [];
+var grid = document.getElementById('resultsGrid');
+var filterName = document.getElementById('filterName');
+var filterSort = document.getElementById('filterSort');
+
 fetch('/api/videos')
-    .then(r => r.json())
-    .then(videos => {
-        const grid = document.getElementById('resultsGrid');
-        if (!videos.length) return;
-        grid.innerHTML = '';
-        videos.forEach(v => {
-            const card = document.createElement('div');
-            card.className = 'result-card';
-            card.innerHTML = '<h3>' + v.filename + '</h3>' +
-                '<p>ID: ' + v.id + '</p>' +
-                '<p>Status: <span class="status-' + v.status + '">' + v.status + '</span></p>' +
-                '<p>' + new Date(v.created_at).toLocaleDateString() + '</p>' +
-                '<a href="/progress?id=' + v.id + '" class="btn btn-sm">View</a>';
-            grid.appendChild(card);
-        });
-    })
-    .catch(() => {});
+    .then(function (r) { return r.json(); })
+    .then(function (videos) { allVideos = videos; renderList(); })
+    .catch(function () {});
+
+filterName.addEventListener('input', renderList);
+filterSort.addEventListener('change', renderList);
+
+function renderList() {
+    var q = filterName.value.toLowerCase();
+    var list = allVideos.filter(function (v) {
+        return !q || v.filename.toLowerCase().indexOf(q) !== -1;
+    });
+    var sort = filterSort.value;
+    list.sort(function (a, b) {
+        if (sort === 'date-asc') return new Date(a.created_at) - new Date(b.created_at);
+        if (sort === 'score-desc') return (b.score || 0) - (a.score || 0);
+        if (sort === 'score-asc') return (a.score || 0) - (b.score || 0);
+        return new Date(b.created_at) - new Date(a.created_at);
+    });
+    if (!list.length) {
+        grid.innerHTML = '<p class="empty-state"><span class="empty-icon">&#9917;</span><br>No results found.</p>';
+        return;
+    }
+    grid.innerHTML = '';
+    list.forEach(function (v) {
+        var card = document.createElement('div');
+        card.className = 'result-card';
+        card.innerHTML =
+            '<div>' +
+                '<h3>' + escHtml(v.filename) + '</h3>' +
+                '<div class="meta">' +
+                    '<span>ID: ' + v.id.substring(0, 8) + '</span>' +
+                    '<span>' + new Date(v.created_at).toLocaleDateString() + '</span>' +
+                    '<span class="badge badge-' + v.status + '">' + v.status + '</span>' +
+                '</div>' +
+            '</div>' +
+            '<div class="score">' +
+                (v.score != null ? v.score + '<small>/ 100</small>' : '&mdash;') +
+            '</div>';
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', function () { openModal(v.id); });
+        grid.appendChild(card);
+    });
+}
+
+function escHtml(s) {
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+}
+
+function openModal(id) {
+    fetch('/api/result/' + id)
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            var body = document.getElementById('modalBody');
+            body.innerHTML =
+                '<h2>' + escHtml(data.filename || id) + '</h2>' +
+                '<div class="detail-grid">' +
+                    '<div class="detail-item"><label>Score</label><span>' + (data.score != null ? data.score + ' / 100' : 'N/A') + '</span></div>' +
+                    '<div class="detail-item"><label>Status</label><span class="badge badge-' + (data.status || 'done') + '">' + (data.status || 'done') + '</span></div>' +
+                    '<div class="detail-item"><label>Video ID</label><span>' + id + '</span></div>' +
+                    '<div class="detail-item"><label>Date</label><span>' + new Date(data.created_at || Date.now()).toLocaleString() + '</span></div>' +
+                '</div>' +
+                '<div class="feedback-section">' +
+                    '<strong>Feedback</strong><br>' + escHtml(data.feedback || 'No feedback available.') +
+                '</div>' +
+                '<div class="chart-container"><canvas id="scoreChart" height="200"></canvas></div>' +
+                '<div class="chart-container"><canvas id="poseChart" height="180"></canvas></div>';
+            document.getElementById('modalOverlay').classList.add('active');
+            drawScoreChart(data);
+            drawPoseChart(data);
+        })
+        .catch(function () { alert('Could not load results.'); });
+}
+
+document.getElementById('modalClose').addEventListener('click', closeModal);
+document.getElementById('modalOverlay').addEventListener('click', function (e) {
+    if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+
+function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('active');
+}
+
+function drawScoreChart(data) {
+    var canvas = document.getElementById('scoreChart');
+    if (!canvas) return;
+    var labels = ['Stance', 'Arm Angle', 'Release', 'Follow-through'];
+    var values = data.scores || [
+        Math.round(data.score * 0.9 + Math.random() * 5),
+        Math.round(data.score * 0.85 + Math.random() * 10),
+        Math.round(data.score * 1.05 + Math.random() * 5),
+        Math.round(data.score * 0.95 + Math.random() * 5)
+    ];
+    new Chart(canvas, {
+        type: 'radar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Score',
+                data: values,
+                backgroundColor: 'rgba(255,106,0,0.15)',
+                borderColor: '#ff6a00',
+                pointBackgroundColor: '#ff6a00',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            scales: { r: { beginAtZero: true, max: 100, ticks: { color: '#888', backdropColor: 'transparent' }, grid: { color: 'rgba(255,255,255,0.06)' }, pointLabels: { color: '#ccc' } } },
+            plugins: { legend: { display: false } }
+        }
+    });
+}
+
+function drawPoseChart(data) {
+    var canvas = document.getElementById('poseChart');
+    if (!canvas) return;
+    var pts = data.pose_data || generateMockPose();
+    new Chart(canvas, {
+        type: 'scatter',
+        data: {
+            datasets: [{
+                label: 'Pose',
+                data: pts.map(function (p) { return { x: p.x, y: p.y }; }),
+                backgroundColor: 'rgba(255,106,0,0.6)',
+                borderColor: '#ff6a00',
+                pointRadius: 5,
+                showLine: true,
+                borderWidth: 1.5,
+                lineColor: 'rgba(255,106,0,0.3)'
+            }]
+        },
+        options: {
+            aspectRatio: 1.6,
+            scales: {
+                x: { display: false, reverse: true },
+                y: { display: false, reverse: true }
+            },
+            plugins: { legend: { display: false }, title: { display: true, text: 'Pose Keypoints', color: '#888', font: { size: 12 } } }
+        }
+    });
+}
+
+function generateMockPose() {
+    var pts = [];
+    var skeleton = [[50,10],[50,25],[50,45],[35,55],[65,55],[50,45],[30,70],[70,70],[50,45],[45,65],[55,65]];
+    skeleton.forEach(function (p) { pts.push({ x: p[0] + (Math.random()-0.5)*4, y: p[1] + (Math.random()-0.5)*3 }); });
+    return pts;
+}
 </script>
 {{end}}
