@@ -1,64 +1,61 @@
 # BasketForm-AI
 
-Website with a backend service for recording and uploading basketball shot videos, extracting biomechanical keypoints, evaluating shooting technique, and generating personalized feedback.
+Web service for analyzing basketball shooting form via video upload, biomechanical keypoint extraction, technique scoring, and personalized AI feedback.
 
 ## Project Overview
 
-BasketForm-AI is an AI-powered platform that helps basketball players improve their shooting technique through video analysis and personalized feedback. The system uses computer vision and machine learning to extract biomechanical keypoints from video footage and provide detailed analysis of shooting form.
+BasketForm-AI is an AI-powered platform that helps basketball players improve their shooting technique through video analysis and personalized feedback. Users upload shooting videos, the system extracts biomechanical keypoints, evaluates stance, arm angle, release point, and follow-through, then generates simplified actionable recommendations.
 
 ## Key Features
 
-- **Video Upload & Recording:** Record or upload basketball shot videos
-- **Biomechanical Analysis:** Automatic extraction of key body points
+- **Video Upload:** Drag-and-drop or file picker for basketball shot videos
+- **Biomechanical Analysis:** Automatic extraction of key body points from video
 - **Technique Evaluation:** Scoring of stance, arm angle, release point, and follow-through
-- **Personalized Feedback:** AI-generated recommendations and drills
+- **Personalized Feedback:** AI-generated recommendations and drills (max 3 actionable takeaways)
 - **Progress Tracking:** Monitor improvement over time
+- **PDF Export:** Download analysis reports for offline reference
+
+## Tech Stack
+
+- **Backend:** Go 1.21+ (standard library + html/template)
+- **Frontend:** HTML + CSS + JavaScript, Canvas animations (basketball theme)
+- **Storage:** Local `uploads/` and `results/` directories
+- **ML:** Mock data stub or Python script via `exec`
+- **Testing:** Go `testing` package, `httptest`
+- **CI:** GitHub Actions (golangci-lint, go test, go build, Lychee link check)
+- **License:** MIT
 
 ## Project Structure
 
 ```
 BasketForm-AI/
-├── LICENSE                    # MIT License
-├── README.md                 # This file
-├── CHANGELOG.md              # Version history
-├── .gitignore               # Git ignore rules
-├── .env.example             # Environment variables template
-├── .lycheeignore            # Link checking exclusions
-├── reports/
-│   └── week2/
-│       ├── README.md         # Assignment 2 public index
-│       ├── user-stories.md   # User stories with MoSCoW priorities
-│       ├── mvp-v0-report.md  # MVP v0 deployment report
-│       ├── customer-meeting-summary.md
-│       ├── customer-meeting-transcript.md
-│       ├── customer-meeting-notes.md
-│       ├── analysis.md       # Week 2 analysis
-│       ├── llm-report.md     # LLM usage report
-│       └── images/           # Screenshots and images
-├── docs/
-│   └── interface.md          # Interface documentation
-├── api/
-│   ├── openapi.yaml          # OpenAPI specification
-│   └── postman_collection.json # Postman collection
-└── .github/
-    ├── pull_request_template.md
-    └── workflows/
-        └── lychee.yml        # Lychee link checking CI
+├── cmd/server/main.go          # Application entry point
+├── internal/
+│   ├── handlers/               # HTTP handlers
+│   ├── models/                 # Data structures
+│   └── services/               # Business logic
+├── web/
+│   ├── templates/              # HTML templates (html/template)
+│   └── static/                 # CSS, JS, images
+├── uploads/                    # Uploaded video files (gitignored)
+├── results/                    # Analysis result JSON files (gitignored)
+├── reports/                    # Course reports and evidence
+├── docs/                       # Project documentation
+├── scripts/                    # Helper scripts (e.g., process_video.py)
+├── tests/                      # Test files
+├── CHANGELOG.md                # Version history
+├── LICENSE                     # MIT License
+├── .gitignore                  # Git ignore rules
+├── .env.example                # Environment variables template
+└── .github/                    # CI workflows, issue/PR templates
 ```
 
 ## Local Development Setup
 
 ### Prerequisites
 
-#### Backend & ML
-- FastAPI
-- MediaPipe Pose
-- OpenCV
-- scikit-learn
-- LLM API
-#### Infrastructure & Collaboration
-- GitHub
-- GitHub Actions (CI/CD)
+- Go 1.21 or later
+- `golangci-lint` (for linting)
 
 ### Installation
 
@@ -68,107 +65,109 @@ BasketForm-AI/
    cd BasketForm-AI
    ```
 
-2. **Install dependencies:**
+2. **Initialize Go module (if needed):**
    ```bash
-   # Frontend
-   cd frontend
-   npm install
-   
-   # Backend
-   cd ../backend
-   pip install -r requirements.txt
+   go mod init github.com/kr1ny77/BasketForm-AI
+   go mod tidy
    ```
 
-3. **Set up environment variables:**
+3. **Create required directories:**
    ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
+   mkdir -p uploads results
    ```
 
-4. **Database setup:**
+4. **Run the server:**
    ```bash
-   cd backend
-   npm run db:create
-   npm run db:migrate
-   npm run db:seed
+   go run ./cmd/server/
+   ```
+   The server starts on `http://localhost:8080` by default.
+
+5. **Build a binary:**
+   ```bash
+   go build -o bin/server ./cmd/server/
+   ./bin/server
    ```
 
-5. **Start development servers:**
+6. **Run tests:**
    ```bash
-   # Terminal 1 - Backend
-   cd backend
-   npm run dev
-   
-   # Terminal 2 - Frontend
-   cd frontend
-   npm run dev
+   go test -race -coverprofile=coverage.out ./...
    ```
 
-6. **Access the application:**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:4000
-   - API Documentation: http://localhost:4000/docs
+7. **Run linter:**
+   ```bash
+   golangci-lint run
+   ```
+
+### Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `PORT` | `8080` | Server port |
+| `UPLOAD_DIR` | `uploads` | Video upload directory |
+| `RESULTS_DIR` | `results` | Analysis results directory |
+
+Copy `.env.example` to `.env` and adjust as needed:
+```bash
+cp .env.example .env
+```
 
 ## Documentation
 
-### Assignment 2
+### Assignment Reports
+- [Assignment 3 Report Index](reports/week3/README.md)
+- [Customer Review Summary](reports/week3/customer-review-summary.md)
+- [Reflection](reports/week3/reflection.md)
+- [Retrospective](reports/week3/retrospective.md)
+- [LLM Usage Report](reports/week3/llm-report.md)
+
+### Assignment 2 (Historical)
 - [Assignment 2 Report Index](reports/week2/README.md)
 - [User Stories](reports/week2/user-stories.md)
 - [MVP v0 Report](reports/week2/mvp-v0-report.md)
-- [Customer Meeting Summary](reports/week2/customer-meeting-summary.md)
-- [Week 2 Analysis](reports/week2/analysis.md)
-- [LLM Usage Report](reports/week2/llm-report.md)
-
-### Technical Documentation
-- [Interface Documentation](docs/interface.md)
-- [API Reference](docs/interface.md#rest-api)
-- [Environment Configuration](.env.example)
 
 ### Project Management
+- [User Stories Index](docs/user-stories.md)
+- [Roadmap](docs/roadmap.md)
+- [Definition of Done](docs/definition-of-done.md)
 - [Changelog](CHANGELOG.md)
 - [License](LICENSE)
 
 ## Deployment
 
-### MVP v0
-- **Production URL:** [http://80.74.30.14/](http://80.74.30.14/)
-- **Video Demonstration:** [https://youtu.be/To_1ZwAMe4M](https://youtu.be/To_1ZwAMe4M)
-
-For detailed deployment instructions, see [MVP v0 Report](reports/week2/mvp-v0-report.md).
-
-### Smoke Check
-To verify the deployment is working:
+### Local
 ```bash
-curl http://80.74.30.14/
-# Expected: Application homepage loads
+go build -o bin/server ./cmd/server/
+PORT=8080 ./bin/server
 ```
+
+### Docker
+```bash
+docker build -t basketform-ai .
+docker run -p 8080:8080 basketform-ai
+```
+
+### Production
+See the [Week 3 Report](reports/week3/README.md) for deployment instructions and the live URL.
 
 ## Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch: `<issue-number>-short-description` (e.g., `42-add-login-form`)
+3. Commit changes
+4. Push and open a Pull Request linked to the related issue
+5. Obtain at least one review approval before merging
 
 ### PR Requirements
 - At least one approval from another team member
-- All CI checks must pass
-- Link to related issue (if applicable)
-- Update CHANGELOG.md if user-visible change
+- All CI checks must pass (golangci-lint, go test, go build)
+- Link to related issue
+- Update `CHANGELOG.md` if user-visible change
+- Verify acceptance criteria
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
 
 ## Contact
 
-For questions or support, please contact the development team via:
 - GitHub Issues: [https://github.com/kr1ny77/BasketForm-AI/issues](https://github.com/kr1ny77/BasketForm-AI/issues)
-- Email: [k.gimadiev@innopolis.university](mailto:k.gimadiev@innopolis.university)
-
-## Acknowledgments
-
-- Customer/Product Owner for valuable feedback and guidance
-- Course instructors for project requirements and evaluation
-- Open source community for tools and libraries used in this project
