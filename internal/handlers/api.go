@@ -113,12 +113,15 @@ func (a *APIHandler) Upload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	video := a.storage.CreateVideo(id, header.Filename)
+	respID := video.ID
+	respFilename := video.Filename
+	respStatus := video.Status
 	go a.processor.ProcessVideo(id)
 
 	writeJSON(w, http.StatusCreated, map[string]string{
-		"id":       video.ID,
-		"filename": video.Filename,
-		"status":   video.Status,
+		"id":       respID,
+		"filename": respFilename,
+		"status":   respStatus,
 	})
 }
 
