@@ -128,9 +128,8 @@ All MVP v1 PBIs were verified through:
 
 - [CHANGELOG.md](../../CHANGELOG.md) — Updated with v0.1.0 entries (Added/Changed/Removed)
 
-## 17. Process and Documentation Links
+## 17. Documentation Links
 
-- [Process_Requirements.md](../../Process_Requirements.md)
 - [docs/roadmap.md](../../docs/roadmap.md)
 - [docs/definition-of-done.md](../../docs/definition-of-done.md)
 
