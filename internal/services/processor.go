@@ -3,6 +3,7 @@ package services
 import (
 	"encoding/json"
 	"log"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"time"
@@ -90,9 +91,18 @@ func (p *Processor) ProcessVideo(id string) {
 	log.Printf("Video %s processed: score=%d", id, mlOut.Score)
 }
 
+func findPython() string {
+	venvPython := filepath.Join("venv", "bin", "python3")
+	if _, err := os.Stat(venvPython); err == nil {
+		return venvPython
+	}
+	return "python3"
+}
+
 func runML(videoPath string) (*mlResult, error) {
+	python := findPython()
 	script := filepath.Join("scripts", "analyze_video.py")
-	cmd := exec.Command("python3", script, videoPath)
+	cmd := exec.Command(python, script, videoPath)
 	out, err := cmd.Output()
 	if err != nil {
 		return nil, err
