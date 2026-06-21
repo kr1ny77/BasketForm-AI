@@ -12,9 +12,9 @@
 |------|-----------------|------|
 | Roman Santalov | romasntlv | Backend / ML Engineer |
 | Kamil Nizamov | Koomaz | Backend / ML Engineer |
-| Arseniy Fedorov | arsafedo | Frontend Developer |
-| Karim Gimadiev | kr1ny77 | Project Manager |
-| Damir Galiev | DamirGaliev | Testing / Documentation |
+| Arseniy Fedorov | kr1ny77 | Frontend Developer |
+| Karim Gimadiev | gimacorp | Project Manager |
+| Damir Galiev | lostcntrol | Testing / Documentation |
 
 ---
 
