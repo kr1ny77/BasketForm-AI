@@ -2,63 +2,52 @@
 
 ## Meeting Information
 
-- **Date:** 2026-06-28
-- **Duration:** 30 minutes
+- **Date:** 2026-06-21
+- **Duration:** 5 minutes
 - **Participants:** Team (Karim, Roman, Kamil, Arseniy, Damir), Customer (Anastasia Malakhova)
-- **Recording:** Not recorded (customer preferred no recording)
-- **Transcript:** Based on meeting notes
+- **Recording:** Recorded
+- **Transcript:** Based on recording
 
-## Transcript
+**ML Engineer 1**: 
+Hi, [redacted]. Today we'll discuss what we did and didn't manage to do in MVP v1. And we'll discuss future plans and what we still have left to do. Before we begin, as usual, I'll ask your permission to record the meeting and transcribe it, which will be written to the repository.
+**Customer**: 
+Hi. Yes, of course. I give my consent.
+**ML Engineer 1**: 
+Fine. So, for MVP v1, we had plans, firstly, to create an authorization system, meaning profiles. Then, we needed to create a neural network that could analyze the skeleton of a throwing athlete. We also needed improved analysis.
+Well, it's not very good yet, but we have some initial rudiments. There. And we also planned to upload a PDF document—export. There. We haven't done the PDF export yet, but it turns out we already have the first neural network algorithm. I sent you a video; you can see how it works.
+It divides the throw into four phases. There. And measures the joint angles.  You can watch it now.
+**ML Engineer 2**: 
+[redacted]. We did the PDF export, except for... We actually did everything that has been planned for MVP v1.
+**Customer**: 
+Well, yes, I looked, great. Then if we've done everything, we can watch it later.
+**ML Engineer 1**: 
+I'll send you a link to the website now. You can see how it works. Well, at least just the authorization system. There. What does it look like?
+**Customer**: 
+Good.
+**ML Engineer 1**: 
+There. So, in our next plans, we also need to track the basketball, how it moves relative to the player. This will improve the algorithm, make it stronger, because it will be easier to measure the exact moment the ball is released. We should probably work some more on the neural network's feedback after you've uploaded the video.
+Because it's not very stable or predictable yet. But that will also all depend on improving the algorithm, so... The script understands better. How should the throw go? And if it's not related to the neural network, we'll probably need to do more in the future, but that's not MVP v2 yet.
+Let's say we upload a video with several throws, and the script itself understands when each throw is made and evaluates each one separately. That's probably all.
+**Customer**:  
+Okay. I might have listened, maybe checking to see if there's a basketball player in the video and so on. Will you have that? Or a camera, for example, and we'll send it a video of a soccer player, and it'll detect the ball. It'll detect a human skeleton and simply give a very low score, which is very poor skill for a basketball player.
+**ML Engineer 1**: 
+Yes, of course, we'll need to add that check. But let's say we could do it like we're doing now. If we manage to find a basketball, we just need to check the conditions: if there's a person and if there's a basketball, then give an estimate. If at least one isn't there, then say that the ball wasn't detected. 
+**ML Engineer 2**:  
+As I understand it, it's just very poorly trained right now, because I tried feeding it TikToks, and it eats them just fine and tries to evaluate them. That's it. But I think once we feed it more data, it'll stop.
+**ML Engineer 1**: 
+We need to add a check.
+**ML Engineer 2**: 
+Yes.
+**Customer**: 
+Okay. Perhaps here you'll need to try training a data-mining neural network to actually separate basketball players and classify everything else, what is that? That's it. And for that, we'll need some kind of data session, at least our own.
+Or just some basketball videos taken from the internet, of suitable quality.
+**ML Engineer 1**: 
+Okay, then we don't have anything else to present to you today. Do you have any questions left for us?
+Customer: 
+I don't think so, otherwise everything's fine. You've accomplished quite a lot in a week. Good. There you go. Everything's great! Yeah, have a nice day, and good luck in the future!
+**ML Engineer 1**: 
+Thank you, you too.
 
-[00:00] **Karim:** Welcome to our Sprint 1 review. Today we'll present our MVP v1 implementation of BasketForm-AI.
-
-[00:10] **Anastasia:** Thank you for the invitation. I'm excited to see the progress.
-
-### Video Upload Feature
-
-[00:20] **Arseniy:** Let me start with the upload page. Users can drag and drop videos or use the file picker. We support MP4, MOV, and AVI formats with a 100MB limit.
-
-[00:40] **Anastasia:** The upload interface looks clean. I like the basketball-themed background animation.
-
-[00:50] **Arseniy:** Thank you. The Canvas animation has 35 basketball objects that react to mouse movement.
-
-### Analysis Feature
-
-[01:00] **Roman:** Next, I'll show the analysis flow. After upload, the system processes the video and generates a score between 40 and 90, along with personalized feedback.
-
-[01:20] **Anastasia:** How does the feedback work?
-
-[01:25] **Roman:** We generate up to 3 actionable takeaways in plain language, like "Good release point. Work on keeping your elbow aligned with the basket."
-
-[01:35] **Anastasia:** That's exactly what beginners need. Simple and actionable.
-
-### Results and Charts
-
-[01:45] **Kamil:** The results page shows a radar chart for score breakdown (stance, arm angle, release point, follow-through) and a scatter plot for pose keypoints.
-
-[02:00] **Anastasia:** The visualizations are clear. Can users filter their results?
-
-[02:05] **Kamil:** Yes, by filename and by date or score. The modal shows detailed analysis when you click a result card.
-
-### PDF Export
-
-[02:15] **Damir:** Users can export their analysis as a PDF report with score, feedback, and metadata.
-
-[02:25] **Anastasia:** Great for keeping records. I know some users prefer physical copies.
-
-### Profile Page
-
-[02:35] **Karim:** The profile page lets users manage their name, email, and password. It's UI-only for now — real authentication is planned for Sprint 2.
-
-[02:45] **Anastasia:** That's fine for MVP. When will real authentication be ready?
-
-[02:50] **Karim:** Sprint 2, along with comparison and sharing features.
-
-### Sprint 2 Planning
-
-[03:00] **Karim:** For Sprint 2, we're planning professional player comparison, coach sharing, and progress tracking.
-
-[03:10] **Anastasia:** Those sound valuable. I'm happy with the current progress. MVP v1 is approved.
 
 ## Key Takeaways
 
@@ -70,5 +59,5 @@
 ## Approval
 
 - **Customer:** Anastasia Malakhova
-- **Date:** 2026-06-28
+- **Date:** 2026-06-21
 - **Status:** Approved
