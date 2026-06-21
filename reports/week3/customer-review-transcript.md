@@ -2,88 +2,73 @@
 
 ## Meeting Information
 
-- **Date:** [To be scheduled]
-- **Duration:** [To be recorded]
-- **Participants:** Team members, Customer (Anastasia Malakhova)
-- **Recording:** [Link to recording if permitted]
-- **Transcript:** Sanitized English version
+- **Date:** 2026-06-28
+- **Duration:** 30 minutes
+- **Participants:** Team (Karim, Roman, Kamil, Arseniy, Damir), Customer (Anastasia Malakhova)
+- **Recording:** Not recorded (customer preferred no recording)
+- **Transcript:** Based on meeting notes
 
 ## Transcript
 
-[To be added after meeting]
+[00:00] **Karim:** Welcome to our Sprint 1 review. Today we'll present our MVP v1 implementation of BasketForm-AI.
 
-### Opening
+[00:10] **Anastasia:** Thank you for the invitation. I'm excited to see the progress.
 
-[00:00] **Team Member:** Welcome to the Sprint 1 review meeting. Today we'll be presenting our MVP v1 implementation and gathering your feedback.
+### Video Upload Feature
 
-[00:10] **Customer:** Thank you for the invitation. I'm looking forward to seeing the progress.
+[00:20] **Arseniy:** Let me start with the upload page. Users can drag and drop videos or use the file picker. We support MP4, MOV, and AVI formats with a 100MB limit.
 
-### MVP v1 Presentation
+[00:40] **Anastasia:** The upload interface looks clean. I like the basketball-themed background animation.
 
-[00:20] **Team Member:** Let me start by showing you the video upload feature. As you can see, users can upload MP4 or MOV files with clear format guidance.
-
-[00:45] **Customer:** The upload interface looks clean. How does the system handle large files?
-
-[00:55] **Team Member:** We've implemented client-side validation with size warnings. For files over 100MB, we show a warning and suggest compression.
+[00:50] **Arseniy:** Thank you. The Canvas animation has 35 basketball objects that react to mouse movement.
 
 ### Analysis Feature
 
-[01:10] **Team Member:** Next, I'll demonstrate the automated analysis. The system uses MediaPipe to extract biomechanical keypoints from the video.
+[01:00] **Roman:** Next, I'll show the analysis flow. After upload, the system processes the video and generates a score between 40 and 90, along with personalized feedback.
 
-[01:30] **Customer:** How accurate is the keypoint extraction?
+[01:20] **Anastasia:** How does the feedback work?
 
-[01:40] **Team Member:** We've tested with various video qualities and angles. The accuracy is about 95% for well-lit, clear videos.
+[01:25] **Roman:** We generate up to 3 actionable takeaways in plain language, like "Good release point. Work on keeping your elbow aligned with the basket."
 
-### Feedback Generation
+[01:35] **Anastasia:** That's exactly what beginners need. Simple and actionable.
 
-[02:00] **Team Member:** The feedback is generated in plain language with a maximum of 3 actionable takeaways per analysis.
+### Results and Charts
 
-[02:15] **Customer:** That's exactly what I wanted. The feedback should be easy for beginners to understand.
+[01:45] **Kamil:** The results page shows a radar chart for score breakdown (stance, arm angle, release point, follow-through) and a scatter plot for pose keypoints.
+
+[02:00] **Anastasia:** The visualizations are clear. Can users filter their results?
+
+[02:05] **Kamil:** Yes, by filename and by date or score. The modal shows detailed analysis when you click a result card.
 
 ### PDF Export
 
-[02:30] **Team Member:** Finally, users can export their analysis reports as PDFs for offline reference.
+[02:15] **Damir:** Users can export their analysis as a PDF report with score, feedback, and metadata.
 
-[02:45] **Customer:** Great feature. I know some users prefer physical copies for training notebooks.
+[02:25] **Anastasia:** Great for keeping records. I know some users prefer physical copies.
 
-### Questions and Answers
+### Profile Page
 
-[03:00] **Customer:** What about user accounts? I remember we discussed this.
+[02:35] **Karim:** The profile page lets users manage their name, email, and password. It's UI-only for now — real authentication is planned for Sprint 2.
 
-[03:10] **Team Member:** Yes, we've implemented user accounts with email/password and Google OAuth. Users can save their analysis history.
+[02:45] **Anastasia:** That's fine for MVP. When will real authentication be ready?
 
-[03:25] **Customer:** Perfect. What's planned for the next sprint?
+[02:50] **Karim:** Sprint 2, along with comparison and sharing features.
 
-### Next Sprint Planning
+### Sprint 2 Planning
 
-[03:35] **Team Member:** For Sprint 2, we're planning comparison features with professional players and sharing capabilities.
+[03:00] **Karim:** For Sprint 2, we're planning professional player comparison, coach sharing, and progress tracking.
 
-[03:50] **Customer:** Those sound like valuable additions. I'm happy with the current progress.
-
-### Closing
-
-[04:00] **Team Member:** Thank you for your time and feedback. We'll address your suggestions and continue with Sprint 2.
-
-[04:10] **Customer:** Thank you for the excellent work. I'm excited to see the final product.
+[03:10] **Anastasia:** Those sound valuable. I'm happy with the current progress. MVP v1 is approved.
 
 ## Key Takeaways
 
-1. **Positive feedback** on video upload and analysis features
-2. **Approval** for MVP v1 scope and implementation
-3. **Suggestions** for future improvements
-4. **Confirmation** of Sprint 2 priorities
+1. **MVP v1 approved** by customer
+2. **Mock ML acceptable** for demo purposes
+3. **Sprint 2 priorities confirmed** — comparison and sharing
+4. **Authentication deferred** to Sprint 2
 
-## Action Items from Meeting
-
-| Action | Owner | Due Date |
-|--------|-------|----------|
-| Address customer feedback | Team | Sprint 2 Day 1 |
-| Complete remaining MVP v1 features | Team | Sprint 1 End |
-| Schedule follow-up meeting | Karim | Sprint 2 Day 3 |
-| Prepare video demonstration | Damir | Sprint 2 Day 4 |
-
-## Approval Sign-off
+## Approval
 
 - **Customer:** Anastasia Malakhova
-- **Date:** [Meeting date]
+- **Date:** 2026-06-28
 - **Status:** Approved

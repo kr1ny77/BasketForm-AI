@@ -9,6 +9,9 @@ mvp-v0.example.com
 mvp-v0.basketformai.com
 staging.mvp-v0.basketformai.com
 
+# Exclude not-yet-created releases
+https://github.com/kr1ny77/BasketForm-AI/releases/tag/
+
 # Exclude GitHub Projects URLs (require authentication)
 https://github.com/users/*/projects
 
@@ -17,3 +20,6 @@ mailto:
 
 # Exclude anchors
 #
+
+# Exclude university GitLab (unreachable from CI)
+https://gitlab.pg.innopolis.university/

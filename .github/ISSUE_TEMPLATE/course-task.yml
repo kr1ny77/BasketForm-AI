@@ -1,0 +1,43 @@
+name: Course Task
+description: Track course-related tasks, reporting, or evidence collection
+title: "[COURSE] "
+labels: ["course-task"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Course Task Template
+        Use this template for course reporting, grading evidence, submission packaging, or course administration tasks.
+        Course Tasks are not PBIs and do not count toward assignment backlog-size minimums.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the course task
+      placeholder: "What needs to be done for the course requirement?"
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-evidence
+    attributes:
+      label: Expected Evidence or Deliverable
+      description: What evidence or deliverable is required?
+      placeholder: |
+        - Report in reports/weekX/
+        - Screenshot of deployed feature
+        - Video demonstration
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: Acceptance Criteria
+      description: How will we know this course task is complete?
+      placeholder: |
+        - [ ] Criterion 1
+        - [ ] Criterion 2
+    validations:
+      required: true

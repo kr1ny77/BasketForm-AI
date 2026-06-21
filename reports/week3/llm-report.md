@@ -2,78 +2,46 @@
 
 ## Tools Used
 
-### Primary AI/LLM Tools
-- **Claude Code (Anthropic)** - Used for code generation, documentation writing, and project planning
-- **GitHub Copilot** - Used for code completion and suggestions during development
+- **Claude Code (Anthropic)** — Code generation, documentation, project planning
+- **GitHub Copilot** — Code completion during development
 
-### Usage Scenarios
+## Usage Scenarios
 
-#### 1. Product Backlog Creation
+### 1. Go Backend Architecture
 - **Tool:** Claude Code
-- **Usage:** Generated user story issue templates and acceptance criteria
-- **Output:** Well-structured GitHub Issues with clear descriptions and acceptance criteria
+- **Usage:** Designed Go project structure (`cmd/server`, `internal/handlers`, `internal/services`, `internal/models`), handler wiring, API endpoint design, and service layer separation
 
-#### 2. Documentation Writing
+### 2. Canvas Animation
 - **Tool:** Claude Code
-- **Usage:** Created project documentation including:
-  - User stories index (`docs/user-stories.md`)
-  - Definition of Done (`docs/definition-of-done.md`)
-  - Product roadmap (`docs/roadmap.md`)
-  - Week 3 report structure
+- **Usage:** Generated the basketball-themed Canvas animation with 35 objects, mouse repulsion physics, trail lines, and wave rendering
 
-#### 3. Code Generation
-- **Tool:** GitHub Copilot
-- **Usage:** Assisted with:
-  - FastAPI endpoint creation
-  - React component structure
-  - Database schema design
-  - Test case generation
-
-#### 4. Project Planning
+### 3. API Handler Implementation
 - **Tool:** Claude Code
-- **Usage:** Assisted with:
-  - Sprint planning and milestone creation
-  - Story point estimation
-  - Task decomposition
-  - Risk identification
+- **Usage:** Created REST API handlers for upload (multipart), status, result, and video list endpoints with proper error handling and JSON responses
 
-## Impact on Development
+### 4. Mock ML Pipeline
+- **Tool:** Claude Code
+- **Usage:** Designed the async processor with goroutines, incremental progress, score generation, feedback selection, and pose skeleton generation
 
-### Positive Impacts
-1. **Faster documentation creation** - LLM tools significantly reduced time spent writing documentation
-2. **Improved code quality** - AI suggestions helped follow best practices and conventions
-3. **Better project structure** - LLM assistance helped organize the backlog and sprint planning
-4. **Enhanced creativity** - AI suggestions provided alternative approaches to problems
+### 5. Test Suite
+- **Tool:** Claude Code + GitHub Copilot
+- **Usage:** Generated 47 unit and integration tests covering UUID generation, file validation, storage operations, API endpoints, and processor behavior
 
-### Challenges
-1. **Accuracy verification** - Required careful review of AI-generated content
-2. **Context limitations** - LLM tools sometimes lacked full project context
-3. **Over-reliance risk** - Needed to balance AI assistance with manual learning
+### 6. Documentation and Reports
+- **Tool:** Claude Code
+- **Usage:** Created CHANGELOG, roadmap, reflection, retrospective, and Week 3 report following course requirements
 
-## Best Practices Learned
+### 7. Dockerfile
+- **Tool:** Claude Code
+- **Usage:** Multi-stage Docker build with Alpine-based final image
 
-1. **Always review AI output** - Verify accuracy and relevance before committing
-2. **Provide clear context** - Better prompts lead to better AI responses
-3. **Use AI for boilerplate** - Let AI handle repetitive tasks, focus on complex logic
-4. **Maintain code ownership** - Understand all code, even if AI-assisted
+## Impact
 
-## Future Improvements
+- **Positive:** Accelerated boilerplate creation (handlers, tests, templates), reduced time on documentation formatting
+- **Challenge:** Required careful review of generated code for correctness, especially template syntax and error handling paths
 
-1. **Custom fine-tuning** - Train models on project-specific patterns
-2. **Better integration** - Use AI tools more seamlessly in the development workflow
-3. **Knowledge sharing** - Document AI usage patterns for team learning
-4. **Quality metrics** - Track AI impact on code quality and productivity
+## Best Practices
 
-## Ethical Considerations
-
-- **Transparency** - All AI usage is documented and disclosed
-- **Attribution** - AI-generated content is reviewed and approved by team members
-- **Quality control** - Human oversight ensures accuracy and appropriateness
-- **Learning balance** - AI tools supplement, not replace, team learning
-
-## Recommendations
-
-1. **Continue using AI tools** for documentation and boilerplate code
-2. **Implement AI code review** to catch potential issues
-3. **Create AI usage guidelines** for consistent team practices
-4. **Track productivity metrics** to measure AI impact
+1. Always review AI-generated code before committing
+2. Use AI for boilerplate and structure, human judgment for architecture decisions
+3. Verify tests actually test the right behavior, not just pass
