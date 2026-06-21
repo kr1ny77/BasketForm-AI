@@ -150,7 +150,7 @@ All MVP v1 PBIs were verified through:
 
 ## 21. Video Demonstration
 
-- [Video Demo (< 2 min)](https://youtu.be/To_1ZwAMe4M)
+- [Video Demo (< 2 min)](https://www.youtube.com/watch?v=BjLcVhTe_RE)
 
 ## 22. Screenshots
 
