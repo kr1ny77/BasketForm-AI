@@ -57,6 +57,7 @@ coverage.html
 *.pth
 *.weights
 models/
+!internal/models/
 datasets/
 *.pkl
 *.pickle
