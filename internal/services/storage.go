@@ -104,6 +104,10 @@ func (s *Storage) LoadResult(videoID string) (*models.Result, error) {
 	return &r, nil
 }
 
+func (s *Storage) UploadDir() string {
+	return s.uploadDir
+}
+
 func (s *Storage) UploadPath(id, ext string) string {
 	return filepath.Join(s.uploadDir, id+ext)
 }
