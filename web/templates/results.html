@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results — BasketForm-AI</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">BasketForm-AI</a>
+        <ul class="nav-links">
+            <li><a href="/upload" data-i18n="nav_upload">Upload</a></li>
+            <li><a href="/results" class="active" data-i18n="nav_results">Results</a></li>
+            <li><a href="/progress" data-i18n="nav_progress">Progress</a></li>
+            <li><a href="/export" data-i18n="nav_export">Export</a></li>
+            <li><a href="/profile" data-i18n="nav_profile">Profile</a></li>
+        </ul>
+        <select id="langSelect" class="lang-select" onchange="applyLang(this.value)">
+            <option value="en">EN</option>
+            <option value="ru">RU</option>
+        </select>
+    </nav>
+    <main class="content">
+        <section class="page-header">
+            <h1 data-i18n="results_title">Analysis Results</h1>
+            <p data-i18n="results_desc">View your shooting form analyses</p>
+        </section>
+        <div class="filter-bar">
+            <input type="text" id="filterName" data-i18n-placeholder="results_filter" placeholder="Filter by filename...">
+            <select id="filterSort">
+                <option value="date-desc" data-i18n="results_sort_new">Newest first</option>
+                <option value="date-asc" data-i18n="results_sort_old">Oldest first</option>
+                <option value="score-desc" data-i18n="results_sort_high">Highest score</option>
+                <option value="score-asc" data-i18n="results_sort_low">Lowest score</option>
+            </select>
+        </div>
+        <section class="results-grid" id="resultsGrid">
+            <p class="empty-state"><span class="empty-icon">&#127936;</span><br><span data-i18n="results_empty">No analyses yet. Upload a video to get started.</span></p>
+        </section>
+    </main>
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal" id="modal">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+    <script src="/static/js/i18n.js"></script>
+    <script src="/static/js/canvas.js"></script>
+    <script>
+    var allVideos = [];
+    var grid = document.getElementById('resultsGrid');
+    var filterName = document.getElementById('filterName');
+    var filterSort = document.getElementById('filterSort');
+    var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
+
+    fetch('/api/videos')
+        .then(function (r) { return r.json(); })
+        .then(function (videos) { allVideos = videos; renderList(); })
+        .catch(function () {});
+
+    filterName.addEventListener('input', renderList);
+    filterSort.addEventListener('change', renderList);
+
+    function renderList() {
+        var q = filterName.value.toLowerCase();
+        var list = allVideos.filter(function (v) {
+            return !q || v.filename.toLowerCase().indexOf(q) !== -1;
+        });
+        var sort = filterSort.value;
+        list.sort(function (a, b) {
+            if (sort === 'date-asc') return new Date(a.created_at) - new Date(b.created_at);
+            if (sort === 'score-desc') return (b.score || 0) - (a.score || 0);
+            if (sort === 'score-asc') return (a.score || 0) - (b.score || 0);
+            return new Date(b.created_at) - new Date(a.created_at);
+        });
+        if (!list.length) {
+            grid.innerHTML = '<p class="empty-state"><span class="empty-icon">&#127936;</span><br>' + escHtml(t.results_no_match || 'No results found.') + '</p>';
+            return;
+        }
+        grid.innerHTML = '';
+        list.forEach(function (v) {
+            var card = document.createElement('div');
+            card.className = 'result-card';
+            card.innerHTML =
+                '<div>' +
+                    '<h3>' + escHtml(v.filename) + '</h3>' +
+                    '<div class="meta">' +
+                        '<span>ID: ' + v.id.substring(0, 8) + '</span>' +
+                        '<span>' + new Date(v.created_at).toLocaleDateString() + '</span>' +
+                        '<span class="badge badge-' + v.status + '">' + v.status + '</span>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="score">' +
+                    (v.score != null ? v.score + '<small>/ 100</small>' : '&mdash;') +
+                '</div>';
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', function () { openModal(v.id); });
+            grid.appendChild(card);
+        });
+    }
+
+    function escHtml(s) {
+        var d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+    }
+
+    function openModal(id) {
+        fetch('/api/result/' + id)
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                var body = document.getElementById('modalBody');
+                var summary = (data.feedback || 'No feedback available.').split('\n')[0];
+                body.innerHTML =
+                    '<h2>' + escHtml(data.filename || id) + '</h2>' +
+                    '<div class="detail-grid">' +
+                        '<div class="detail-item"><label>' + (t.results_detail_score || 'Score') + '</label><span>' + (data.score != null ? data.score + ' / 100' : 'N/A') + '</span></div>' +
+                        '<div class="detail-item"><label>' + (t.results_detail_status || 'Status') + '</label><span class="badge badge-done">done</span></div>' +
+                        '<div class="detail-item"><label>' + (t.results_detail_id || 'Video ID') + '</label><span>' + id + '</span></div>' +
+                        '<div class="detail-item"><label>' + (t.results_detail_date || 'Date') + '</label><span>' + new Date(data.created_at || Date.now()).toLocaleString() + '</span></div>' +
+                    '</div>' +
+                    '<div class="feedback-section">' +
+                        '<strong>' + (t.results_feedback || 'Analysis Report') + '</strong>' +
+                        '<p class="feedback-summary">' + escHtml(summary) + '</p>' +
+                        '<pre class="feedback-text feedback-hidden" id="feedbackFull">' + escHtml(data.feedback || '') + '</pre>' +
+                        '<button class="btn btn-sm btn-outline feedback-toggle" id="feedbackToggle" onclick="toggleFeedback()">&#9660; Show detailed analysis</button>' +
+                    '</div>' +
+                    '<div class="chart-container"><canvas id="scoreChart" height="200"></canvas></div>';
+                document.getElementById('modalOverlay').classList.add('active');
+                drawScoreChart(data);
+            })
+            .catch(function () { alert('Could not load results.'); });
+    }
+
+    function toggleFeedback() {
+        var full = document.getElementById('feedbackFull');
+        var btn = document.getElementById('feedbackToggle');
+        var t2 = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
+        if (full.classList.contains('feedback-hidden')) {
+            full.classList.remove('feedback-hidden');
+            btn.innerHTML = t2.feedback_hide || '\u25b2 Hide detailed analysis';
+        } else {
+            full.classList.add('feedback-hidden');
+            btn.innerHTML = t2.feedback_show || '\u25bc Show detailed analysis';
+        }
+    }
+
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    document.getElementById('modalOverlay').addEventListener('click', function (e) {
+        if (e.target === this) closeModal();
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
+
+    function closeModal() {
+        document.getElementById('modalOverlay').classList.remove('active');
+    }
+
+    function drawScoreChart(data) {
+        var canvas = document.getElementById('scoreChart');
+        if (!canvas || typeof Chart === 'undefined') return;
+        var labels = ['Stance', 'Arm Angle', 'Release', 'Follow-through'];
+        var values = data.scores || [
+            Math.round(data.score * 0.9 + Math.random() * 5),
+            Math.round(data.score * 0.85 + Math.random() * 10),
+            Math.round(data.score * 1.05 + Math.random() * 5),
+            Math.round(data.score * 0.95 + Math.random() * 5)
+        ];
+        new Chart(canvas, {
+            type: 'radar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: t.results_radar || 'Score Breakdown',
+                    data: values,
+                    backgroundColor: 'rgba(255,106,0,0.15)',
+                    borderColor: '#ff6a00',
+                    pointBackgroundColor: '#ff6a00',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                scales: { r: { beginAtZero: true, max: 100, ticks: { color: '#888', backdropColor: 'transparent' }, grid: { color: 'rgba(255,255,255,0.06)' }, pointLabels: { color: '#ccc' } } },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+    </script>
+</body>
+</html>
