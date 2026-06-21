@@ -2,10 +2,10 @@
 
 ## Meeting Details
 
-- **Date:** 2026-06-28
-- **Duration:** 30 minutes
+- **Date:** 2026-06-21
+- **Duration:** 6 minutes
 - **Participants:** Team (Karim, Roman, Kamil, Arseniy, Damir), Customer (Anastasia Malakhova)
-- **Format:** Video call (Google Meet)
+- **Format:** Video call (Yandex Telemost)
 
 ## Scope Reviewed
 
