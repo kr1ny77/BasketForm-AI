@@ -120,16 +120,22 @@ func (a *APIHandler) Upload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	video := a.storage.CreateVideo(id, header.Filename, userID)
-	video.Lang = lang
-	a.storage.SaveVideoJSON(video)
+		video.Lang = lang
+		a.storage.SaveVideoJSON(video)
 
-	go a.processor.ProcessVideo(id)
+		// Capture response values before starting the async processor goroutine
+		// to avoid a data race on the shared *Video while it is being updated.
+		respID := video.ID
+		respFilename := video.Filename
+		respStatus := video.Status
 
-	writeJSON(w, http.StatusCreated, map[string]string{
-		"id":       video.ID,
-		"filename": video.Filename,
-		"status":   video.Status,
-	})
+		go a.processor.ProcessVideo(id)
+
+		writeJSON(w, http.StatusCreated, map[string]string{
+					"id":       respID,
+					"filename": respFilename,
+					"status":   respStatus,
+				})
 }
 
 func (a *APIHandler) Status(w http.ResponseWriter, r *http.Request) {
