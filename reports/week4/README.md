@@ -9,7 +9,7 @@ Deployment: http://80.74.30.14/
 - **Sprint Goal:** Add authentication, social features, enhanced ML with phase analysis, and automated quality gates.
 - **Sprint milestone:** [Sprint 2 - Assignment 4](https://github.com/kr1ny77/BasketForm-AI/milestone/2)
 - **Sprint Backlog:** [Issues view](https://github.com/kr1ny77/BasketForm-AI/issues/views/775)
-- **Sprint dates:** 2026-06-23 to 2026-06-29
+- **Sprint dates:** 2026-06-29 to 2026-07-05
 - **Total Sprint size:** 34 Story Points
 
 ## Delivered Product Changes
