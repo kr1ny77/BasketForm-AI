@@ -20,23 +20,42 @@ This document defines the team's shared minimum completion standard for all Prod
 
 ## Testing
 
-- [ ] Unit tests are written and passing
-- [ ] Integration tests are written and passing (where applicable)
+- [ ] Unit tests are written and passing for critical modules
+- [ ] Integration tests are written and passing
+- [ ] Each critical module achieves at least 30% line coverage
+- [ ] Automated quality requirement tests (QRTs) pass
 - [ ] Manual testing is performed for user-facing features
 - [ ] Edge cases are considered and tested
+
+## Quality Requirements
+
+- [ ] Relevant quality requirements are satisfied or documented as not applicable
+- [ ] Quality requirement tests (QRTs) pass in CI
+- [ ] `docs/quality-requirements.md` is current
+- [ ] `docs/quality-requirement-tests.md` is current
+
+## CI and Automation
+
+- [ ] CI lint step passes (golangci-lint)
+- [ ] CI unit test step passes
+- [ ] CI integration test step passes
+- [ ] CI coverage check passes (30% for critical modules)
+- [ ] CI QRT step passes
+- [ ] CI additional QA check passes (govulncheck)
+- [ ] CI link check passes (Lychee)
 
 ## Documentation
 
 - [ ] Code is documented with comments where necessary
 - [ ] API documentation is updated (if applicable)
-- [ ] User documentation is updated (if applicable)
+- [ ] `docs/testing.md` reflects current test status
+- [ ] `docs/user-acceptance-tests.md` is current
 - [ ] CHANGELOG.md is updated with user-visible changes
 
 ## Deployment
 
 - [ ] Feature is deployable to staging/production
 - [ ] Environment variables are configured
-- [ ] Database migrations are created (if applicable)
 - [ ] Feature works in the deployed environment
 
 ## User Story Specific
@@ -77,7 +96,7 @@ This document defines the team's shared minimum completion standard for all Prod
 
 ## Release Requirements
 
-- [ ] All MVP v1 PBIs are completed
+- [ ] All MVP PBIs are completed
 - [ ] SemVer release is created with proper tag
 - [ ] Release notes are comprehensive
 - [ ] Deployment is verified in production

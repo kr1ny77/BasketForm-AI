@@ -1,0 +1,7 @@
+{
+  "id": "1210c1880639cf3fd76440c0c792beed",
+  "email": "test@example.com",
+  "nickname": "testuser",
+  "password_hash": "$2a$10$8hHCAqNCY1EKAnzM.5Axv.7OcALSKxwtgiifsa5WwaIgP3QcKcc9C",
+  "created_at": "2026-06-28T15:30:58.274923+03:00"
+}

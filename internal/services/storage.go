@@ -30,11 +30,15 @@ func genID() string {
 }
 
 func NewStorage(uploadDir, resultsDir string) *Storage {
+	dataDir := os.Getenv("DATA_DIR")
+	if dataDir == "" {
+		dataDir = "data"
+	}
 	s := &Storage{
 		videos:     make(map[string]*models.Video),
 		uploadDir:  uploadDir,
 		resultsDir: resultsDir,
-		dataDir:    "data",
+		dataDir:    dataDir,
 	}
 	s.ensureDataDirs()
 	return s
