@@ -49,3 +49,32 @@ Private submission details (identity, recording links, credentials, access detai
               - - [Sprint Backlog board (GitHub Projects Kanban)](https://github.com/users/kr1ny77/projects/7/views/2)
                 - - [Product roadmap](https://github.com/kr1ny77/BasketForm-AI/blob/main/docs/roadmap.md)
                   - - [Definition of Done](https://github.com/kr1ny77/BasketForm-AI/blob/main/docs/definition-of-done.md)
+
+## UAT Results Summary (Week 4)
+
+The customer executed all three active UAT scenarios during the recorded Week 4 session. No private customer information is included in this public summary. The private recording link and exact timecodes are provided separately in the Moodle submission.
+
+Full scenario definitions and per-execution records are maintained in [docs/user-acceptance-tests.md](https://github.com/kr1ny77/BasketForm-AI/blob/main/docs/user-acceptance-tests.md).
+
+### UAT Scenarios Passed
+
+All three active scenarios passed without issues:
+
+| Scenario ID | Scenario title | Result |
+|---|---|---|
+| UAT-001 | Upload Video and Receive Biomechanical Form Analysis | **Passed** |
+| UAT-002 | Export Analysis Report as PDF for Offline Review | **Passed** |
+| UAT-003 | Evaluate Interactive UI and Canvas Animation Responsiveness | **Passed** |
+
+### UAT Scenarios Failed or Needing Product Changes
+
+None. All three executed scenarios met their expected outcomes. No product changes or corrective actions are required as a result of this testing cycle.
+
+### Most Important Feedback Points Received
+
+- **Core functionality confirmed end-to-end:** Video upload, biomechanical analysis (technique scores for stance, arm angle, release point, and follow-through), PDF export, and UI interactivity all worked seamlessly in the customer-executed session.
+- - **Animations received strong positive feedback:** The basketball-themed interactive Canvas background animations were a standout highlight. The customer expressed genuine surprise at their quality and responsiveness, describing them as visually engaging and well-executed.
+ 
+  - ### Resulting PBIs or Issues
+ 
+  - None. No bugs, defects, regressions, or new Product Backlog Items were generated from the Week 4 UAT cycle. The positive results confirm that the current increment is stable and ready for the Sprint 2 quality and automation work without needing to fix UAT-identified regressions.
