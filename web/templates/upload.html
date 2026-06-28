@@ -9,18 +9,24 @@
 </head>
 <body>
     <nav class="navbar">
-        <a href="/" class="logo">BasketForm-AI</a>
-        <ul class="nav-links">
-            <li><a href="/upload" class="active" data-i18n="nav_upload">Upload</a></li>
-            <li><a href="/results" data-i18n="nav_results">Results</a></li>
-            <li><a href="/progress" data-i18n="nav_progress">Progress</a></li>
-            <li><a href="/export" data-i18n="nav_export">Export</a></li>
-            <li><a href="/profile" data-i18n="nav_profile">Profile</a></li>
-        </ul>
-        <select id="langSelect" class="lang-select" onchange="applyLang(this.value)">
-            <option value="en">EN</option>
-            <option value="ru">RU</option>
-        </select>
+        <div class="navbar-left">
+            <a href="/" class="logo">BasketForm-AI</a>
+        </div>
+        <div class="nav-center">
+            <ul class="nav-links">
+                <li><a href="/upload" class="active">Upload</a></li>
+                <li><a href="/results">Results</a></li>
+                <li><a href="/shared">Shared</a></li>
+                <li><a href="/friends">Friends</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <select id="langSelect" class="lang-select" onchange="applyLang(this.value)">
+                <option value="en">EN</option>
+                <option value="ru">RU</option>
+            </select>
+            <a href="/profile" class="nav-profile" title="Profile">&#128100;</a>
+        </div>
     </nav>
     <main class="content">
         <section class="page-header">

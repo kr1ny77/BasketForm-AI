@@ -9,14 +9,20 @@
 </head>
 <body>
     <nav class="navbar">
-        <a href="/" class="logo">BasketForm-AI</a>
-        <ul class="nav-links">
-            <li><a href="/upload">Upload</a></li>
-            <li><a href="/results">Results</a></li>
-            <li><a href="/shared">Shared</a></li>
-            <li><a href="/friends" class="active">Friends</a></li>
-            <li><a href="/profile">Profile</a></li>
-        </ul>
+        <div class="navbar-left">
+            <a href="/" class="logo">BasketForm-AI</a>
+        </div>
+        <div class="nav-center">
+            <ul class="nav-links">
+                <li><a href="/upload">Upload</a></li>
+                <li><a href="/results">Results</a></li>
+                <li><a href="/shared">Shared</a></li>
+                <li><a href="/friends" class="active">Friends</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <a href="/profile" class="nav-profile" title="Profile">&#128100;</a>
+        </div>
     </nav>
     <main class="content">
         <section class="page-header">
@@ -25,8 +31,9 @@
         </section>
 
         <section class="section-card">
-            <h2>Find Users</h2>
+            <h2>&#128269; Find Players</h2>
             <div class="search-bar">
+                <span class="search-icon">&#128269;</span>
                 <input type="text" id="searchInput" placeholder="Search by nickname..." class="form-input">
                 <button id="searchBtn" class="btn btn-primary">Search</button>
             </div>
@@ -34,29 +41,38 @@
         </section>
 
         <section class="section-card">
-            <h2>Pending Requests</h2>
+            <h2>&#128233; Pending Requests</h2>
             <div id="requestsList" class="user-list">
                 <p class="text-muted">No pending requests.</p>
             </div>
         </section>
 
         <section class="section-card">
-            <h2>My Friends</h2>
+            <h2>&#129309; My Friends</h2>
             <div id="friendsList" class="user-list">
-                <p class="text-muted">No friends yet.</p>
+                <p class="text-muted">No friends yet. Search for players above to connect!</p>
             </div>
         </section>
     </main>
     <script>
+    function getInitial(name) {
+        return name ? name.charAt(0).toUpperCase() : '?';
+    }
+
     function loadFriends() {
         fetch('/api/friends').then(function(r) { return r.json(); }).then(function(data) {
             var el = document.getElementById('friendsList');
             if (!data || data.length === 0) {
-                el.innerHTML = '<p class="text-muted">No friends yet.</p>';
+                el.innerHTML = '<p class="text-muted">No friends yet. Search for players above to connect!</p>';
                 return;
             }
             el.innerHTML = data.map(function(f) {
-                return '<div class="user-item"><span class="user-name">' + f.nickname + '</span></div>';
+                return '<div class="user-item">' +
+                    '<div class="user-info">' +
+                        '<div class="user-avatar">' + getInitial(f.nickname) + '</div>' +
+                        '<span class="user-name">' + f.nickname + '</span>' +
+                    '</div>' +
+                '</div>';
             }).join('');
         });
     }
@@ -71,9 +87,14 @@
             }
             el.innerHTML = pending.map(function(r) {
                 return '<div class="user-item">' +
-                    '<span class="user-name">' + r.from_nickname + '</span>' +
-                    '<button class="btn btn-sm btn-primary" onclick="acceptRequest(\'' + r.id + '\')">Accept</button>' +
-                    '<button class="btn btn-sm btn-danger" onclick="rejectRequest(\'' + r.id + '\')">Reject</button>' +
+                    '<div class="user-info">' +
+                        '<div class="user-avatar">' + getInitial(r.from_nickname) + '</div>' +
+                        '<span class="user-name">' + r.from_nickname + '</span>' +
+                    '</div>' +
+                    '<div class="user-actions">' +
+                        '<button class="btn btn-sm btn-primary" onclick="acceptRequest(\'' + r.id + '\')">Accept</button>' +
+                        '<button class="btn btn-sm btn-danger" onclick="rejectRequest(\'' + r.id + '\')">Decline</button>' +
+                    '</div>' +
                 '</div>';
             }).join('');
         });
@@ -91,8 +112,15 @@
                 return;
             }
             el.innerHTML = data.map(function(u) {
-                return '<div class="user-item"><span class="user-name">' + u.nickname +
-                    '</span><button class="btn btn-sm btn-primary" onclick="sendRequest(\'' + u.id + '\')">Add Friend</button></div>';
+                return '<div class="user-item">' +
+                    '<div class="user-info">' +
+                        '<div class="user-avatar">' + getInitial(u.nickname) + '</div>' +
+                        '<span class="user-name">' + u.nickname + '</span>' +
+                    '</div>' +
+                    '<div class="user-actions">' +
+                        '<button class="btn btn-sm btn-primary" onclick="sendRequest(\'' + u.id + '\')">Add Friend</button>' +
+                    '</div>' +
+                '</div>';
             }).join('');
         });
     }
