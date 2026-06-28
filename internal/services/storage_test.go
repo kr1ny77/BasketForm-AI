@@ -13,6 +13,7 @@ func tempDirs(t *testing.T) (string, string) {
 	t.Helper()
 	upload := t.TempDir()
 	results := t.TempDir()
+	t.Setenv("DATA_DIR", filepath.Join(upload, "data"))
 	return upload, results
 }
 

@@ -10,6 +10,19 @@ permissions:
   contents: read
 
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: latest
+
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -22,22 +35,85 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version-file: go.mod
-      - name: Run tests
-        run: go test -coverprofile=coverage.out ./...
+      - name: Run unit tests
+        run: go test -v -race -coverprofile=coverage.out ./...
       - name: Upload coverage
         uses: actions/upload-artifact@v4
         with:
           name: coverage
           path: coverage.out
 
-  build:
-    name: Build
+  coverage:
+    name: Coverage Check
+    runs-on: ubuntu-latest
+    needs: [test]
+    env:
+      GONOSUMCHECK: github.com/kr1ny77/BasketForm-AI
+      GONOSUMDB: github.com/kr1ny77/BasketForm-AI
+      GOFLAGS: -mod=mod
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Download coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: coverage
+      - name: Check critical module coverage
+        run: |
+          go test -coverprofile=svc.out ./internal/services/...
+          go test -coverprofile=hnd.out ./internal/handlers/...
+          SVC_COV=$(go tool cover -func=svc.out | grep total | awk '{print $3}' | tr -d '%')
+          HND_COV=$(go tool cover -func=hnd.out | grep total | awk '{print $3}' | tr -d '%')
+          echo "Services coverage: $SVC_COV%"
+          echo "Handlers coverage: $HND_COV%"
+          SVC_INT=$(echo "$SVC_COV" | cut -d. -f1)
+          HND_INT=$(echo "$HND_COV" | cut -d. -f1)
+          if [ "$SVC_INT" -lt 30 ]; then echo "FAIL: services coverage $SVC_COV% < 30%"; exit 1; fi
+          if [ "$HND_INT" -lt 30 ]; then echo "FAIL: handlers coverage $HND_COV% < 30%"; exit 1; fi
+          echo "Coverage check passed"
+
+  qrt:
+    name: Quality Requirement Tests
     runs-on: ubuntu-latest
     env:
       GONOSUMCHECK: github.com/kr1ny77/BasketForm-AI
       GONOSUMDB: github.com/kr1ny77/BasketForm-AI
       GOFLAGS: -mod=mod
-    needs: [test]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Run QRT tests
+        run: go test -tags=qrt -v ./internal/qrt/...
+
+  qa-extra:
+    name: Security Scan (govulncheck)
+    runs-on: ubuntu-latest
+    env:
+      GONOSUMCHECK: github.com/kr1ny77/BasketForm-AI
+      GONOSUMDB: github.com/kr1ny77/BasketForm-AI
+      GOFLAGS: -mod=mod
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - name: Install govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+      - name: Run govulncheck
+        run: govulncheck ./...
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: [lint, test, coverage, qrt, qa-extra]
+    env:
+      GONOSUMCHECK: github.com/kr1ny77/BasketForm-AI
+      GONOSUMDB: github.com/kr1ny77/BasketForm-AI
+      GOFLAGS: -mod=mod
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
