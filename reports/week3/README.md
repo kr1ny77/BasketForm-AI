@@ -43,11 +43,11 @@ Based on the customer meeting from Assignment 2:
 
 ## 5. Product Backlog Board
 
-- [GitHub Projects Board](https://github.com/kr1ny77/BasketForm-AI/projects)
+- [GitHub Projects Board](https://github.com/users/Koomaz/projects/1)
 
 ## 6. Sprint Backlog Board
 
-- [GitHub Projects Board — Sprint View](https://github.com/kr1ny77/BasketForm-AI/projects)
+- [GitHub Projects Board — Sprint View](https://github.com/users/Koomaz/projects/1)
 
 ## 7. Sprint Milestone
 
