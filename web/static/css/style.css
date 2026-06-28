@@ -924,3 +924,184 @@ a:hover { color: var(--accent-light); }
     .stats-row { grid-template-columns: repeat(2, 1fr); }
     .stat-value { font-size: 1.4rem; }
 }
+
+/* ======================== AUTH ======================== */
+.auth-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 1.5rem;
+    z-index: 10;
+}
+
+.auth-card {
+    background: var(--surface);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2.5rem;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,106,0,0.3), transparent);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-header h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.4rem;
+}
+
+.auth-header p {
+    color: var(--text-dim);
+    font-size: 0.88rem;
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+}
+
+.auth-footer p {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+}
+
+.error-message {
+    background: rgba(255, 71, 87, 0.1);
+    border: 1px solid rgba(255, 71, 87, 0.25);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    color: var(--danger);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.success-message {
+    background: rgba(46, 213, 115, 0.1);
+    border: 1px solid rgba(46, 213, 115, 0.25);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    color: var(--success);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+/* ======================== BUTTON VARIANTS ======================== */
+.btn-block { display: flex; width: 100%; }
+.btn-sm { padding: 0.4rem 0.8rem; font-size: 0.78rem; }
+.btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-dark)); color: #fff; }
+.btn-danger { background: rgba(255, 71, 87, 0.15); color: var(--danger); border: 1px solid rgba(255, 71, 87, 0.25); }
+.btn-danger:hover { background: rgba(255, 71, 87, 0.25); box-shadow: 0 8px 25px rgba(255, 71, 87, 0.25); color: #fff; }
+
+/* ======================== SECTION CARD ======================== */
+.section-card {
+    background: var(--surface);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.75rem 2rem;
+    margin-bottom: 1.25rem;
+    position: relative;
+}
+
+.section-card h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+}
+
+/* ======================== SEARCH ======================== */
+.search-bar {
+    display: flex;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+}
+
+.search-bar .form-input {
+    flex: 1;
+    padding: 0.6rem 1rem;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.85rem;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.search-bar .form-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+/* ======================== USER LIST ======================== */
+.user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    transition: all 0.2s;
+}
+
+.user-item:hover {
+    border-color: var(--border-hover);
+}
+
+.user-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.text-muted {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+}
+
+/* ======================== PROFILE ======================== */
+.profile-info {
+    margin-bottom: 0;
+}
+
+.profile-value {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text);
+    padding: 0.5rem 0;
+}

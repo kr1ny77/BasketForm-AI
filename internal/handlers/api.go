@@ -74,6 +74,8 @@ func (a *APIHandler) Upload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userID := r.Context().Value("user_id").(string)
+
 	if err := r.ParseMultipartForm(100 << 20); err != nil {
 		writeError(w, http.StatusBadRequest, "invalid form data")
 		return
@@ -112,7 +114,7 @@ func (a *APIHandler) Upload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	video := a.storage.CreateVideo(id, header.Filename)
+	video := a.storage.CreateVideo(id, header.Filename, userID)
 	respID := video.ID
 	respFilename := video.Filename
 	respStatus := video.Status
@@ -177,7 +179,8 @@ func (a *APIHandler) Videos(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	videos := a.storage.GetAllVideos()
+	userID := r.Context().Value("user_id").(string)
+	videos := a.storage.GetVideosByUserID(userID)
 	if videos == nil {
 		videos = []*models.Video{}
 	}

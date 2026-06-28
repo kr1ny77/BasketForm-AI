@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shared Results — BasketForm-AI</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">BasketForm-AI</a>
+        <ul class="nav-links">
+            <li><a href="/upload">Upload</a></li>
+            <li><a href="/results">Results</a></li>
+            <li><a href="/shared" class="active">Shared</a></li>
+            <li><a href="/friends">Friends</a></li>
+            <li><a href="/profile">Profile</a></li>
+        </ul>
+    </nav>
+    <main class="content">
+        <section class="page-header">
+            <h1>Shared Results</h1>
+            <p>Results shared with you by friends</p>
+        </section>
+        <section class="results-grid" id="sharedResults">
+            <p class="text-muted">No shared results yet.</p>
+        </section>
+    </main>
+    <script>
+    function loadShared() {
+        fetch('/api/results/shared-with-me')
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            var el = document.getElementById('sharedResults');
+            if (!data || data.length === 0) {
+                el.innerHTML = '<p class="text-muted">No shared results yet.</p>';
+                return;
+            }
+            el.innerHTML = data.map(function(r) {
+                return '<div class="result-card">' +
+                    '<h3>Score: ' + r.score + '</h3>' +
+                    '<p>Shared by: <strong>' + r.from_nickname + '</strong></p>' +
+                    '<p class="text-muted">Video: ' + r.video_id + '</p>' +
+                    '<p class="text-muted">' + new Date(r.created_at).toLocaleDateString() + '</p>' +
+                    '<a href="/results?id=' + r.video_id + '" class="btn btn-primary btn-sm">View Details</a>' +
+                '</div>';
+            }).join('');
+        });
+    }
+    loadShared();
+    </script>
+</body>
+</html>

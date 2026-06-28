@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friends — BasketForm-AI</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">BasketForm-AI</a>
+        <ul class="nav-links">
+            <li><a href="/upload">Upload</a></li>
+            <li><a href="/results">Results</a></li>
+            <li><a href="/shared">Shared</a></li>
+            <li><a href="/friends" class="active">Friends</a></li>
+            <li><a href="/profile">Profile</a></li>
+        </ul>
+    </nav>
+    <main class="content">
+        <section class="page-header">
+            <h1>Friends</h1>
+            <p>Find and connect with other players</p>
+        </section>
+
+        <section class="section-card">
+            <h2>Find Users</h2>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search by nickname..." class="form-input">
+                <button id="searchBtn" class="btn btn-primary">Search</button>
+            </div>
+            <div id="searchResults" class="user-list"></div>
+        </section>
+
+        <section class="section-card">
+            <h2>Pending Requests</h2>
+            <div id="requestsList" class="user-list">
+                <p class="text-muted">No pending requests.</p>
+            </div>
+        </section>
+
+        <section class="section-card">
+            <h2>My Friends</h2>
+            <div id="friendsList" class="user-list">
+                <p class="text-muted">No friends yet.</p>
+            </div>
+        </section>
+    </main>
+    <script>
+    function loadFriends() {
+        fetch('/api/friends').then(function(r) { return r.json(); }).then(function(data) {
+            var el = document.getElementById('friendsList');
+            if (!data || data.length === 0) {
+                el.innerHTML = '<p class="text-muted">No friends yet.</p>';
+                return;
+            }
+            el.innerHTML = data.map(function(f) {
+                return '<div class="user-item"><span class="user-name">' + f.nickname + '</span></div>';
+            }).join('');
+        });
+    }
+
+    function loadRequests() {
+        fetch('/api/friends/requests').then(function(r) { return r.json(); }).then(function(data) {
+            var el = document.getElementById('requestsList');
+            var pending = (data || []).filter(function(r) { return r.status === 'pending'; });
+            if (pending.length === 0) {
+                el.innerHTML = '<p class="text-muted">No pending requests.</p>';
+                return;
+            }
+            el.innerHTML = pending.map(function(r) {
+                return '<div class="user-item">' +
+                    '<span class="user-name">' + r.from_nickname + '</span>' +
+                    '<button class="btn btn-sm btn-primary" onclick="acceptRequest(\'' + r.id + '\')">Accept</button>' +
+                    '<button class="btn btn-sm btn-danger" onclick="rejectRequest(\'' + r.id + '\')">Reject</button>' +
+                '</div>';
+            }).join('');
+        });
+    }
+
+    function searchUsers() {
+        var q = document.getElementById('searchInput').value.trim();
+        if (!q) return;
+        fetch('/api/friends/search?q=' + encodeURIComponent(q))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            var el = document.getElementById('searchResults');
+            if (!data || data.length === 0) {
+                el.innerHTML = '<p class="text-muted">No users found.</p>';
+                return;
+            }
+            el.innerHTML = data.map(function(u) {
+                return '<div class="user-item"><span class="user-name">' + u.nickname +
+                    '</span><button class="btn btn-sm btn-primary" onclick="sendRequest(\'' + u.id + '\')">Add Friend</button></div>';
+            }).join('');
+        });
+    }
+
+    function sendRequest(toUserId) {
+        fetch('/api/friends/request', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({to_user_id: toUserId})
+        }).then(function(r) { return r.json(); }).then(function(data) {
+            if (data.error) { alert(data.error); return; }
+            alert('Request sent!');
+        });
+    }
+
+    function acceptRequest(requestId) {
+        fetch('/api/friends/accept', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({request_id: requestId})
+        }).then(function(r) { return r.json(); }).then(function(data) {
+            if (data.error) { alert(data.error); return; }
+            loadFriends();
+            loadRequests();
+        });
+    }
+
+    function rejectRequest(requestId) {
+        fetch('/api/friends/reject', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({request_id: requestId})
+        }).then(function(r) { return r.json(); }).then(function(data) {
+            if (data.error) { alert(data.error); return; }
+            loadRequests();
+        });
+    }
+
+    document.getElementById('searchBtn').addEventListener('click', searchUsers);
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') searchUsers();
+    });
+
+    loadFriends();
+    loadRequests();
+    </script>
+</body>
+</html>

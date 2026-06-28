@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 )
 
 type Handler struct {
@@ -37,6 +38,14 @@ func (h *Handler) IndexHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/upload", http.StatusFound)
 }
 
+func (h *Handler) LoginHandler(w http.ResponseWriter, r *http.Request) {
+	serveFile(w, "web/templates/login.html")
+}
+
+func (h *Handler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
+	serveFile(w, "web/templates/signup.html")
+}
+
 func (h *Handler) UploadPageHandler(w http.ResponseWriter, r *http.Request) {
 	serveFile(w, "web/templates/upload.html")
 }
@@ -55,4 +64,20 @@ func (h *Handler) ProgressPageHandler(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) ExportPageHandler(w http.ResponseWriter, r *http.Request) {
 	serveFile(w, "web/templates/export.html")
+}
+
+func (h *Handler) FriendsPageHandler(w http.ResponseWriter, r *http.Request) {
+	serveFile(w, "web/templates/friends.html")
+}
+
+func (h *Handler) SharedResultsPageHandler(w http.ResponseWriter, r *http.Request) {
+	serveFile(w, "web/templates/shared.html")
+}
+
+func (h *Handler) ResultsFileServer() http.Handler {
+	abs, err := filepath.Abs(h.resultsDir)
+	if err != nil {
+		abs = h.resultsDir
+	}
+	return http.StripPrefix("/results/", http.FileServer(http.Dir(abs)))
 }

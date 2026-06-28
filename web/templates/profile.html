@@ -11,56 +11,105 @@
     <nav class="navbar">
         <a href="/" class="logo">BasketForm-AI</a>
         <ul class="nav-links">
-            <li><a href="/upload" data-i18n="nav_upload">Upload</a></li>
-            <li><a href="/results" data-i18n="nav_results">Results</a></li>
-            <li><a href="/progress" data-i18n="nav_progress">Progress</a></li>
-            <li><a href="/export" data-i18n="nav_export">Export</a></li>
-            <li><a href="/profile" class="active" data-i18n="nav_profile">Profile</a></li>
+            <li><a href="/upload">Upload</a></li>
+            <li><a href="/results">Results</a></li>
+            <li><a href="/shared">Shared</a></li>
+            <li><a href="/friends">Friends</a></li>
+            <li><a href="/profile" class="active">Profile</a></li>
         </ul>
-        <select id="langSelect" class="lang-select" onchange="applyLang(this.value)">
-            <option value="en">EN</option>
-            <option value="ru">RU</option>
-        </select>
     </nav>
     <main class="content">
         <section class="page-header">
-            <h1 data-i18n="profile_title">Profile</h1>
-            <p data-i18n="profile_desc">Manage your account settings</p>
+            <h1>Profile</h1>
+            <p>Manage your account settings</p>
         </section>
         <section class="form-card">
-            <form id="profileForm" onsubmit="return false;">
+            <div id="profileInfo" class="profile-info">
                 <div class="form-group">
-                    <label for="name" data-i18n="profile_name">Name</label>
-                    <input type="text" id="name" value="Player" placeholder="Your name">
+                    <label>Nickname</label>
+                    <p id="nickname" class="profile-value">Loading...</p>
                 </div>
                 <div class="form-group">
-                    <label for="email" data-i18n="profile_email">Email</label>
-                    <input type="email" id="email" value="player@example.com" placeholder="Your email">
+                    <label>Email</label>
+                    <p id="email" class="profile-value">Loading...</p>
+                </div>
+            </div>
+        </section>
+        <section class="form-card">
+            <h2>Change Password</h2>
+            <form id="passwordForm">
+                <div class="form-group">
+                    <label for="oldPassword">Current Password</label>
+                    <input type="password" id="oldPassword" placeholder="Enter current password" required>
                 </div>
                 <div class="form-group">
-                    <label for="password" data-i18n="profile_pw">New Password</label>
-                    <input type="password" id="password" data-i18n-placeholder="profile_pw_hint" placeholder="Leave blank to keep current">
+                    <label for="newPassword">New Password</label>
+                    <input type="password" id="newPassword" placeholder="At least 6 characters" required minlength="6">
                 </div>
                 <div class="form-group">
-                    <label for="passwordConfirm" data-i18n="profile_pw2">Confirm New Password</label>
-                    <input type="password" id="passwordConfirm" data-i18n-placeholder="profile_pw_hint2" placeholder="Repeat new password">
+                    <label for="confirmPassword">Confirm New Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Repeat new password" required>
                 </div>
-                <button type="button" class="btn" id="saveBtn" data-i18n="profile_save">Save Changes</button>
+                <div id="errorMessage" class="error-message" style="display:none;"></div>
+                <div id="successMessage" class="success-message" style="display:none;"></div>
+                <button type="submit" class="btn btn-primary">Update Password</button>
             </form>
         </section>
+        <section class="form-card">
+            <button id="logoutBtn" class="btn btn-danger">Logout</button>
+        </section>
     </main>
-    <script src="/static/js/i18n.js"></script>
-    <script src="/static/js/canvas.js"></script>
     <script>
-    var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
-    document.getElementById('saveBtn').addEventListener('click', function () {
-        var pw = document.getElementById('password').value;
-        var pw2 = document.getElementById('passwordConfirm').value;
-        if (pw && pw !== pw2) {
-            alert(t.profile_mismatch || 'Passwords do not match.');
+    fetch('/api/profile')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+        if (data.error) { window.location.href = '/login'; return; }
+        document.getElementById('nickname').textContent = data.nickname;
+        document.getElementById('email').textContent = data.email;
+    });
+
+    document.getElementById('passwordForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var oldPw = document.getElementById('oldPassword').value;
+        var newPw = document.getElementById('newPassword').value;
+        var confirmPw = document.getElementById('confirmPassword').value;
+        var errorEl = document.getElementById('errorMessage');
+        var successEl = document.getElementById('successMessage');
+        errorEl.style.display = 'none';
+        successEl.style.display = 'none';
+
+        if (newPw !== confirmPw) {
+            errorEl.textContent = 'Passwords do not match.';
+            errorEl.style.display = 'block';
             return;
         }
-        alert(t.profile_saved || 'Profile saved (demo).');
+        if (newPw.length < 6) {
+            errorEl.textContent = 'Password must be at least 6 characters.';
+            errorEl.style.display = 'block';
+            return;
+        }
+
+        fetch('/api/profile/update', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({old_password: oldPw, new_password: newPw})
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.error) {
+                errorEl.textContent = data.error;
+                errorEl.style.display = 'block';
+            } else {
+                successEl.textContent = 'Password updated successfully!';
+                successEl.style.display = 'block';
+                document.getElementById('passwordForm').reset();
+            }
+        });
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        window.location.href = '/login';
     });
     </script>
 </body>
