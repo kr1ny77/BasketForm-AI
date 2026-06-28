@@ -59,7 +59,7 @@
 ### Links to Affected Artifacts
 
 - [Sprint 2 Milestone](https://github.com/kr1ny77/BasketForm-AI/milestone/1)
-- [ML Integration PR](https://github.com/kr1ny77/BasketForm-AI/pull) — `feat/replace-mock-nn-with-python-ml`
+- [ML Integration PR](https://github.com/kr1ny77/BasketForm-AI/pulls) — `feat/replace-mock-nn-with-python-ml`
 - [Roadmap](../../docs/roadmap.md)
 - [User Stories](../../docs/user-stories.md)
 - [CHANGELOG](../../CHANGELOG.md)
