@@ -17,12 +17,17 @@
             <ul class="nav-links">
                 <li><a href="/upload">Upload</a></li>
                 <li><a href="/results">Results</a></li>
+                <li><a href="/export" class="active">Export</a></li>
                 <li><a href="/shared">Shared</a></li>
                 <li><a href="/friends">Friends</a></li>
             </ul>
         </div>
         <div class="nav-right">
-            <a href="/profile" class="nav-profile" title="Profile">&#128100;</a>
+            <select id="langSelect" class="lang-select" onchange="applyLang(this.value)">
+                <option value="en">EN</option>
+                <option value="ru">RU</option>
+            </select>
+            <a href="/profile" class="nav-profile">Profile</a>
         </div>
     </nav>
     <main class="content">
