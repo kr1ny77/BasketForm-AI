@@ -1,80 +1,97 @@
 # Week 4 Public Report — BasketForm-AI
 
-This is the public report for Week 4 (Assignment 4). It records how the team responded to customer feedback on the MVP v1 increment and how that feedback was turned into traceable backlog work for Sprint 2.
-
-Private submission details (identity, recording links, credentials, access details) are intentionally kept out of this public report and are provided only in the private Moodle PDF wrapper.
+Project: **BasketForm-AI** — AI-powered basketball shooting form analysis platform.
+Deployment: http://80.74.30.14/
 
 ## Sprint Context
 
-- **Current Sprint:** Sprint 2 — Assignment 4 (Real ML & Trustworthy Analysis)
-- - **Sprint milestone:** [Sprint 2 - Assignment 4](https://github.com/kr1ny77/BasketForm-AI/milestone/2)
-  - - **Sprint Backlog board:** [Assignment 4 Sprint Backlog (GitHub Projects Kanban)](https://github.com/users/kr1ny77/projects/7/views/2)
-    - - **Roadmap:** [docs/roadmap.md](https://github.com/kr1ny77/BasketForm-AI/blob/main/docs/roadmap.md)
-     
-      - The Sprint Goal for Sprint 2 is value-focused: deliver a more trustworthy analysis increment by replacing the mock pipeline with real ML, rejecting non-basketball videos, persisting results across restarts, and protecting all of this with automated tests and CI quality gates.
-     
-      - ## Customer Feedback Source
-     
-      - Feedback was gathered at the MVP v1 customer review (Anastasia Malakhova, customer). The source records are public in the repository:
-     
-      - - [Customer review summary (Week 3)](https://github.com/kr1ny77/BasketForm-AI/blob/main/reports/week3/customer-review-summary.md)
-        - - [Customer review notes (Week 3)](https://github.com/kr1ny77/BasketForm-AI/blob/main/reports/week3/customer-review-notes.md)
-          - - [Customer review transcript (Week 3)](https://github.com/kr1ny77/BasketForm-AI/blob/main/reports/week3/customer-review-transcript.md)
-           
-            - ## Customer Feedback Response Table
-           
-            - Every feedback point below is traced to a backlog item and given a clear response. Feedback that is not planned for this Sprint still has an explanation and a linked backlog item.
-           
-            - | Feedback point | Resulting PBI or issue | Status | Response |
-            - |---|---|---|---|
-            - | Real ML analysis is needed for production; the mock pipeline is only acceptable for a demo. | [#64](https://github.com/kr1ny77/BasketForm-AI/issues/64) (PBI-016) | In Sprint 2 (Ready) | Replacing the mock processor with a real Python ML pipeline so scores reflect actual shot analysis. Selected as a Sprint 2 must-have. |
-            - | The product should verify the video really shows a basketball player/ball, and reject non-basketball clips (e.g. soccer, TikTok) instead of giving a misleading score. | [#65](https://github.com/kr1ny77/BasketForm-AI/issues/65) (PBI-017) | In Sprint 2 (Ready) | Adding basketball + player detection. If a ball or player is not detected, the user gets a clear "not a basketball shot / ball not detected" message instead of a meaningless score. |
-            - | Authentication and data should persist across sessions; in-memory storage loses results on server restart. | [#66](https://github.com/kr1ny77/BasketForm-AI/issues/66) (PBI-018) | In Sprint 2 (Ready) | Adding a persistence layer so analysis results survive server restarts, moving the product toward production readiness. |
-            - | The shot-phase / release analysis is still rough and needs to track the ball and refine the algorithm. | [#62](https://github.com/kr1ny77/BasketForm-AI/issues/62) (PBI-021) | Done | Ball tracking and the release-phase algorithm were refined and merged; this PBI is complete and feeds into the real ML pipeline work. |
-            - | PDF export was planned for MVP v1 (US-010) but was not delivered. | [#70](https://github.com/kr1ny77/BasketForm-AI/issues/70) (PBI-022) | Not planned for this Sprint | Deferred because Sprint 2 prioritises trustworthy analysis, persistence, and automated quality gates over new feature surface. Tracked for a later Sprint and depends on the real ML pipeline so exports reflect real data. |
-            - | The customer suggested batch upload for multiple shots in one session. | [#71](https://github.com/kr1ny77/BasketForm-AI/issues/71) (PBI-023) | Not planned for this Sprint | Deferred; depends on real ML, validation, and persistence landing first. Tracked as a backlog item and a candidate for a later Sprint. |
-            - | Positive: clean and intuitive upload interface, engaging Canvas animation, responsive on mobile, PDF meets offline record-keeping needs. | No issue (positive feedback) | Acknowledged | No change required. These strengths are preserved; Sprint 2 work must not regress the existing UX, which is protected by the automated tests and CI gates. |
-           
-            - ## How Quality and Automation Continue
-           
-            - The quality requirements, automated tests, CI checks, coverage expectations, and Definition of Done updates created in Assignment 4 are maintained project assets. Later PBIs must maintain or extend these gates rather than bypass, disable, or treat them as one-time submission evidence. New work added to the backlog (including the deferred PBIs #70 and #71) explicitly requires its own automated test coverage in the acceptance criteria so the quality bar is carried forward.
-           
-            - ## Sprint Milestone vs Release Evidence
-           
-            - The Sprint 2 milestone is planning and scope evidence: it defines what the team committed to and which PBIs are in scope. The SemVer release is separate packaged-increment evidence created after the Sprint work is Done. The two are deliberately kept distinct, in line with the Process Requirements and Product Repository Requirements.
-           
-            - ## Links
-           
-            - - [Sprint 2 milestone](https://github.com/kr1ny77/BasketForm-AI/milestone/2)
-              - - [Sprint Backlog board (GitHub Projects Kanban)](https://github.com/users/kr1ny77/projects/7/views/2)
-                - - [Product roadmap](https://github.com/kr1ny77/BasketForm-AI/blob/main/docs/roadmap.md)
-                  - - [Definition of Done](https://github.com/kr1ny77/BasketForm-AI/blob/main/docs/definition-of-done.md)
+- **Sprint:** Sprint 2 — Assignment 4 (Auth, Social, ML, Quality)
+- **Sprint Goal:** Add authentication, social features, enhanced ML with phase analysis, and automated quality gates.
+- **Sprint milestone:** [Sprint 2 - Assignment 4](https://github.com/kr1ny77/BasketForm-AI/milestone/2)
+- **Sprint Backlog:** [Issues view](https://github.com/kr1ny77/BasketForm-AI/issues/views/775)
+- **Sprint dates:** 2026-06-23 to 2026-06-29
+- **Total Sprint size:** 34 Story Points
 
-## UAT Results Summary (Week 4)
+## Delivered Product Changes
 
-The customer executed all three active UAT scenarios during the recorded Week 4 session. No private customer information is included in this public summary. The private recording link and exact timecodes are provided separately in the Moodle submission.
+- User registration and login with email, nickname, password (bcrypt + JWT)
+- Friend system: search, request, accept/reject
+- Result sharing with friends (read-only)
+- Enhanced ML agent with annotated output video and phase analysis (Stance, Arm Angle, Release, Follow-through)
+- PDF export with full score breakdown
+- Quality requirements (QR-001 to QR-004) following ISO/IEC 25010
+- Automated QRT tests (QRT-001 to QRT-004)
+- Updated CI pipeline with lint, test, coverage, QRT, govulncheck
+- Unit tests (auth: 9 tests) and integration tests (5 tests)
 
-Full scenario definitions and per-execution records are maintained in [docs/user-acceptance-tests.md](https://github.com/kr1ny77/BasketForm-AI/blob/main/docs/user-acceptance-tests.md).
+## Deployed Product
 
-### UAT Scenarios Passed
+- **URL:** http://80.74.30.14/
+- **Run instructions:** See [README.md](../../README.md)
 
-All three active scenarios passed without issues:
+## Customer Feedback Response Table
 
-| Scenario ID | Scenario title | Result |
+| Feedback point | Resulting PBI or issue | Status | Response |
+|---|---|---|---|
+| Real ML analysis needed; mock pipeline is only acceptable for demo. | #64 (PBI-016) | Done | Replaced mock with real MediaPipe pipeline generating annotated video and phase scores. |
+| Reject non-basketball videos instead of scoring them. | #65 (PBI-017) | Done | Added player detection; non-basketball videos get rejected. |
+| Authentication and data persistence across restarts. | #66 (PBI-018) | Done | Added JWT auth, bcrypt, JSON file persistence in data/ directory. |
+| Share results with coaches/friends. | #67 (PBI-019) | Done | Added friend system and result sharing with read-only access. |
+| PDF export for offline record-keeping. | #70 (PBI-022) | Done | Implemented jsPDF-based PDF export with full score breakdown. |
+| Batch upload for multiple shots. | #71 (PBI-023) | Not planned | Deferred; depends on real ML and persistence landing first. |
+
+## Feedback Not Addressed
+
+- Batch upload (PBI-023): Deferred to a later Sprint. Depends on real ML pipeline stability and persistence being fully validated.
+
+## Links
+
+- [Roadmap](../../docs/roadmap.md)
+- [Definition of Done](../../docs/definition-of-done.md)
+- [Quality Requirements](../../docs/quality-requirements.md)
+- [Quality Requirement Tests](../../docs/quality-requirement-tests.md)
+- [Testing Strategy](../../docs/testing.md)
+- [User Acceptance Tests](../../docs/user-acceptance-tests.md)
+- [CHANGELOG](../../CHANGELOG.md)
+
+## Quality Model
+
+ISO/IEC 25010 sub-characteristics addressed:
+- **QR-001:** Time Behaviour (API response < 2s)
+- **QR-002:** Confidentiality (auth security, no cross-user access)
+- **QR-003:** Testability (30% coverage for critical modules)
+- **QR-004:** Usability (form guidance via placeholders/labels)
+
+## Testing Status
+
+| Test type | Status | Evidence |
 |---|---|---|
-| UAT-001 | Upload Video and Receive Biomechanical Form Analysis | **Passed** |
-| UAT-002 | Export Analysis Report as PDF for Offline Review | **Passed** |
-| UAT-003 | Evaluate Interactive UI and Canvas Animation Responsiveness | **Passed** |
+| Unit tests | Passing | CI run |
+| Integration tests | Passing | CI run |
+| QRTs (QRT-001 to QRT-004) | Passing | CI run |
+| Coverage (services, handlers) | ≥30% | CI run |
 
-### UAT Scenarios Failed or Needing Product Changes
+## CI Pipeline
 
-None. All three executed scenarios met their expected outcomes. No product changes or corrective actions are required as a result of this testing cycle.
+- Lint: golangci-lint
+- Test: go test -race -coverprofile
+- Coverage: 30% threshold for critical modules
+- QRT: go test -tags=qrt
+- QA Extra: govulncheck
+- Link Check: Lychee
 
-### Most Important Feedback Points Received
+## SemVer Release
 
-- **Core functionality confirmed end-to-end:** Video upload, biomechanical analysis (technique scores for stance, arm angle, release point, and follow-through), PDF export, and UI interactivity all worked seamlessly in the customer-executed session.
-- - **Animations received strong positive feedback:** The basketball-themed interactive Canvas background animations were a standout highlight. The customer expressed genuine surprise at their quality and responsiveness, describing them as visually engaging and well-executed.
- 
-  - ### Resulting PBIs or Issues
- 
-  - None. No bugs, defects, regressions, or new Product Backlog Items were generated from the Week 4 UAT cycle. The positive results confirm that the current increment is stable and ready for the Sprint 2 quality and automation work without needing to fix UAT-identified regressions.
+- **Release:** [v0.2.0](https://github.com/kr1ny77/BasketForm-AI/releases/tag/v0.2.0)
+- **Tag:** v0.2.0
+- **Maps to:** Sprint 2 — Assignment 4
+
+## Current Product Status
+
+BasketForm-AI now has a complete authentication system, social features (friends and result sharing), an enhanced ML pipeline with annotated video output and phase analysis, PDF export, and automated quality gates in CI. The product is production-ready at http://80.74.30.14/.
+
+## Next Steps
+
+- Sprint 3: Comparison with professional players, progress tracking over time
+- Performance optimization for large video files
+- Additional QA checks (accessibility, API contract testing)

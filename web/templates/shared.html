@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shared Results — BasketForm-AI</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=4">
+    <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+<body>
+    <canvas id="bgCanvas"></canvas>
+    <nav class="navbar">
+        <div class="navbar-left">
+            <a href="/" class="logo">BasketForm-AI</a>
+        </div>
+        <div class="nav-center">
+            <ul class="nav-links">
+                <li><a href="/upload">Upload</a></li>
+                <li><a href="/results">Results</a></li>
+                <li><a href="/export">Export</a></li>
+                <li><a href="/shared" class="active">Shared</a></li>
+                <li><a href="/friends">Friends</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <select id="langSelect" class="lang-select" onchange="applyLang(this.value)">
+                <option value="en">EN</option>
+                <option value="ru">RU</option>
+            </select>
+            <a href="/profile" class="nav-profile">Profile</a>
+        </div>
+    </nav>
+    <main class="content">
+        <section class="page-header">
+            <h1 data-i18n="shared_title">Shared Results</h1>
+            <p data-i18n="shared_desc">Results your friends shared with you</p>
+        </section>
+        <div class="chat-feed" id="chatFeed">
+            <p class="text-muted" style="text-align:center;padding:3rem;" data-i18n="shared_empty">No shared results yet.</p>
+        </div>
+    </main>
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal modal-lg" id="modal">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+    <script>
+    function getInitial(name) {
+        return name ? name.charAt(0).toUpperCase() : '?';
+    }
+
+    function loadShared() {
+        fetch('/api/results/shared-with-me')
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            var el = document.getElementById('chatFeed');
+            if (!data || data.length === 0) {
+                el.innerHTML = '<p class="text-muted" style="text-align:center;padding:3rem;">No shared results yet. Ask a friend to share!</p>';
+                return;
+            }
+            var grouped = {};
+            data.forEach(function (r) {
+                var key = r.from_nickname || 'Unknown';
+                if (!grouped[key]) grouped[key] = [];
+                grouped[key].push(r);
+            });
+            var html = '';
+            var friends = Object.keys(grouped).sort();
+            friends.forEach(function (name) {
+                var items = grouped[name];
+                html += '<div class="chat-thread">';
+                html += '<div class="chat-friend-header">' +
+                    '<div class="user-avatar">' + getInitial(name) + '</div>' +
+                    '<div><strong>' + escHtml(name) + '</strong><span class="text-muted" style="margin-left:0.5rem;font-size:0.78rem;">' + items.length + ' result' + (items.length > 1 ? 's' : '') + '</span></div>' +
+                '</div>';
+                items.forEach(function (r) {
+                    html += '<div class="chat-bubble" onclick="openSharedModal(\'' + r.result_id + '\')">' +
+                        '<div class="chat-bubble-head">' +
+                            '<span class="chat-score">' + r.score + '<small>/100</small></span>' +
+                            '<span class="chat-date">' + new Date(r.created_at).toLocaleDateString() + '</span>' +
+                        '</div>' +
+                        '<div class="chat-bubble-video">Video: ' + r.video_id.substring(0, 8) + '...</div>' +
+                        '<div class="chat-bubble-view">Click to view details &#10132;</div>' +
+                    '</div>';
+                });
+                html += '</div>';
+            });
+            el.innerHTML = html;
+        });
+    }
+
+    function escHtml(s) {
+        var d = document.createElement('div');
+        d.textContent = s;
+        return d.innerHTML;
+    }
+
+    function openSharedModal(resultId) {
+        fetch('/api/result/' + resultId)
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                var body = document.getElementById('modalBody');
+                var html = '<h2>' + escHtml(data.filename || resultId) + '</h2>';
+
+                if (data.output_video_url) {
+                    html += '<div class="video-section">' +
+                        '<video controls class="result-video" src="' + data.output_video_url + '"></video>' +
+                    '</div>';
+                }
+
+                html += '<div class="detail-grid">' +
+                    '<div class="detail-item"><label>Score</label><span>' + (data.score != null ? data.score + ' / 100' : 'N/A') + '</span></div>' +
+                    '<div class="detail-item"><label>Date</label><span>' + new Date(data.created_at || Date.now()).toLocaleString() + '</span></div>' +
+                '</div>';
+
+                if (data.phases && data.phases.length > 0) {
+                    html += '<div class="phases-section"><h3>Phase Analysis</h3><div class="phases-grid">';
+                    data.phases.forEach(function (p) {
+                        var color = p.score >= 80 ? 'var(--success)' : p.score >= 50 ? 'var(--warning)' : 'var(--danger)';
+                        html += '<div class="phase-card">' +
+                            '<div class="phase-header">' +
+                                '<span class="phase-name">' + escHtml(p.phase_name) + '</span>' +
+                                '<span class="phase-score" style="color:' + color + '">' + Math.round(p.score) + '/100</span>' +
+                            '</div>' +
+                            '<div class="phase-bar"><div class="phase-fill" style="width:' + p.score + '%;background:' + color + '"></div></div>' +
+                            '<p class="phase-feedback">' + escHtml(p.feedback || '') + '</p>' +
+                        '</div>';
+                    });
+                    html += '</div></div>';
+                }
+
+                var summary = (data.feedback || 'No feedback available.').split('\n')[0];
+                html += '<div class="feedback-section">' +
+                    '<strong>Analysis Report</strong>' +
+                    '<p class="feedback-summary">' + escHtml(summary) + '</p>' +
+                    '<pre class="feedback-text feedback-hidden" id="feedbackFull">' + escHtml(data.feedback || '') + '</pre>' +
+                    '<button class="btn btn-sm feedback-toggle" id="feedbackToggle" onclick="toggleFeedback()">&#9660; Show detailed analysis</button>' +
+                '</div>';
+
+                html += '<div class="chart-container"><canvas id="scoreChart" height="200"></canvas></div>';
+
+                body.innerHTML = html;
+                document.getElementById('modalOverlay').classList.add('active');
+                drawScoreChart(data);
+            })
+            .catch(function () { alert('Could not load result.'); });
+    }
+
+    function toggleFeedback() {
+        var full = document.getElementById('feedbackFull');
+        var btn = document.getElementById('feedbackToggle');
+        if (full.classList.contains('feedback-hidden')) {
+            full.classList.remove('feedback-hidden');
+            btn.innerHTML = '&#9650; Hide detailed analysis';
+        } else {
+            full.classList.add('feedback-hidden');
+            btn.innerHTML = '&#9660; Show detailed analysis';
+        }
+    }
+
+    document.getElementById('modalClose').addEventListener('click', function () {
+        document.getElementById('modalOverlay').classList.remove('active');
+    });
+    document.getElementById('modalOverlay').addEventListener('click', function (e) {
+        if (e.target === this) this.classList.remove('active');
+    });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') document.getElementById('modalOverlay').classList.remove('active');
+    });
+
+    function drawScoreChart(data) {
+        var canvas = document.getElementById('scoreChart');
+        if (!canvas || typeof Chart === 'undefined') return;
+        var labels = ['Stance', 'Arm Angle', 'Release', 'Follow-through'];
+        var values = data.scores || [0, 0, 0, 0];
+        new Chart(canvas, {
+            type: 'radar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Score Breakdown',
+                    data: values,
+                    backgroundColor: 'rgba(255,106,0,0.15)',
+                    borderColor: '#ff6a00',
+                    pointBackgroundColor: '#ff6a00',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                scales: { r: { beginAtZero: true, max: 100, ticks: { color: '#888', backdropColor: 'transparent' }, grid: { color: 'rgba(255,255,255,0.06)' }, pointLabels: { color: '#ccc' } } },
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+
+    loadShared();
+    </script>
+    <script src="/static/js/canvas.js"></script>
+</body>
+</html>

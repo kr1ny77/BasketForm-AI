@@ -1,0 +1,9 @@
+{
+  "id": "2ec9cd7daebf8dcd0b6868dde23c2938",
+  "user_id": "user1",
+  "filename": "clip.mov",
+  "status": "processing",
+  "progress": 20,
+  "created_at": "2026-06-28T15:35:28.164045+03:00",
+  "updated_at": "2026-06-28T15:35:29.166354+03:00"
+}
