@@ -19,12 +19,20 @@ func NewProcessor(storage *Storage) *Processor {
 	return &Processor{storage: storage}
 }
 
+type mlPhase struct {
+	PhaseName string  `json:"phase_name"`
+	Score     float64 `json:"score"`
+	Feedback  string  `json:"feedback"`
+}
+
 type mlResult struct {
-	Score    int            `json:"score"`
-	Scores   []int          `json:"scores"`
-	Feedback string         `json:"feedback"`
-	PoseData []models.Point `json:"pose_data"`
-	Error    string         `json:"error,omitempty"`
+	Score        int            `json:"score"`
+	Scores       []int          `json:"scores"`
+	Feedback     string         `json:"feedback"`
+	PoseData     []models.Point `json:"pose_data"`
+	Phases       []mlPhase      `json:"phases"`
+	OutputVideo  string         `json:"output_video"`
+	Error        string         `json:"error,omitempty"`
 }
 
 func (p *Processor) ProcessVideo(id string) {
@@ -44,7 +52,7 @@ func (p *Processor) ProcessVideo(id string) {
 		p.storage.UpdateStatus(id, "processing", progress)
 	}
 
-	mlOut, err := runML(videoPath)
+	mlOut, err := runML(videoPath, video.UserID, id)
 	if err != nil {
 		log.Printf("ML script failed for %s: %v", id, err)
 		p.storage.UpdateStatus(id, "error", 0)
@@ -69,14 +77,24 @@ func (p *Processor) ProcessVideo(id string) {
 		mlOut.Feedback = "No feedback available."
 	}
 
+	var phases []models.PhaseScore
+	for _, ph := range mlOut.Phases {
+		phases = append(phases, models.PhaseScore{
+			PhaseName: ph.PhaseName,
+			Score:     ph.Score,
+		})
+	}
+
 	result := &models.Result{
 		ID:        id,
+		UserID:    video.UserID,
 		VideoID:   id,
 		Filename:  video.Filename,
 		Score:     mlOut.Score,
 		Feedback:  mlOut.Feedback,
 		PoseData:  mlOut.PoseData,
 		Scores:    mlOut.Scores,
+		Phases:    phases,
 		CreatedAt: time.Now().Format(time.RFC3339),
 	}
 
@@ -99,10 +117,14 @@ func findPython() string {
 	return "python3"
 }
 
-func runML(videoPath string) (*mlResult, error) {
+func runML(videoPath, userID, videoID string) (*mlResult, error) {
 	python := findPython()
 	script := filepath.Join("scripts", "analyze_video.py")
-	cmd := exec.Command(python, script, videoPath)
+	args := []string{script, videoPath}
+	if userID != "" && videoID != "" {
+		args = append(args, "--user_id", userID, "--video_id", videoID)
+	}
+	cmd := exec.Command(python, args...)
 	out, err := cmd.Output()
 	if err != nil {
 		return nil, err

@@ -170,7 +170,41 @@ func (a *APIHandler) Result(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	writeJSON(w, http.StatusOK, result)
+	outputVideoURL := ""
+	video, ok := a.storage.GetVideo(id)
+	if ok && video.UserID != "" {
+		_, err := os.Stat(filepath.Join("results", video.UserID, id, "output.mp4"))
+		if err == nil {
+			outputVideoURL = "/results-files/" + video.UserID + "/" + id + "/output.mp4"
+		}
+	}
+
+	type resultResp struct {
+		ID             string              `json:"id"`
+		UserID         string              `json:"user_id"`
+		VideoID        string              `json:"video_id"`
+		Filename       string              `json:"filename"`
+		Score          int                 `json:"score"`
+		Feedback       string              `json:"feedback"`
+		PoseData       []models.Point      `json:"pose_data"`
+		Scores         []int               `json:"scores"`
+		Phases         []models.PhaseScore `json:"phases"`
+		OutputVideoURL string              `json:"output_video_url"`
+		CreatedAt      string              `json:"created_at"`
+	}
+	writeJSON(w, http.StatusOK, resultResp{
+		ID:             result.ID,
+		UserID:         result.UserID,
+		VideoID:        result.VideoID,
+		Filename:       result.Filename,
+		Score:          result.Score,
+		Feedback:       result.Feedback,
+		PoseData:       result.PoseData,
+		Scores:         result.Scores,
+		Phases:         result.Phases,
+		OutputVideoURL: outputVideoURL,
+		CreatedAt:      result.CreatedAt,
+	})
 }
 
 func (a *APIHandler) Videos(w http.ResponseWriter, r *http.Request) {

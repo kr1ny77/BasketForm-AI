@@ -1105,3 +1105,86 @@ a:hover { color: var(--accent-light); }
     color: var(--text);
     padding: 0.5rem 0;
 }
+
+/* ======================== VIDEO & PHASES ======================== */
+.modal-lg {
+    max-width: 820px;
+}
+
+.video-section {
+    margin-bottom: 1.5rem;
+}
+
+.result-video {
+    width: 100%;
+    border-radius: var(--radius-sm);
+    background: #000;
+    max-height: 400px;
+}
+
+.phases-section {
+    margin-bottom: 1.5rem;
+}
+
+.phases-section h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    letter-spacing: -0.01em;
+}
+
+.phases-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.phase-card {
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
+    padding: 1rem 1.25rem;
+    border: 1px solid var(--border);
+}
+
+.phase-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.phase-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.phase-score {
+    font-weight: 800;
+    font-size: 0.95rem;
+}
+
+.phase-bar {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 0.5rem;
+}
+
+.phase-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.phase-feedback {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+@media (max-width: 700px) {
+    .modal-lg { max-width: 100%; }
+    .result-video { max-height: 250px; }
+}
