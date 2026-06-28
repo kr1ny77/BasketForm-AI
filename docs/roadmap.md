@@ -4,105 +4,32 @@
 
 BasketForm-AI is an AI-powered platform that helps basketball players improve their shooting technique through video analysis and personalized feedback.
 
-## Current Status
+## Product Goal
 
-- **MVP v0:** Deployed with basic video upload (v0.0.1)
-- **MVP v1:** Completed and deployed (v0.1.0) — [Release](https://github.com/kr1ny77/BasketForm-AI/releases/tag/v0.1.0)
+Deliver a trustworthy, production-ready basketball shooting-form coach: real biomechanical analysis of genuine basketball shots, credible and durable feedback, and sharing/progress features that keep players coming back.
 
-## MVP Versions
+## Current Status (as of 2026-06-28)
 
-### MVP v0 (Completed — v0.0.1)
-- Basic video upload functionality
-- Simple web interface
-- Deployment at http://80.74.30.14/
-
-### MVP v1 (Completed — v0.1.0)
-**Goal:** Deliver core basketball shooting form analysis with Go backend, Canvas frontend, and mock ML pipeline.
-
-**Scope (all Done):**
-- [US-001](https://github.com/kr1ny77/BasketForm-AI/issues/20): Upload shooting form video
-- [US-002](https://github.com/kr1ny77/BasketForm-AI/issues/21): View automated form analysis
-- [US-003](https://github.com/kr1ny77/BasketForm-AI/issues/22): Create and manage a user account
-- [US-004](https://github.com/kr1ny77/BasketForm-AI/issues/23): Receive simplified actionable feedback
-- [US-010](https://github.com/kr1ny77/BasketForm-AI/issues/28): Export analysis report as PDF
-
-**Delivered Features:**
-- Go HTTP server with html/template rendering
-- Video upload with drag-and-drop, format validation, UUID naming
-- Canvas basketball-themed background animation (35 objects, mouse interaction)
-- Mock ML pipeline (score, feedback, pose data)
-- REST API with upload, status, results, and video list endpoints
-- Progress polling with real-time UI updates
-- Results page with Chart.js radar + scatter charts
-- PDF export via jsPDF
-- Profile page (demo mode)
-- Dark glass-morphism theme, mobile-first responsive
-- 47 unit + integration tests
-- Manual test checklist with 50+ scenarios
-
-### MVP v2 (Sprint 2 — Planned)
-**Goal:** Enhanced comparison and sharing features
-
-**Planned Features:**
-- [US-005](https://github.com/kr1ny77/BasketForm-AI/issues/24): Compare form with professional players
-- [US-006](https://github.com/kr1ny77/BasketForm-AI/issues/25): Share analysis report with a coach
-- [US-007](https://github.com/kr1ny77/BasketForm-AI/issues/26): Share progress with friends
-- [US-008](https://github.com/kr1ny77/BasketForm-AI/issues/27): Track shooting progress over time
-
-### MVP v3 (Sprint 3 — Future)
-**Goal:** Community and social features
-
-**Planned Features:**
-- Advanced analytics dashboard
-- Coach portal
-- Team management
-- Competition features
+MVP v0 (v0.0.1) provides basic video upload, deployed at http://80.74.30.14/. MVP v1 (v0.1.0) delivers core analysis with a Go backend, Canvas frontend, and a mock ML pipeline; it is completed and released (see the v0.1.0 release). The current direction is to harden MVP v1 into a trustworthy product by replacing the mock pipeline with real basketball-shot analysis and adding result persistence. The customer accepted the mock ML for the demo only and explicitly asked for real analysis, basketball/player detection, and rejection of non-basketball videos.
 
 ## Sprint Plan
 
-### Sprint 1 (Completed)
-- **Duration:** 2026-06-16 — 2026-06-29
-- **Goal:** Deliver MVP v1 — core analysis with Go backend, Canvas frontend, mock ML
-- **Milestone:** [Sprint 1](https://github.com/kr1ny77/BasketForm-AI/milestone/1)
-- **Release:** [v0.1.0](https://github.com/kr1ny77/BasketForm-AI/releases/tag/v0.1.0)
+### Sprint 1 - MVP v1 (Completed)
 
-### Sprint 2 (Planned)
-- **Duration:** 2 weeks
-- **Focus:** Comparison features, sharing, progress tracking
-- **Deliverables:** Professional comparison, coach sharing, social sharing, progress charts
+Milestone: https://github.com/kr1ny77/BasketForm-AI/milestone/1 . Dates: 2026-06-16 to 2026-06-29. Sprint Goal: deliver core basketball shooting-form analysis with Go backend, Canvas frontend, and mock ML pipeline. Outcome: all MVP v1 user stories Done (US-001, US-002, US-003, US-004, US-010), packaged as SemVer release v0.1.0.
 
-### Sprint 3 (Future)
-- **Duration:** 2 weeks
-- **Focus:** Community features
-- **Deliverables:** Social feed, advanced analytics, coach portal
+### Sprint 2 - Assignment 4 (Current Sprint)
 
-## Technical Roadmap
+Milestone (authoritative Sprint container): https://github.com/kr1ny77/BasketForm-AI/milestone/2 . Dates: 2026-06-29 (Mon) to 2026-07-05 (Sun). Sprint Goal: make the analysis trustworthy and durable - replace the mock pipeline with real basketball-shot analysis that detects and tracks the ball, clearly rejects non-basketball videos instead of scoring them, and persists results across server restarts. Sprint Backlog board (GitHub repository Issues view): https://github.com/kr1ny77/BasketForm-AI/issues/views/775 - it shows the issues in Milestone 2 with priority, MVP version, milestone, and assignee. Planned items (see each issue for expected outcome, acceptance criteria, Story Points, implementer, reviewer, and Work Status): PBI-016 (#64) real Python ML pipeline; PBI-017 (#65) basketball + player detection and non-basketball validation; PBI-018 (#66) result persistence across restarts; PBI-019 (#67) automated tests for ML, validation, persistence; PBI-020 (#68) deploy real ML runtime to production; PBI-021 (#62) track the basketball and refine the release-phase algorithm. Packaged increment: a SemVer release (planned v0.2.0) is created after the Sprint work is Done. The milestone is planning and scope evidence; the SemVer release is the packaged increment evidence.
 
-### Phase 1: Foundation (MVP v0 → v1) — DONE
-- Go HTTP server with standard library
-- html/template rendering with shared layout
-- Canvas basketball-themed animations
-- REST API for upload, status, results
-- Mock ML pipeline (score + feedback + pose)
-- Unit and integration tests
-- CI with golangci-lint + go test + go build
+### Sprint 3 - Expected Next Sprint (Planned)
 
-### Phase 2: Enhancement (MVP v2)
-- Python ML script integration via exec
-- Real biomechanical analysis with MediaPipe
-- Professional player comparison library
-- Sharing mechanisms
-- Progress tracking over time
+Focus: build value features on top of the now-trustworthy analysis - comparison and sharing. Candidate items: US-005 compare with professional players (#24), US-006 share report with a coach (#25), US-007 share progress with friends (#26), US-008 track progress over time (#27). Any Sprint 2 should-have work not finished (for example deployment polish) carries over here.
 
-### Phase 3: Scale (MVP v3)
-- Coach portal
-- Team features
-- Competition system
-- Potential mobile app
+## Quality and Automation Work That Must Continue
+
+This work is ongoing across later Sprints and must not be dropped: keep the GitHub Actions CI green (golangci-lint, go test -race, go build, link check) on every PR; maintain and grow automated test coverage as features land and do not let it fall below the current baseline, with new ML, validation, and persistence behaviour covered by tests (PBI-019); keep the non-basketball rejection and ball/player validation covered by positive and negative sample tests; keep deployment reproducible (Docker plus documented run instructions) so each increment can be released; and keep traceability in sync across docs/user-stories.md, this roadmap, the milestones, and CHANGELOG.
 
 ## Links
 
-- [User Stories Index](user-stories.md)
-- [Definition of Done](definition-of-done.md)
-- [CHANGELOG](../CHANGELOG.md)
-- [Repository](https://github.com/kr1ny77/BasketForm-AI)
+User Stories Index: user-stories.md . Definition of Done: definition-of-done.md . CHANGELOG: ../CHANGELOG.md . Sprint 1 milestone: https://github.com/kr1ny77/BasketForm-AI/milestone/1 . Sprint 2 (Assignment 4) milestone: https://github.com/kr1ny77/BasketForm-AI/milestone/2 . Repository: https://github.com/kr1ny77/BasketForm-AI
