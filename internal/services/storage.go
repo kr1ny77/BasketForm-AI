@@ -196,6 +196,10 @@ func (s *Storage) saveVideoJSON(v *models.Video) {
 	os.WriteFile(path, data, 0o644)
 }
 
+func (s *Storage) SaveVideoJSON(v *models.Video) {
+	s.saveVideoJSON(v)
+}
+
 func (s *Storage) loadVideoJSON(id string) (*models.Video, bool) {
 	path := filepath.Join(s.dataDir, "videos", id+".json")
 	data, err := os.ReadFile(path)

@@ -114,16 +114,21 @@ func (a *APIHandler) Upload(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	lang := r.FormValue("lang")
+	if lang == "" {
+		lang = "en"
+	}
+
 	video := a.storage.CreateVideo(id, header.Filename, userID)
-	respID := video.ID
-	respFilename := video.Filename
-	respStatus := video.Status
+	video.Lang = lang
+	a.storage.SaveVideoJSON(video)
+
 	go a.processor.ProcessVideo(id)
 
 	writeJSON(w, http.StatusCreated, map[string]string{
-		"id":       respID,
-		"filename": respFilename,
-		"status":   respStatus,
+		"id":       video.ID,
+		"filename": video.Filename,
+		"status":   video.Status,
 	})
 }
 

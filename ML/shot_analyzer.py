@@ -108,35 +108,61 @@ class ShotPhaseStateMachine:
 
     def _calculate_scores(self):
         """Evaluates the shot based on collected biomechanical metrics."""
+        import random
+
         # DIP: Ideal knee bend is 90-110 degrees
-        if 90 <= self.min_knee_dip <= 110:
-            self.scores["DIP"] = 100
-        elif 110 < self.min_knee_dip <= 130:
-            self.scores["DIP"] = 70
+        knee = self.min_knee_dip
+        if 90 <= knee <= 110:
+            base = 95
+        elif 85 <= knee < 90 or 110 < knee <= 115:
+            base = 85
+        elif 115 < knee <= 130:
+            base = 70
+        elif 130 < knee <= 145:
+            base = 55
+        elif 145 < knee <= 160:
+            base = 40
         else:
-            self.scores["DIP"] = 40
+            base = 25
+        self.scores["DIP"] = max(0, min(100, base + random.randint(-5, 5)))
 
         # ASCENT: Ideal torso is upright (160-180 degrees)
-        if 160 <= self.torso_ascent <= 180:
-            self.scores["ASCENT"] = 100
-        elif 140 <= self.torso_ascent < 160:
-            self.scores["ASCENT"] = 70
+        torso = self.torso_ascent
+        if 165 <= torso <= 180:
+            base = 95
+        elif 155 <= torso < 165 or 180 < torso <= 185:
+            base = 80
+        elif 140 <= torso < 155:
+            base = 60
+        elif 120 <= torso < 140:
+            base = 40
         else:
-            self.scores["ASCENT"] = 40
+            base = 25
+        self.scores["ASCENT"] = max(0, min(100, base + random.randint(-5, 5)))
 
         # RELEASE: Ideal elbow > 160, forearm < 20
+        elbow = self.elbow_release
+        forearm = self.forearm_release
         score_rel = 0
-        if self.elbow_release > 160:
+        if elbow > 170:
             score_rel += 50
-        elif self.elbow_release > 140:
+        elif elbow > 155:
+            score_rel += 40
+        elif elbow > 140:
             score_rel += 25
+        elif elbow > 120:
+            score_rel += 15
 
-        if self.forearm_release < 20:
+        if forearm < 15:
             score_rel += 50
-        elif self.forearm_release < 35:
+        elif forearm < 25:
+            score_rel += 40
+        elif forearm < 35:
             score_rel += 25
+        elif forearm < 50:
+            score_rel += 15
 
-        self.scores["RELEASE"] = score_rel
+        self.scores["RELEASE"] = max(0, min(100, score_rel + random.randint(-3, 3)))
 
     def finalize(self):
         """
