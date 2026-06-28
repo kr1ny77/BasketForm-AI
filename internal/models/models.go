@@ -14,6 +14,7 @@ type Video struct {
 	ID        string    `json:"id"`
 	UserID    string    `json:"user_id"`
 	Filename  string    `json:"filename"`
+	Lang      string    `json:"lang"`
 	Status    string    `json:"status"`
 	Progress  int       `json:"progress"`
 	Score     *int      `json:"score,omitempty"`

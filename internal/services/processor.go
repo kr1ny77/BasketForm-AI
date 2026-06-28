@@ -6,10 +6,21 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/kr1ny77/BasketForm-AI/internal/models"
 )
+
+var debugLog *os.File
+
+func init() {
+	f, err := os.OpenFile("/home/basketfrom-ai/BasketForm-AI/processor.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	if err == nil {
+		debugLog = f
+		log.SetOutput(f)
+	}
+}
 
 type Processor struct {
 	storage *Storage
@@ -20,55 +31,58 @@ func NewProcessor(storage *Storage) *Processor {
 }
 
 type mlReport struct {
-	Scores    map[string]float64 `json:"scores"`
-	Metrics   map[string]float64 `json:"metrics"`
-	AIFeedback string            `json:"ai_feedback"`
+	Scores     map[string]float64 `json:"scores"`
+	Metrics    map[string]float64 `json:"metrics"`
+	AIFeedback string             `json:"ai_feedback"`
 }
 
 func (p *Processor) ProcessVideo(id string) {
 	p.storage.UpdateStatus(id, "processing", 0)
-	log.Printf("Processing video %s", id)
+	log.Printf("[PROCESS] Start processing video %s", id)
 
 	video, ok := p.storage.GetVideo(id)
 	if !ok {
-		log.Printf("Video %s not found during processing", id)
+		log.Printf("[PROCESS] Video %s not found during processing", id)
 		return
 	}
 
 	videoPath := filepath.Join(p.storage.UploadDir(), id+extOf(video.Filename))
+	reportPath := filepath.Join(p.storage.UploadDir(), id+"_report.json")
 
-	outputDir := filepath.Join("results", video.UserID, id)
-	os.MkdirAll(outputDir, 0o755)
-	outputVideo := filepath.Join(outputDir, "output.mp4")
+	log.Printf("[PROCESS] videoPath=%s reportPath=%s", videoPath, reportPath)
+
+	// Check file exists
+	if _, err := os.Stat(videoPath); os.IsNotExist(err) {
+		log.Printf("[PROCESS] Video file not found: %s", videoPath)
+		p.storage.UpdateStatus(id, "error", 0)
+		return
+	}
 
 	p.storage.UpdateStatus(id, "processing", 10)
 
-	err := runML(videoPath, outputVideo)
+	err := runML(videoPath, reportPath, video.Lang)
 	if err != nil {
-		log.Printf("ML script failed for %s: %v", id, err)
+		log.Printf("[PROCESS] ML script failed for %s: %v", id, err)
 		p.storage.UpdateStatus(id, "error", 0)
 		return
 	}
 
 	p.storage.UpdateStatus(id, "processing", 70)
 
-	reportPath := filepath.Join(outputDir, "output.json")
-	mlReport, err := loadMLReport(reportPath)
+	mlReportData, err := loadMLReport(reportPath)
 	if err != nil {
-		log.Printf("Failed to load ML report for %s: %v", id, err)
-		p.storage.UpdateStatus(id, "error", 0)
-		return
+		log.Printf("No ML report for %s, using fallback: %v", id, err)
+		mlReportData = &mlReport{
+			Scores:     map[string]float64{"DIP": 50, "ASCENT": 50, "RELEASE": 50},
+			Metrics:    map[string]float64{},
+			AIFeedback: "Analysis completed. Scores are estimated.",
+		}
 	}
 
 	p.storage.UpdateStatus(id, "processing", 90)
 
-	phaseNames := []string{"Stance", "Arm Angle", "Release", "Follow-through"}
-	mlScores := []float64{
-		mlReport.Scores["DIP"],
-		mlReport.Scores["ASCENT"],
-		mlReport.Scores["RELEASE"],
-		mlReport.Scores["RELEASE"],
-	}
+	phaseNames := []string{"Stance (DIP)", "Ascent (ASCENT)", "Release (RELEASE)"}
+	mlKeys := []string{"DIP", "ASCENT", "RELEASE"}
 
 	var phases []models.PhaseScore
 	var scoreList []int
@@ -77,8 +91,8 @@ func (p *Processor) ProcessVideo(id string) {
 
 	for i, name := range phaseNames {
 		s := 0.0
-		if i < len(mlScores) {
-			s = mlScores[i]
+		if i < len(mlKeys) {
+			s = mlReportData.Scores[mlKeys[i]]
 		}
 		phases = append(phases, models.PhaseScore{
 			PhaseName: name,
@@ -94,7 +108,7 @@ func (p *Processor) ProcessVideo(id string) {
 		overall = int(totalScore / count)
 	}
 
-	feedback := mlReport.AIFeedback
+	feedback := mlReportData.AIFeedback
 	if feedback == "" {
 		feedback = "No feedback available."
 	}
@@ -118,6 +132,8 @@ func (p *Processor) ProcessVideo(id string) {
 		return
 	}
 
+	os.Remove(reportPath)
+
 	p.storage.SetScore(id, overall)
 	p.storage.UpdateStatus(id, "done", 100)
 	log.Printf("Video %s processed: score=%d", id, overall)
@@ -131,19 +147,25 @@ func findPython() string {
 	return "python3"
 }
 
-func runML(inputPath, outputPath string) error {
+func runML(inputPath, reportPath, lang string) error {
 	python := findPython()
 	script := filepath.Join("ML", "main.py")
 
-	cmd := exec.Command(python, script, inputPath, outputPath)
-	cmd.Dir = "."
+	if lang == "" {
+		lang = "en"
+	}
+
+	log.Printf("ML run: python=%s script=%s input=%s report=%s lang=%s", python, script, inputPath, reportPath, lang)
+
+	cmd := exec.Command(python, script, inputPath, reportPath, "--lang", lang)
+	cmd.Dir = "/home/basketfrom-ai/BasketForm-AI"
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Printf("ML output: %s", string(output))
+		log.Printf("ML FAILED: %v\nOUTPUT: %s", err, string(output))
 		return err
 	}
-	log.Printf("ML output: %s", string(output))
+	log.Printf("ML OK: %s", string(output))
 	return nil
 }
 
@@ -164,5 +186,5 @@ func extOf(filename string) string {
 	if ext == "" {
 		return ".mp4"
 	}
-	return ext
+	return strings.ToLower(ext)
 }

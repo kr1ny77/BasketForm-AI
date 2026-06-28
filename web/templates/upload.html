@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload — BasketForm-AI</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=3">
+    <link rel="stylesheet" href="/static/css/style.css?v=4">
     <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
 </head>
 <body>
@@ -41,7 +41,7 @@
                     <p data-i18n="upload_drag">Drag &amp; drop your video here</p>
                     <p class="dropzone-hint" data-i18n="upload_hint">or click to browse · MP4, MOV, AVI · max 100 MB</p>
                     <p class="dropzone-file-name" id="fileName"></p>
-                    <input type="file" id="fileInput" accept="video/mp4,video/quicktime,video/x-msvideo" hidden>
+                    <input type="file" id="fileInput" accept="video/*,.mp4,.mov,.avi,.MP4,.MOV,.AVI" hidden>
                 </div>
             </div>
             <div class="upload-status" id="uploadStatus" style="display:none;">
@@ -75,8 +75,9 @@
     });
 
     function handleFile(file) {
-        var allowed = ['video/mp4', 'video/quicktime', 'video/x-msvideo'];
-        if (allowed.indexOf(file.type) === -1) {
+        var ext = file.name.split('.').pop().toLowerCase();
+        var allowedExt = ['mp4', 'mov', 'avi'];
+        if (allowedExt.indexOf(ext) === -1) {
             alert('Unsupported format. Use MP4, MOV, or AVI.');
             return;
         }
@@ -88,6 +89,7 @@
         uploadStatus.style.display = 'block';
         var formData = new FormData();
         formData.append('video', file);
+        formData.append('lang', localStorage.getItem('lang') || 'en');
         var xhr = new XMLHttpRequest();
         xhr.upload.addEventListener('progress', function (e) {
             if (e.lengthComputable) {

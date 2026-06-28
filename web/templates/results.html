@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results — BasketForm-AI</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=3">
+    <link rel="stylesheet" href="/static/css/style.css?v=4">
     <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
     <canvas id="bgCanvas"></canvas>
@@ -176,8 +175,8 @@
                 html += '<div class="chart-container"><canvas id="scoreChart" height="200"></canvas></div>';
 
                 html += '<div class="modal-actions">' +
-                    '<button class="btn btn-primary" onclick="openShareModal()">&#128279; Share</button>' +
-                    '<button class="btn btn-outline" onclick="exportPDF()">&#128196; Export PDF</button>' +
+                    '<button class="btn btn-primary" onclick="openShareModal()">&#128279; <span data-i18n="share_btn">Share</span></button>' +
+                    '<button class="btn btn-outline" onclick="exportPDF()">&#128196; <span data-i18n="export_pdf_btn">Export PDF</span></button>' +
                 '</div>';
 
                 body.innerHTML = html;
@@ -297,137 +296,70 @@
 
     // --- PDF Export ---
     function exportPDF() {
-        if (typeof window.jspdf === 'undefined') {
-            alert('PDF library is loading, please try again.');
-            return;
-        }
-        var jsPDF = window.jspdf.jsPDF;
-        var doc = new jsPDF();
-        var margin = 15;
-        var y = margin;
-        var lineHeight = 7;
-        var pageW = doc.internal.pageSize.getWidth();
-
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(18);
-        doc.setTextColor(255, 106, 0);
-        doc.text('BasketForm-AI Analysis Report', margin, y);
-        y += lineHeight + 5;
-
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(10);
-        doc.setTextColor(100, 100, 100);
-        doc.text('Generated: ' + new Date().toLocaleString(), margin, y);
-        y += lineHeight + 5;
-
-        doc.setDrawColor(255, 106, 0);
-        doc.setLineWidth(0.5);
-        doc.line(margin, y, pageW - margin, y);
-        y += lineHeight + 3;
-
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(12);
-        doc.setTextColor(30, 30, 30);
-
         var body = document.getElementById('modalBody');
         if (!body) return;
 
-        var scoreEl = body.querySelector('.detail-item span');
+        var printWin = window.open('', '_blank');
+        var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
+
+        var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+            '<style>' +
+            'body{font-family:Arial,sans-serif;padding:30px;color:#222;line-height:1.6;}' +
+            'h1{color:#ff6a00;font-size:22px;margin-bottom:5px;}' +
+            'h2{font-size:18px;margin:15px 0 8px;border-bottom:2px solid #ff6a00;padding-bottom:5px;}' +
+            '.meta{color:#666;font-size:13px;margin-bottom:15px;}' +
+            '.phase{background:#f5f5f5;padding:12px;border-radius:6px;margin-bottom:10px;}' +
+            '.phase-name{font-weight:bold;font-size:14px;}' +
+            '.phase-score{color:#ff6a00;font-weight:bold;font-size:16px;float:right;}' +
+            '.phase-fb{font-size:13px;color:#444;margin-top:5px;}' +
+            '.feedback{background:#fff3e0;padding:15px;border-left:3px solid #ff6a00;margin:15px 0;font-size:13px;white-space:pre-wrap;}' +
+            '.footer{margin-top:20px;padding-top:10px;border-top:1px solid #ddd;color:#999;font-size:11px;}' +
+            '</style></head><body>';
+
+        var h2 = body.querySelector('h2');
+        html += '<h1>BasketForm-AI ' + (t.export_title || 'Report') + '</h1>';
+        html += '<div class="meta">' + (h2 ? h2.textContent.trim() : '') + ' | ' + new Date().toLocaleString() + '</div>';
+
         var allDetailItems = body.querySelectorAll('.detail-item');
-        var filename = '';
-        var score = '';
-        var videoId = '';
-        var date = '';
+        var score = '', date = '';
         allDetailItems.forEach(function (item) {
             var label = item.querySelector('label');
             var span = item.querySelector('span');
             if (label && span) {
                 var lbl = label.textContent.trim();
                 var val = span.textContent.trim();
-                if (lbl === 'Score') score = val;
-                if (lbl === 'Video ID') videoId = val;
-                if (lbl === 'Date') date = val;
+                if (lbl === 'Score' || lbl === '\u0411\u0430\u043b\u043b') score = val;
+                if (lbl === 'Date' || lbl === '\u0414\u0430\u0442\u0430') date = val;
             }
         });
+        html += '<div class="meta">' + (t.results_detail_score || 'Score') + ': <b>' + score + '</b> | ' + (t.results_detail_date || 'Date') + ': ' + date + '</div>';
 
-        var h2 = body.querySelector('h2');
-        if (h2) filename = h2.textContent.trim();
-
-        doc.setFontSize(13);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Video: ' + filename, margin, y);
-        y += lineHeight;
-
-        doc.setFont('helvetica', 'normal');
-        doc.setFontSize(10);
-        doc.setTextColor(60, 60, 60);
-        doc.text('Score: ' + score, margin, y); y += lineHeight;
-        doc.text('Date: ' + date, margin, y); y += lineHeight;
-        doc.text('Video ID: ' + videoId, margin, y);
-        y += lineHeight + 5;
-
-        var phasesSection = body.querySelector('.phases-section');
-        if (phasesSection) {
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(12);
-            doc.setTextColor(30, 30, 30);
-            doc.text('Phase Analysis', margin, y);
-            y += lineHeight + 2;
-
-            var phaseCards = body.querySelectorAll('.phase-card');
+        var phaseCards = body.querySelectorAll('.phase-card');
+        if (phaseCards.length) {
+            html += '<h2>' + (t.results_detail_score || 'Phase Analysis') + '</h2>';
             phaseCards.forEach(function (card) {
-                if (y > 260) { doc.addPage(); y = margin; }
                 var name = card.querySelector('.phase-name');
-                var score = card.querySelector('.phase-score');
+                var sc = card.querySelector('.phase-score');
                 var fb = card.querySelector('.phase-feedback');
-                if (name) {
-                    doc.setFont('helvetica', 'bold');
-                    doc.setFontSize(10);
-                    doc.setTextColor(30, 30, 30);
-                    doc.text(name.textContent.trim() + ': ' + (score ? score.textContent.trim() : ''), margin, y);
-                    y += lineHeight - 1;
-                }
-                if (fb) {
-                    doc.setFont('helvetica', 'normal');
-                    doc.setFontSize(9);
-                    doc.setTextColor(80, 80, 80);
-                    var lines = doc.splitTextToSize(fb.textContent.trim(), pageW - 2 * margin);
-                    lines.forEach(function (line) {
-                        if (y > 275) { doc.addPage(); y = margin; }
-                        doc.text(line, margin, y);
-                        y += 5;
-                    });
-                }
-                y += 3;
+                html += '<div class="phase">';
+                if (name) html += '<div class="phase-name">' + name.textContent.trim() + ' <span class="phase-score">' + (sc ? sc.textContent.trim() : '') + '</span></div>';
+                if (fb) html += '<div class="phase-fb">' + fb.textContent.trim() + '</div>';
+                html += '</div>';
             });
         }
-
-        y += 3;
-        if (y > 250) { doc.addPage(); y = margin; }
-        doc.setDrawColor(255, 106, 0);
-        doc.line(margin, y, pageW - margin, y);
-        y += lineHeight + 3;
-
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(12);
-        doc.setTextColor(30, 30, 30);
-        doc.text('Full Feedback', margin, y);
-        y += lineHeight;
 
         var feedbackFull = document.getElementById('feedbackFull');
-        if (feedbackFull) {
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(9);
-            doc.setTextColor(60, 60, 60);
-            var fbLines = doc.splitTextToSize(feedbackFull.textContent.trim(), pageW - 2 * margin);
-            fbLines.forEach(function (line) {
-                if (y > 275) { doc.addPage(); y = margin; }
-                doc.text(line, margin, y);
-                y += 5;
-            });
+        if (feedbackFull && feedbackFull.textContent.trim()) {
+            html += '<h2>' + (t.results_feedback || 'Feedback') + '</h2>';
+            html += '<div class="feedback">' + feedbackFull.textContent.trim() + '</div>';
         }
 
-        doc.save('BasketForm-AI-' + (filename || 'report').replace(/[^a-zA-Z0-9]/g, '_') + '.pdf');
+        html += '<div class="footer">BasketForm-AI \u2014 ' + new Date().toLocaleDateString() + '</div>';
+        html += '</body></html>';
+
+        printWin.document.write(html);
+        printWin.document.close();
+        setTimeout(function () { printWin.print(); }, 500);
     }
     </script>
     <script src="/static/js/canvas.js"></script>

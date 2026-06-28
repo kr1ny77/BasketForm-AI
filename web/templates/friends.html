@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Friends — BasketForm-AI</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=3">
+    <link rel="stylesheet" href="/static/css/style.css?v=4">
     <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
 </head>
 <body>
@@ -32,37 +32,37 @@
     </nav>
     <main class="content">
         <section class="page-header">
-            <h1>Friends</h1>
-            <p>Find players, connect, and share your results</p>
+            <h1 data-i18n="friends_title">Friends</h1>
+            <p data-i18n="friends_desc">Find players, connect, and share your results</p>
         </section>
 
         <div class="friends-search-wrap">
             <div class="friends-search">
                 <span class="friends-search-icon">&#128269;</span>
-                <input type="text" id="searchInput" placeholder="Search players by nickname..." class="friends-search-input">
-                <button id="searchBtn" class="friends-search-btn">Search</button>
+                <input type="text" id="searchInput" data-i18n-placeholder="friends_search_ph" placeholder="Search players by nickname..." class="friends-search-input">
+                <button id="searchBtn" class="friends-search-btn" data-i18n="friends_search_btn">Search</button>
             </div>
             <div id="searchResults" class="user-list"></div>
         </div>
 
         <section class="section-card">
-            <h2>&#128233; Pending Requests</h2>
+            <h2 data-i18n="friends_requests">Pending Requests</h2>
             <div id="requestsList" class="user-list">
-                <p class="text-muted">No pending requests.</p>
+                <p class="text-muted" data-i18n="friends_requests_empty">No pending requests.</p>
             </div>
         </section>
 
         <section class="section-card">
-            <h2>&#129309; My Friends</h2>
+            <h2 data-i18n="friends_my">My Friends</h2>
             <div id="friendsList" class="user-list">
-                <p class="text-muted">No friends yet. Search above to connect!</p>
+                <p class="text-muted" data-i18n="friends_my_empty">No friends yet. Search above to connect!</p>
             </div>
         </section>
 
         <section class="section-card" id="shareSection" style="display:none;">
-            <h2>&#128228; Share a Result with <span id="selectedFriendName"></span></h2>
+            <h2><span data-i18n="friends_share_title">Share a Result with</span> <span id="selectedFriendName"></span></h2>
             <div id="shareResultsList" class="user-list">
-                <p class="text-muted">Loading your results...</p>
+                <p class="text-muted" data-i18n="friends_share_loading">Loading your results...</p>
             </div>
             <div id="shareStatus" class="text-muted" style="margin-top:0.75rem;"></div>
         </section>
