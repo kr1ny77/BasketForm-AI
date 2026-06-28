@@ -77,3 +77,5 @@ uploads/*
 !uploads/.gitkeep
 results/*
 !results/.gitkeep
+data/
+**/data/

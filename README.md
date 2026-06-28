@@ -2,30 +2,33 @@
 
 Web service for analyzing basketball shooting form via video upload, biomechanical keypoint extraction, technique scoring, and personalized AI feedback.
 
-**Live:** http://80.74.30.14/ · [Video Demo](https://youtu.be/To_1ZwAMe4M) · [v0.1.0 Release](https://github.com/kr1ny77/BasketForm-AI/releases/tag/v0.1.0)
+**Live:** http://80.74.30.14/ · [v0.2.0 Release](https://github.com/kr1ny77/BasketForm-AI/releases/tag/v0.2.0)
 
 ## Project Overview
 
-BasketForm-AI is an AI-powered platform that helps basketball players improve their shooting technique through video analysis and personalized feedback. Users upload shooting videos, the system extracts biomechanical keypoints, evaluates stance, arm angle, release point, and follow-through, then generates simplified actionable recommendations.
+BasketForm-AI is an AI-powered platform that helps basketball players improve their shooting technique through video analysis and personalized feedback. Users upload shooting videos, the system extracts biomechanical keypoints, evaluates stance, arm angle, release point, and follow-through, then generates actionable recommendations.
 
 ## Key Features
 
+- **User Accounts:** Registration with email/nickname/password, JWT-based login
 - **Video Upload:** Drag-and-drop or file picker for basketball shot videos (MP4, MOV, AVI)
-- **Biomechanical Analysis:** Automatic extraction of key body points from video
+- **Biomechanical Analysis:** Automatic extraction of key body points using MediaPipe
 - **Technique Evaluation:** Scoring of stance, arm angle, release point, and follow-through (0–100)
-- **Personalized Feedback:** AI-generated recommendations (max 3 actionable takeaways)
-- **Progress Tracking:** Real-time processing status with auto-polling
-- **PDF Export:** Download analysis reports via jsPDF
-- **Canvas Animation:** Basketball-themed background (35 objects, mouse-reactive, orange waves)
+- **Annotated Video:** Output video with pose overlay, keypoints, skeleton, and HUD
+- **Phase Analysis:** Detailed per-phase scoring and personalized feedback
+- **Social Features:** Search users, friend requests, share results with friends
+- **PDF Export:** Download analysis reports with full score breakdown and feedback
+- **Dark Theme:** Glass-morphism design, orange accents, Canvas background animation
 
 ## Tech Stack
 
-- **Backend:** Go 1.21+ (standard library `net/http` + `html/template`)
+- **Backend:** Go 1.22+ (standard library `net/http`)
 - **Frontend:** HTML + CSS + JavaScript, Canvas animations, Chart.js, jsPDF
-- **Storage:** Local `uploads/` and `results/` directories
-- **ML:** Mock data pipeline (Python script available via `exec`)
-- **Testing:** Go `testing`, `httptest` (47 unit + integration tests)
-- **CI:** GitHub Actions — golangci-lint, go test, go build, Lychee link check
+- **ML:** MediaPipe Holistic + OpenCV (Python scripts via `exec`)
+- **Auth:** bcrypt password hashing, JWT tokens (HMAC-SHA256), HttpOnly cookies
+- **Storage:** Local JSON files in `data/` directory
+- **Testing:** Go `testing`, `httptest` (unit + integration + QRT tests)
+- **CI:** GitHub Actions — golangci-lint, test, coverage, QRT, govulncheck, Lychee
 - **Deployment:** Binary or Docker
 - **License:** MIT
 
@@ -42,7 +45,8 @@ go run ./cmd/server/
 
 ### Prerequisites
 
-- Go 1.21 or later
+- Go 1.22 or later
+- Python 3 with MediaPipe, OpenCV (for ML analysis)
 - `golangci-lint` (for linting, optional)
 
 ### Installation
@@ -53,12 +57,17 @@ go run ./cmd/server/
    cd BasketForm-AI
    ```
 
-2. **Run the server:**
+2. **Install Python dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Run the server:**
    ```bash
    go run ./cmd/server/
    ```
 
-3. **Open in browser:**
+4. **Open in browser:**
    ```
    http://localhost:8080
    ```
@@ -73,7 +82,11 @@ PORT=8080 ./bin/server
 ### Run Tests
 
 ```bash
+# Unit and integration tests
 go test -race -coverprofile=coverage.out ./...
+
+# Quality requirement tests
+go test -tags=qrt -v ./internal/qrt/...
 ```
 
 ### Run Linter
@@ -89,14 +102,19 @@ golangci-lint run
 | `PORT` | `8080` | Server port |
 | `UPLOAD_DIR` | `uploads` | Video upload directory |
 | `RESULTS_DIR` | `results` | Analysis results directory |
+| `DATA_DIR` | `data` | User/video/friend JSON storage |
+| `JWT_SECRET` | default | JWT signing secret |
 
 ## Deployment
 
-### Binary
+### Production (VM at http://80.74.30.14/)
 
 ```bash
-go build -o bin/server ./cmd/server/
-PORT=80 ./bin/server
+# Build
+go build -o /usr/local/bin/basketform-ai ./cmd/server/
+
+# Run
+PORT=80 /usr/local/bin/basketform-ai
 ```
 
 ### Docker
@@ -106,104 +124,64 @@ docker build -t basketform-ai .
 docker run -p 8080:8080 basketform-ai
 ```
 
-### Production (systemd)
-
-```bash
-# Build
-go build -o /usr/local/bin/basketform-ai ./cmd/server/
-
-# Create service file /etc/systemd/system/basketform-ai.service
-# [Unit]
-# Description=BasketForm-AI
-# After=network.target
-#
-# [Service]
-# Type=simple
-# User=www-data
-# WorkingDirectory=/opt/basketform-ai
-# ExecStart=/usr/local/bin/basketform-ai
-# Restart=always
-# Environment=PORT=80
-# Environment=UPLOAD_DIR=uploads
-# Environment=RESULTS_DIR=results
-#
-# [Install]
-# WantedBy=multi-user.target
-
-sudo systemctl enable basketform-ai
-sudo systemctl start basketform-ai
-```
-
-### Smoke Check
-
-```bash
-curl http://localhost:8080/
-# Expected: redirects to /upload
-
-curl http://localhost:8080/api/videos
-# Expected: []
-```
-
 ## Project Structure
 
 ```
 BasketForm-AI/
-├── cmd/server/main.go          # Application entry point
+├── cmd/server/main.go              # Application entry point
 ├── internal/
-│   ├── handlers/               # HTTP handlers (pages + API)
-│   │   ├── handlers.go         # Page handlers
-│   │   ├── api.go              # API handlers
-│   │   └── *_test.go           # Tests
-│   ├── models/                 # Data structures
-│   └── services/               # Business logic (storage, processor)
+│   ├── handlers/                   # HTTP handlers
+│   │   ├── handlers.go             # Page handlers
+│   │   ├── api.go                  # API handlers
+│   │   ├── auth.go                 # Auth handlers
+│   │   ├── friends.go              # Friends handlers
+│   │   ├── share.go                # Share handlers
+│   │   ├── middleware.go           # JWT auth middleware
+│   │   └── *_test.go               # Tests
+│   ├── models/                     # Data structures
+│   ├── services/                   # Business logic
+│   │   ├── auth.go                 # Auth service (bcrypt + JWT)
+│   │   ├── storage.go              # JSON file storage
+│   │   └── processor.go            # ML video processing
+│   └── qrt/                        # Quality requirement tests
 ├── web/
-│   ├── templates/              # HTML templates (html/template)
-│   └── static/                 # CSS, JS, images
-├── scripts/                    # Helper scripts (process_video.py)
-├── uploads/                    # Uploaded video files (gitignored)
-├── results/                    # Analysis result JSON files (gitignored)
-├── reports/                    # Course reports
-├── docs/                       # Project documentation
-├── Dockerfile                  # Container build
-├── CHANGELOG.md                # Version history
-└── LICENSE                     # MIT License
+│   ├── templates/                  # HTML templates
+│   │   ├── login.html, signup.html # Auth pages
+│   │   ├── upload.html             # Video upload
+│   │   ├── results.html            # Analysis results
+│   │   ├── friends.html            # Friend management
+│   │   ├── shared.html             # Shared results
+│   │   └── profile.html            # User profile
+│   └── static/                     # CSS, JS, images
+├── scripts/                        # Python ML scripts
+├── data/                           # JSON user/video/friend storage
+├── uploads/                        # Uploaded video files
+├── results/                        # Analysis result files + output videos
+├── docs/                           # Project documentation
+├── reports/                        # Course reports
+├── Dockerfile                      # Container build
+├── CHANGELOG.md                    # Version history
+└── LICENSE                         # MIT License
 ```
 
 ## Documentation
 
-### Assignment Reports
-- [Assignment 3 Report](reports/week3/README.md)
-- [Customer Review Summary](reports/week3/customer-review-summary.md)
-- [Reflection](reports/week3/reflection.md)
-- [Retrospective](reports/week3/retrospective.md)
-- [LLM Usage Report](reports/week3/llm-report.md)
-- [Manual Test Checklist](reports/week3/manual-test-checklist.md)
-
-### Assignment 2 (Historical)
-- [Assignment 2 Report](reports/week2/README.md)
-- [User Stories](reports/week2/user-stories.md)
-- [MVP v0 Report](reports/week2/mvp-v0-report.md)
+### Reports
+- [Week 4 Report](reports/week4/README.md)
+- [Customer Review Summary](reports/week4/customer-review-summary.md)
+- [Reflection](reports/week4/reflection.md)
+- [Retrospective](reports/week4/retrospective.md)
+- [LLM Usage Report](reports/week4/llm-report.md)
+- [User Acceptance Tests](docs/user-acceptance-tests.md)
 
 ### Project Management
 - [User Stories Index](docs/user-stories.md)
 - [Roadmap](docs/roadmap.md)
 - [Definition of Done](docs/definition-of-done.md)
+- [Quality Requirements](docs/quality-requirements.md)
+- [Quality Requirement Tests](docs/quality-requirement-tests.md)
+- [Testing Strategy](docs/testing.md)
 - [Changelog](CHANGELOG.md)
-- [License](LICENSE)
-
-## Contributing
-
-1. Create a feature branch: `<issue-number>-short-description`
-2. Commit changes with meaningful messages
-3. Push and open a Pull Request linked to the related issue
-4. Obtain at least one review approval before merging
-
-### PR Requirements
-- At least one approval from another team member
-- All CI checks must pass
-- Link to related issue
-- Update `CHANGELOG.md` if user-visible change
-- Verify acceptance criteria
 
 ## License
 
