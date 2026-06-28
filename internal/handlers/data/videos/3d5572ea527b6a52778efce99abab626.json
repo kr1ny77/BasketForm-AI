@@ -1,0 +1,9 @@
+{
+  "id": "3d5572ea527b6a52778efce99abab626",
+  "user_id": "user1",
+  "filename": "test.mp4",
+  "status": "processing",
+  "progress": 20,
+  "created_at": "2026-06-28T15:33:57.196751+03:00",
+  "updated_at": "2026-06-28T15:33:58.197645+03:00"
+}

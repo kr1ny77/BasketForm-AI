@@ -4,24 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Export — BasketForm-AI</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css?v=4">
     <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
     <nav class="navbar">
-        <a href="/" class="logo">BasketForm-AI</a>
-        <ul class="nav-links">
-            <li><a href="/upload" data-i18n="nav_upload">Upload</a></li>
-            <li><a href="/results" data-i18n="nav_results">Results</a></li>
-            <li><a href="/progress" data-i18n="nav_progress">Progress</a></li>
-            <li><a href="/export" class="active" data-i18n="nav_export">Export</a></li>
-            <li><a href="/profile" data-i18n="nav_profile">Profile</a></li>
-        </ul>
-        <select id="langSelect" class="lang-select" onchange="applyLang(this.value)">
-            <option value="en">EN</option>
-            <option value="ru">RU</option>
-        </select>
+        <div class="navbar-left">
+            <a href="/" class="logo">BasketForm-AI</a>
+        </div>
+        <div class="nav-center">
+            <ul class="nav-links">
+                <li><a href="/upload">Upload</a></li>
+                <li><a href="/results">Results</a></li>
+                <li><a href="/export" class="active">Export</a></li>
+                <li><a href="/shared">Shared</a></li>
+                <li><a href="/friends">Friends</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <select id="langSelect" class="lang-select" onchange="applyLang(this.value)">
+                <option value="en">EN</option>
+                <option value="ru">RU</option>
+            </select>
+            <a href="/profile" class="nav-profile">Profile</a>
+        </div>
     </nav>
     <main class="content">
         <section class="page-header">

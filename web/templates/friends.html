@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friends — BasketForm-AI</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=4">
+    <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
+</head>
+<body>
+    <canvas id="bgCanvas"></canvas>
+    <nav class="navbar">
+        <div class="navbar-left">
+            <a href="/" class="logo">BasketForm-AI</a>
+        </div>
+        <div class="nav-center">
+            <ul class="nav-links">
+                <li><a href="/upload">Upload</a></li>
+                <li><a href="/results">Results</a></li>
+                <li><a href="/export">Export</a></li>
+                <li><a href="/shared">Shared</a></li>
+                <li><a href="/friends" class="active">Friends</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <select id="langSelect" class="lang-select" onchange="applyLang(this.value)">
+                <option value="en">EN</option>
+                <option value="ru">RU</option>
+            </select>
+            <a href="/profile" class="nav-profile">Profile</a>
+        </div>
+    </nav>
+    <main class="content">
+        <section class="page-header">
+            <h1 data-i18n="friends_title">Friends</h1>
+            <p data-i18n="friends_desc">Find players, connect, and share your results</p>
+        </section>
+
+        <div class="friends-search-wrap">
+            <div class="friends-search">
+                <span class="friends-search-icon">&#128269;</span>
+                <input type="text" id="searchInput" data-i18n-placeholder="friends_search_ph" placeholder="Search players by nickname..." class="friends-search-input">
+                <button id="searchBtn" class="friends-search-btn" data-i18n="friends_search_btn">Search</button>
+            </div>
+            <div id="searchResults" class="user-list"></div>
+        </div>
+
+        <section class="section-card">
+            <h2 data-i18n="friends_requests">Pending Requests</h2>
+            <div id="requestsList" class="user-list">
+                <p class="text-muted" data-i18n="friends_requests_empty">No pending requests.</p>
+            </div>
+        </section>
+
+        <section class="section-card">
+            <h2 data-i18n="friends_my">My Friends</h2>
+            <div id="friendsList" class="user-list">
+                <p class="text-muted" data-i18n="friends_my_empty">No friends yet. Search above to connect!</p>
+            </div>
+        </section>
+
+        <section class="section-card" id="shareSection" style="display:none;">
+            <h2><span data-i18n="friends_share_title">Share a Result with</span> <span id="selectedFriendName"></span></h2>
+            <div id="shareResultsList" class="user-list">
+                <p class="text-muted" data-i18n="friends_share_loading">Loading your results...</p>
+            </div>
+            <div id="shareStatus" class="text-muted" style="margin-top:0.75rem;"></div>
+        </section>
+    </main>
+    <script>
+    var selectedFriendId = null;
+
+    function getInitial(name) {
+        return name ? name.charAt(0).toUpperCase() : '?';
+    }
+
+    function loadFriends() {
+        fetch('/api/friends').then(function(r) { return r.json(); }).then(function(data) {
+            var el = document.getElementById('friendsList');
+            if (!data || data.length === 0) {
+                el.innerHTML = '<p class="text-muted">No friends yet. Search above to connect!</p>';
+                return;
+            }
+            el.innerHTML = data.map(function(f) {
+                var sel = selectedFriendId === f.id ? ' selected' : '';
+                return '<div class="user-item friend-item' + sel + '" onclick="selectFriend(\'' + f.id + '\', \'' + f.nickname + '\')">' +
+                    '<div class="user-info">' +
+                        '<div class="user-avatar">' + getInitial(f.nickname) + '</div>' +
+                        '<span class="user-name">' + f.nickname + '</span>' +
+                    '</div>' +
+                    '<div class="user-actions">' +
+                        '<span class="friend-select-hint">Select to share &#10132;</span>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        });
+    }
+
+    function selectFriend(id, name) {
+        selectedFriendId = id;
+        document.getElementById('selectedFriendName').textContent = name;
+        document.getElementById('shareSection').style.display = 'block';
+        loadMyResults();
+        loadFriends();
+        document.getElementById('shareSection').scrollIntoView({behavior: 'smooth'});
+    }
+
+    function loadMyResults() {
+        var el = document.getElementById('shareResultsList');
+        el.innerHTML = '<p class="text-muted">Loading...</p>';
+        fetch('/api/videos').then(function(r) { return r.json(); }).then(function(videos) {
+            var done = videos.filter(function(v) { return v.status === 'done' && v.score != null; });
+            if (!done.length) {
+                el.innerHTML = '<p class="text-muted">No completed results to share. Upload a video first!</p>';
+                return;
+            }
+            el.innerHTML = done.map(function(v) {
+                return '<div class="user-item">' +
+                    '<div class="user-info">' +
+                        '<div class="user-avatar" style="background:linear-gradient(135deg,rgba(46,213,115,0.15),rgba(46,213,115,0.25));border-color:rgba(46,213,115,0.3);color:var(--success);">' + v.score + '</div>' +
+                        '<div>' +
+                            '<span class="user-name">' + v.filename + '</span>' +
+                            '<span class="text-muted" style="display:block;font-size:0.75rem;">Score: ' + v.score + '/100</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="user-actions">' +
+                        '<button class="btn btn-sm btn-primary" onclick="shareResult(\'' + v.id + '\')">Share</button>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        });
+    }
+
+    function shareResult(resultId) {
+        if (!selectedFriendId) return;
+        var status = document.getElementById('shareStatus');
+        fetch('/api/share/result', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({result_id: resultId, friend_id: selectedFriendId})
+        }).then(function(r) { return r.json(); }).then(function(data) {
+            if (data.error) {
+                status.textContent = data.error;
+                status.style.color = 'var(--danger)';
+            } else {
+                status.textContent = 'Result shared successfully!';
+                status.style.color = 'var(--success)';
+                setTimeout(function() { status.textContent = ''; }, 3000);
+            }
+        });
+    }
+
+    function loadRequests() {
+        fetch('/api/friends/requests').then(function(r) { return r.json(); }).then(function(data) {
+            var el = document.getElementById('requestsList');
+            var pending = (data || []).filter(function(r) { return r.status === 'pending'; });
+            if (pending.length === 0) {
+                el.innerHTML = '<p class="text-muted">No pending requests.</p>';
+                return;
+            }
+            el.innerHTML = pending.map(function(r) {
+                return '<div class="user-item">' +
+                    '<div class="user-info">' +
+                        '<div class="user-avatar">' + getInitial(r.from_nickname) + '</div>' +
+                        '<span class="user-name">' + r.from_nickname + '</span>' +
+                    '</div>' +
+                    '<div class="user-actions">' +
+                        '<button class="btn btn-sm btn-primary" onclick="acceptRequest(\'' + r.id + '\')">Accept</button>' +
+                        '<button class="btn btn-sm btn-danger" onclick="rejectRequest(\'' + r.id + '\')">Decline</button>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        });
+    }
+
+    function searchUsers() {
+        var q = document.getElementById('searchInput').value.trim();
+        if (!q) return;
+        fetch('/api/friends/search?q=' + encodeURIComponent(q))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            var el = document.getElementById('searchResults');
+            if (!data || data.length === 0) {
+                el.innerHTML = '<p class="text-muted">No users found.</p>';
+                return;
+            }
+            el.innerHTML = data.map(function(u) {
+                return '<div class="user-item">' +
+                    '<div class="user-info">' +
+                        '<div class="user-avatar">' + getInitial(u.nickname) + '</div>' +
+                        '<span class="user-name">' + u.nickname + '</span>' +
+                    '</div>' +
+                    '<div class="user-actions">' +
+                        '<button class="btn btn-sm btn-primary" onclick="sendRequest(\'' + u.id + '\')">Add Friend</button>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        });
+    }
+
+    function sendRequest(toUserId) {
+        fetch('/api/friends/request', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({to_user_id: toUserId})
+        }).then(function(r) { return r.json(); }).then(function(data) {
+            if (data.error) { alert(data.error); return; }
+            alert('Request sent!');
+        });
+    }
+
+    function acceptRequest(requestId) {
+        fetch('/api/friends/accept', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({request_id: requestId})
+        }).then(function(r) { return r.json(); }).then(function(data) {
+            if (data.error) { alert(data.error); return; }
+            loadFriends();
+            loadRequests();
+        });
+    }
+
+    function rejectRequest(requestId) {
+        fetch('/api/friends/reject', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({request_id: requestId})
+        }).then(function(r) { return r.json(); }).then(function(data) {
+            if (data.error) { alert(data.error); return; }
+            loadRequests();
+        });
+    }
+
+    document.getElementById('searchBtn').addEventListener('click', searchUsers);
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') searchUsers();
+    });
+
+    loadFriends();
+    loadRequests();
+    </script>
+    <script src="/static/js/canvas.js"></script>
+</body>
+</html>

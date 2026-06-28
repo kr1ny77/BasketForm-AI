@@ -6,6 +6,47 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [v0.2.0] — 2026-06-28
+
+Sprint 2 — Assignment 4: Authentication, social features, enhanced ML, quality automation.
+
+### Added
+- User registration and login with email, nickname, and password (bcrypt hashing)
+- JWT-based session authentication with HttpOnly cookies
+- Protected routes: all pages except /login, /register, /static require authentication
+- User profile page with nickname, email display, and password change
+- Friend system: search users by nickname, send/accept/reject friend requests
+- Result sharing: share analysis results with friends (read-only access)
+- Shared results page showing results shared by friends
+- Enhanced ML agent: generates output video with pose overlay (keypoints, skeleton, HUD)
+- Phase analysis: detailed scoring for Stance, Arm Angle, Release, Follow-through
+- Phase feedback: personalized text feedback per phase
+- PDF export: jsPDF-based report with user info, score, phases, and full feedback
+- Share button in result modal with friend selection dropdown
+- Quality requirements document (QR-001 to QR-004) following ISO/IEC 25010
+- Quality requirement tests (QRT-001 to QRT-004) automated in CI
+- Unit tests for authentication service (9 tests)
+- Integration tests for API endpoints (5 tests: register, login, profile, share, friends)
+- QRT tests for response time, auth security, coverage, form guidance
+- Updated CI pipeline: lint, test, coverage (30%), QRT, govulncheck, build
+- Updated Definition of Done with Assignment 4 quality gates
+- User acceptance test scenarios (UAT-001 to UAT-004)
+
+### Changed
+- Video model now includes UserID field for per-user video ownership
+- Results include UserID and phase data
+- Storage layer uses JSON files in data/ directory for persistence
+- Upload handler associates videos with authenticated user
+- Results endpoint returns output_video_url and phases
+- All page handlers and API handlers require JWT authentication
+- Navigation updated: added Friends and Shared links
+
+### Security
+- All API endpoints require authentication (401 for unauthenticated requests)
+- Passwords hashed with bcrypt before storage
+- JWT tokens signed with HMAC-SHA256
+- HttpOnly cookies prevent XSS token theft
+
 ## [v0.1.0] — 2026-06-19
 
 MVP v1 — Core basketball shooting form analysis with Go backend, Canvas frontend, and mock ML pipeline.

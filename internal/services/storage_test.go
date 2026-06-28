@@ -13,6 +13,7 @@ func tempDirs(t *testing.T) (string, string) {
 	t.Helper()
 	upload := t.TempDir()
 	results := t.TempDir()
+	t.Setenv("DATA_DIR", filepath.Join(upload, "data"))
 	return upload, results
 }
 
@@ -20,7 +21,7 @@ func TestStorage_CreateAndGetVideo(t *testing.T) {
 	upload, results := tempDirs(t)
 	s := NewStorage(upload, results)
 
-	v := s.CreateVideo("id1", "test.mp4")
+	v := 	s.CreateVideo("id1", "test.mp4", "user1")
 	if v.ID != "id1" {
 		t.Fatalf("expected id1, got %s", v.ID)
 	}
@@ -54,11 +55,11 @@ func TestStorage_GetAllVideos_Sorted(t *testing.T) {
 	upload, results := tempDirs(t)
 	s := NewStorage(upload, results)
 
-	s.CreateVideo("c", "c.mp4")
+	s.CreateVideo("c", "c.mp4", "user1")
 	time.Sleep(1100 * time.Millisecond)
-	s.CreateVideo("a", "a.mp4")
+	s.CreateVideo("a", "a.mp4", "user1")
 	time.Sleep(1100 * time.Millisecond)
-	s.CreateVideo("b", "b.mp4")
+	s.CreateVideo("b", "b.mp4", "user1")
 
 	list := s.GetAllVideos()
 	if len(list) != 3 {
@@ -84,7 +85,7 @@ func TestStorage_UpdateStatus(t *testing.T) {
 	upload, results := tempDirs(t)
 	s := NewStorage(upload, results)
 
-	s.CreateVideo("v1", "test.mp4")
+	s.CreateVideo("v1", "test.mp4", "user1")
 	s.UpdateStatus("v1", "processing", 50)
 
 	v, _ := s.GetVideo("v1")
@@ -108,7 +109,7 @@ func TestStorage_SetScore(t *testing.T) {
 	upload, results := tempDirs(t)
 	s := NewStorage(upload, results)
 
-	s.CreateVideo("v1", "test.mp4")
+	s.CreateVideo("v1", "test.mp4", "user1")
 	s.SetScore("v1", 85)
 
 	v, _ := s.GetVideo("v1")
