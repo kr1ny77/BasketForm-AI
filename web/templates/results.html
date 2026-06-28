@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/static/css/style.css">
     <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -43,11 +44,26 @@
             <div id="modalBody"></div>
         </div>
     </div>
+    <div class="modal-overlay" id="shareOverlay">
+        <div class="modal" id="shareModal" style="max-width:420px;">
+            <button class="modal-close" id="shareClose">&times;</button>
+            <h2>Share Result</h2>
+            <div class="form-group">
+                <label for="friendSelect">Select a friend</label>
+                <select id="friendSelect" class="form-group select-input">
+                    <option value="">Loading friends...</option>
+                </select>
+            </div>
+            <div id="shareStatus" class="text-muted" style="margin-bottom:1rem;"></div>
+            <button class="btn btn-primary btn-block" id="shareBtn">Send</button>
+        </div>
+    </div>
     <script>
     var allVideos = [];
     var grid = document.getElementById('resultsGrid');
     var filterName = document.getElementById('filterName');
     var filterSort = document.getElementById('filterSort');
+    var currentResultId = null;
 
     fetch('/api/videos')
         .then(function (r) { return r.json(); })
@@ -101,6 +117,7 @@
     }
 
     function openModal(id) {
+        currentResultId = id;
         fetch('/api/result/' + id)
             .then(function (r) { return r.json(); })
             .then(function (data) {
@@ -145,6 +162,11 @@
                 '</div>';
 
                 html += '<div class="chart-container"><canvas id="scoreChart" height="200"></canvas></div>';
+
+                html += '<div class="modal-actions">' +
+                    '<button class="btn btn-primary" onclick="openShareModal()">&#128279; Share</button>' +
+                    '<button class="btn btn-outline" onclick="exportPDF()">&#128196; Export PDF</button>' +
+                '</div>';
 
                 body.innerHTML = html;
                 document.getElementById('modalOverlay').classList.add('active');
@@ -198,6 +220,202 @@
                 plugins: { legend: { display: false } }
             }
         });
+    }
+
+    // --- Share ---
+    function openShareModal() {
+        document.getElementById('shareOverlay').classList.add('active');
+        document.getElementById('shareStatus').textContent = '';
+        document.getElementById('shareBtn').disabled = false;
+        loadFriendsList();
+    }
+
+    document.getElementById('shareClose').addEventListener('click', function () {
+        document.getElementById('shareOverlay').classList.remove('active');
+    });
+    document.getElementById('shareOverlay').addEventListener('click', function (e) {
+        if (e.target === this) this.classList.remove('active');
+    });
+
+    function loadFriendsList() {
+        var sel = document.getElementById('friendSelect');
+        sel.innerHTML = '<option value="">Loading...</option>';
+        fetch('/api/friends')
+            .then(function (r) { return r.json(); })
+            .then(function (friends) {
+                if (!friends || friends.length === 0) {
+                    sel.innerHTML = '<option value="">No friends yet</option>';
+                    return;
+                }
+                sel.innerHTML = '<option value="">-- Select friend --</option>';
+                friends.forEach(function (f) {
+                    var opt = document.createElement('option');
+                    opt.value = f.id;
+                    opt.textContent = f.nickname;
+                    sel.appendChild(opt);
+                });
+            });
+    }
+
+    document.getElementById('shareBtn').addEventListener('click', function () {
+        var friendId = document.getElementById('friendSelect').value;
+        var status = document.getElementById('shareStatus');
+        if (!friendId) {
+            status.textContent = 'Please select a friend.';
+            status.style.color = 'var(--danger)';
+            return;
+        }
+        fetch('/api/share/result', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ result_id: currentResultId, friend_id: friendId })
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            if (data.error) {
+                status.textContent = data.error;
+                status.style.color = 'var(--danger)';
+            } else {
+                status.textContent = 'Result shared successfully!';
+                status.style.color = 'var(--success)';
+                document.getElementById('shareBtn').disabled = true;
+            }
+        });
+    });
+
+    // --- PDF Export ---
+    function exportPDF() {
+        if (typeof window.jspdf === 'undefined') {
+            alert('PDF library is loading, please try again.');
+            return;
+        }
+        var jsPDF = window.jspdf.jsPDF;
+        var doc = new jsPDF();
+        var margin = 15;
+        var y = margin;
+        var lineHeight = 7;
+        var pageW = doc.internal.pageSize.getWidth();
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(18);
+        doc.setTextColor(255, 106, 0);
+        doc.text('BasketForm-AI Analysis Report', margin, y);
+        y += lineHeight + 5;
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.setTextColor(100, 100, 100);
+        doc.text('Generated: ' + new Date().toLocaleString(), margin, y);
+        y += lineHeight + 5;
+
+        doc.setDrawColor(255, 106, 0);
+        doc.setLineWidth(0.5);
+        doc.line(margin, y, pageW - margin, y);
+        y += lineHeight + 3;
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(12);
+        doc.setTextColor(30, 30, 30);
+
+        var body = document.getElementById('modalBody');
+        if (!body) return;
+
+        var scoreEl = body.querySelector('.detail-item span');
+        var allDetailItems = body.querySelectorAll('.detail-item');
+        var filename = '';
+        var score = '';
+        var videoId = '';
+        var date = '';
+        allDetailItems.forEach(function (item) {
+            var label = item.querySelector('label');
+            var span = item.querySelector('span');
+            if (label && span) {
+                var lbl = label.textContent.trim();
+                var val = span.textContent.trim();
+                if (lbl === 'Score') score = val;
+                if (lbl === 'Video ID') videoId = val;
+                if (lbl === 'Date') date = val;
+            }
+        });
+
+        var h2 = body.querySelector('h2');
+        if (h2) filename = h2.textContent.trim();
+
+        doc.setFontSize(13);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Video: ' + filename, margin, y);
+        y += lineHeight;
+
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.setTextColor(60, 60, 60);
+        doc.text('Score: ' + score, margin, y); y += lineHeight;
+        doc.text('Date: ' + date, margin, y); y += lineHeight;
+        doc.text('Video ID: ' + videoId, margin, y);
+        y += lineHeight + 5;
+
+        var phasesSection = body.querySelector('.phases-section');
+        if (phasesSection) {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(12);
+            doc.setTextColor(30, 30, 30);
+            doc.text('Phase Analysis', margin, y);
+            y += lineHeight + 2;
+
+            var phaseCards = body.querySelectorAll('.phase-card');
+            phaseCards.forEach(function (card) {
+                if (y > 260) { doc.addPage(); y = margin; }
+                var name = card.querySelector('.phase-name');
+                var score = card.querySelector('.phase-score');
+                var fb = card.querySelector('.phase-feedback');
+                if (name) {
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(10);
+                    doc.setTextColor(30, 30, 30);
+                    doc.text(name.textContent.trim() + ': ' + (score ? score.textContent.trim() : ''), margin, y);
+                    y += lineHeight - 1;
+                }
+                if (fb) {
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(9);
+                    doc.setTextColor(80, 80, 80);
+                    var lines = doc.splitTextToSize(fb.textContent.trim(), pageW - 2 * margin);
+                    lines.forEach(function (line) {
+                        if (y > 275) { doc.addPage(); y = margin; }
+                        doc.text(line, margin, y);
+                        y += 5;
+                    });
+                }
+                y += 3;
+            });
+        }
+
+        y += 3;
+        if (y > 250) { doc.addPage(); y = margin; }
+        doc.setDrawColor(255, 106, 0);
+        doc.line(margin, y, pageW - margin, y);
+        y += lineHeight + 3;
+
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(12);
+        doc.setTextColor(30, 30, 30);
+        doc.text('Full Feedback', margin, y);
+        y += lineHeight;
+
+        var feedbackFull = document.getElementById('feedbackFull');
+        if (feedbackFull) {
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(9);
+            doc.setTextColor(60, 60, 60);
+            var fbLines = doc.splitTextToSize(feedbackFull.textContent.trim(), pageW - 2 * margin);
+            fbLines.forEach(function (line) {
+                if (y > 275) { doc.addPage(); y = margin; }
+                doc.text(line, margin, y);
+                y += 5;
+            });
+        }
+
+        doc.save('BasketForm-AI-' + (filename || 'report').replace(/[^a-zA-Z0-9]/g, '_') + '.pdf');
     }
     </script>
 </body>
