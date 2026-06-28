@@ -19,20 +19,10 @@ func NewProcessor(storage *Storage) *Processor {
 	return &Processor{storage: storage}
 }
 
-type mlPhase struct {
-	PhaseName string  `json:"phase_name"`
-	Score     float64 `json:"score"`
-	Feedback  string  `json:"feedback"`
-}
-
-type mlResult struct {
-	Score        int            `json:"score"`
-	Scores       []int          `json:"scores"`
-	Feedback     string         `json:"feedback"`
-	PoseData     []models.Point `json:"pose_data"`
-	Phases       []mlPhase      `json:"phases"`
-	OutputVideo  string         `json:"output_video"`
-	Error        string         `json:"error,omitempty"`
+type mlReport struct {
+	Scores    map[string]float64 `json:"scores"`
+	Metrics   map[string]float64 `json:"metrics"`
+	AIFeedback string            `json:"ai_feedback"`
 }
 
 func (p *Processor) ProcessVideo(id string) {
@@ -47,42 +37,66 @@ func (p *Processor) ProcessVideo(id string) {
 
 	videoPath := filepath.Join(p.storage.UploadDir(), id+extOf(video.Filename))
 
-	for progress := 10; progress <= 40; progress += 10 {
-		time.Sleep(500 * time.Millisecond)
-		p.storage.UpdateStatus(id, "processing", progress)
-	}
+	outputDir := filepath.Join("results", video.UserID, id)
+	os.MkdirAll(outputDir, 0o755)
+	outputVideo := filepath.Join(outputDir, "output.mp4")
 
-	mlOut, err := runML(videoPath, video.UserID, id)
+	p.storage.UpdateStatus(id, "processing", 10)
+
+	err := runML(videoPath, outputVideo)
 	if err != nil {
 		log.Printf("ML script failed for %s: %v", id, err)
 		p.storage.UpdateStatus(id, "error", 0)
 		return
 	}
 
-	for progress := 50; progress <= 90; progress += 10 {
-		time.Sleep(200 * time.Millisecond)
-		p.storage.UpdateStatus(id, "processing", progress)
-	}
+	p.storage.UpdateStatus(id, "processing", 70)
 
-	if mlOut.Error != "" {
-		log.Printf("ML analysis error for %s: %s", id, mlOut.Error)
+	reportPath := filepath.Join(outputDir, "output.json")
+	mlReport, err := loadMLReport(reportPath)
+	if err != nil {
+		log.Printf("Failed to load ML report for %s: %v", id, err)
 		p.storage.UpdateStatus(id, "error", 0)
 		return
 	}
 
-	if len(mlOut.Scores) != 4 {
-		mlOut.Scores = []int{0, 0, 0, 0}
-	}
-	if mlOut.Feedback == "" {
-		mlOut.Feedback = "No feedback available."
+	p.storage.UpdateStatus(id, "processing", 90)
+
+	phaseNames := []string{"Stance", "Arm Angle", "Release", "Follow-through"}
+	mlScores := []float64{
+		mlReport.Scores["DIP"],
+		mlReport.Scores["ASCENT"],
+		mlReport.Scores["RELEASE"],
+		mlReport.Scores["RELEASE"],
 	}
 
 	var phases []models.PhaseScore
-	for _, ph := range mlOut.Phases {
+	var scoreList []int
+	totalScore := 0.0
+	count := 0.0
+
+	for i, name := range phaseNames {
+		s := 0.0
+		if i < len(mlScores) {
+			s = mlScores[i]
+		}
 		phases = append(phases, models.PhaseScore{
-			PhaseName: ph.PhaseName,
-			Score:     ph.Score,
+			PhaseName: name,
+			Score:     s,
 		})
+		scoreList = append(scoreList, int(s))
+		totalScore += s
+		count++
+	}
+
+	overall := 0
+	if count > 0 {
+		overall = int(totalScore / count)
+	}
+
+	feedback := mlReport.AIFeedback
+	if feedback == "" {
+		feedback = "No feedback available."
 	}
 
 	result := &models.Result{
@@ -90,10 +104,10 @@ func (p *Processor) ProcessVideo(id string) {
 		UserID:    video.UserID,
 		VideoID:   id,
 		Filename:  video.Filename,
-		Score:     mlOut.Score,
-		Feedback:  mlOut.Feedback,
-		PoseData:  mlOut.PoseData,
-		Scores:    mlOut.Scores,
+		Score:     overall,
+		Feedback:  feedback,
+		PoseData:  nil,
+		Scores:    scoreList,
 		Phases:    phases,
 		CreatedAt: time.Now().Format(time.RFC3339),
 	}
@@ -104,9 +118,9 @@ func (p *Processor) ProcessVideo(id string) {
 		return
 	}
 
-	p.storage.SetScore(id, mlOut.Score)
+	p.storage.SetScore(id, overall)
 	p.storage.UpdateStatus(id, "done", 100)
-	log.Printf("Video %s processed: score=%d", id, mlOut.Score)
+	log.Printf("Video %s processed: score=%d", id, overall)
 }
 
 func findPython() string {
@@ -117,23 +131,32 @@ func findPython() string {
 	return "python3"
 }
 
-func runML(videoPath, userID, videoID string) (*mlResult, error) {
+func runML(inputPath, outputPath string) error {
 	python := findPython()
-	script := filepath.Join("scripts", "analyze_video.py")
-	args := []string{script, videoPath}
-	if userID != "" && videoID != "" {
-		args = append(args, "--user_id", userID, "--video_id", videoID)
+	script := filepath.Join("ML", "main.py")
+
+	cmd := exec.Command(python, script, inputPath, outputPath)
+	cmd.Dir = "."
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		log.Printf("ML output: %s", string(output))
+		return err
 	}
-	cmd := exec.Command(python, args...)
-	out, err := cmd.Output()
+	log.Printf("ML output: %s", string(output))
+	return nil
+}
+
+func loadMLReport(reportPath string) (*mlReport, error) {
+	data, err := os.ReadFile(reportPath)
 	if err != nil {
 		return nil, err
 	}
-	var r mlResult
-	if err := json.Unmarshal(out, &r); err != nil {
+	var report mlReport
+	if err := json.Unmarshal(data, &report); err != nil {
 		return nil, err
 	}
-	return &r, nil
+	return &report, nil
 }
 
 func extOf(filename string) string {

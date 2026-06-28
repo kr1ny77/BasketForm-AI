@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shared Results — BasketForm-AI</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css?v=3">
     <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
 </head>
 <body>
+    <canvas id="bgCanvas"></canvas>
     <nav class="navbar">
         <div class="navbar-left">
             <a href="/" class="logo">BasketForm-AI</a>
@@ -33,11 +34,11 @@
     <main class="content">
         <section class="page-header">
             <h1>Shared Results</h1>
-            <p>Results shared with you by friends</p>
+            <p>Results your friends shared with you</p>
         </section>
-        <section class="results-grid" id="sharedResults">
-            <p class="text-muted">No shared results yet.</p>
-        </section>
+        <div class="chat-feed" id="chatFeed">
+            <p class="text-muted" style="text-align:center;padding:3rem;">No shared results yet.</p>
+        </div>
     </main>
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal modal-lg" id="modal">
@@ -46,33 +47,47 @@
         </div>
     </div>
     <script>
+    function getInitial(name) {
+        return name ? name.charAt(0).toUpperCase() : '?';
+    }
+
     function loadShared() {
         fetch('/api/results/shared-with-me')
         .then(function (r) { return r.json(); })
         .then(function (data) {
-            var el = document.getElementById('sharedResults');
+            var el = document.getElementById('chatFeed');
             if (!data || data.length === 0) {
-                el.innerHTML = '<p class="text-muted">No shared results yet.</p>';
+                el.innerHTML = '<p class="text-muted" style="text-align:center;padding:3rem;">No shared results yet. Ask a friend to share!</p>';
                 return;
             }
-            el.innerHTML = '';
+            var grouped = {};
             data.forEach(function (r) {
-                var card = document.createElement('div');
-                card.className = 'result-card';
-                card.innerHTML =
-                    '<div>' +
-                        '<h3>Score: ' + r.score + '</h3>' +
-                        '<div class="meta">' +
-                            '<span>Shared by: <strong>' + escHtml(r.from_nickname) + '</strong></span>' +
-                            '<span>Video: ' + r.video_id.substring(0, 8) + '</span>' +
-                            '<span>' + new Date(r.created_at).toLocaleDateString() + '</span>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="score">' + r.score + '<small>/ 100</small></div>';
-                card.style.cursor = 'pointer';
-                card.addEventListener('click', function () { openSharedModal(r.result_id); });
-                el.appendChild(card);
+                var key = r.from_nickname || 'Unknown';
+                if (!grouped[key]) grouped[key] = [];
+                grouped[key].push(r);
             });
+            var html = '';
+            var friends = Object.keys(grouped).sort();
+            friends.forEach(function (name) {
+                var items = grouped[name];
+                html += '<div class="chat-thread">';
+                html += '<div class="chat-friend-header">' +
+                    '<div class="user-avatar">' + getInitial(name) + '</div>' +
+                    '<div><strong>' + escHtml(name) + '</strong><span class="text-muted" style="margin-left:0.5rem;font-size:0.78rem;">' + items.length + ' result' + (items.length > 1 ? 's' : '') + '</span></div>' +
+                '</div>';
+                items.forEach(function (r) {
+                    html += '<div class="chat-bubble" onclick="openSharedModal(\'' + r.result_id + '\')">' +
+                        '<div class="chat-bubble-head">' +
+                            '<span class="chat-score">' + r.score + '<small>/100</small></span>' +
+                            '<span class="chat-date">' + new Date(r.created_at).toLocaleDateString() + '</span>' +
+                        '</div>' +
+                        '<div class="chat-bubble-video">Video: ' + r.video_id.substring(0, 8) + '...</div>' +
+                        '<div class="chat-bubble-view">Click to view details &#10132;</div>' +
+                    '</div>';
+                });
+                html += '</div>';
+            });
+            el.innerHTML = html;
         });
     }
 
@@ -182,5 +197,6 @@
 
     loadShared();
     </script>
+    <script src="/static/js/canvas.js"></script>
 </body>
 </html>

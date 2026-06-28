@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results — BasketForm-AI</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/style.css?v=3">
     <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
+    <canvas id="bgCanvas"></canvas>
     <nav class="navbar">
         <div class="navbar-left">
             <a href="/" class="logo">BasketForm-AI</a>
@@ -429,5 +430,6 @@
         doc.save('BasketForm-AI-' + (filename || 'report').replace(/[^a-zA-Z0-9]/g, '_') + '.pdf');
     }
     </script>
+    <script src="/static/js/canvas.js"></script>
 </body>
 </html>
