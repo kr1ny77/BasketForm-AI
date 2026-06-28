@@ -15,11 +15,18 @@ import (
 var debugLog *os.File
 
 func init() {
-	f, err := os.OpenFile("/home/basketfrom-ai/BasketForm-AI/processor.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
-	if err == nil {
-		debugLog = f
-		log.SetOutput(f)
-	}
+		// Optional debug log file. Configurable via PROCESSOR_LOG so the code does
+		// not depend on a hardcoded absolute path (which breaks in CI and other
+		// environments). When unset, logging stays on the default destination.
+		logPath := os.Getenv("PROCESSOR_LOG")
+		if logPath == "" {
+					return
+				}
+		f, err := os.OpenFile(logPath, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0o644)
+		if err == nil {
+					debugLog = f
+					log.SetOutput(f)
+				}
 }
 
 type Processor struct {
