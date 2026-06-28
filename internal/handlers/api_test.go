@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"mime/multipart"
 	"net/http"
@@ -43,6 +44,7 @@ func TestAPI_Upload_Success(t *testing.T) {
 
 	req := httptest.NewRequest("POST", "/api/upload", body)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
+	req = req.WithContext(context.WithValue(req.Context(), "user_id", "user1"))
 	w := httptest.NewRecorder()
 
 	mux.ServeHTTP(w, req)
@@ -85,6 +87,7 @@ func TestAPI_Upload_UnsupportedFormat(t *testing.T) {
 
 	req := httptest.NewRequest("POST", "/api/upload", body)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
+	req = req.WithContext(context.WithValue(req.Context(), "user_id", "user1"))
 	w := httptest.NewRecorder()
 
 	mux.ServeHTTP(w, req)
@@ -104,6 +107,7 @@ func TestAPI_Upload_NoFile(t *testing.T) {
 
 	req := httptest.NewRequest("POST", "/api/upload", body)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
+	req = req.WithContext(context.WithValue(req.Context(), "user_id", "user1"))
 	w := httptest.NewRecorder()
 
 	mux.ServeHTTP(w, req)
@@ -130,7 +134,7 @@ func TestAPI_Status_Found(t *testing.T) {
 	api, _, _ := setupTest(t)
 	mux := newMux(api)
 
-	api.storage.CreateVideo("vid1", "test.mp4")
+	api.storage.CreateVideo("vid1", "test.mp4", "user1")
 
 	req := httptest.NewRequest("GET", "/api/status/vid1", nil)
 	w := httptest.NewRecorder()
@@ -180,7 +184,7 @@ func TestAPI_Result_Found(t *testing.T) {
 	api, _, _ := setupTest(t)
 	mux := newMux(api)
 
-	api.storage.CreateVideo("vid2", "test.mp4")
+	api.storage.CreateVideo("vid2", "test.mp4", "user1")
 	api.storage.SaveResult(&models.Result{
 		ID:       "vid2",
 		VideoID:  "vid2",
@@ -226,6 +230,7 @@ func TestAPI_Videos_Empty(t *testing.T) {
 	mux := newMux(api)
 
 	req := httptest.NewRequest("GET", "/api/videos", nil)
+	req = req.WithContext(context.WithValue(req.Context(), "user_id", "user1"))
 	w := httptest.NewRecorder()
 	mux.ServeHTTP(w, req)
 
@@ -244,10 +249,11 @@ func TestAPI_Videos_WithEntries(t *testing.T) {
 	api, _, _ := setupTest(t)
 	mux := newMux(api)
 
-	api.storage.CreateVideo("v1", "a.mp4")
-	api.storage.CreateVideo("v2", "b.mp4")
+	api.storage.CreateVideo("v1", "a.mp4", "user1")
+	api.storage.CreateVideo("v2", "b.mp4", "user1")
 
 	req := httptest.NewRequest("GET", "/api/videos", nil)
+	req = req.WithContext(context.WithValue(req.Context(), "user_id", "user1"))
 	w := httptest.NewRecorder()
 	mux.ServeHTTP(w, req)
 
@@ -274,6 +280,7 @@ func TestAPI_Upload_MOV(t *testing.T) {
 
 	req := httptest.NewRequest("POST", "/api/upload", body)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
+	req = req.WithContext(context.WithValue(req.Context(), "user_id", "user1"))
 	w := httptest.NewRecorder()
 	mux.ServeHTTP(w, req)
 
@@ -305,6 +312,7 @@ func TestAPI_Upload_EmptyFile(t *testing.T) {
 
 	req := httptest.NewRequest("POST", "/api/upload", body)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
+	req = req.WithContext(context.WithValue(req.Context(), "user_id", "user1"))
 	w := httptest.NewRecorder()
 	mux.ServeHTTP(w, req)
 
@@ -327,6 +335,7 @@ func TestAPI_Status_AfterUpload(t *testing.T) {
 
 	req := httptest.NewRequest("POST", "/api/upload", body)
 	req.Header.Set("Content-Type", writer.FormDataContentType())
+	req = req.WithContext(context.WithValue(req.Context(), "user_id", "user1"))
 	w := httptest.NewRecorder()
 	mux.ServeHTTP(w, req)
 
@@ -355,9 +364,10 @@ func TestAPI_VideosJSONFormat(t *testing.T) {
 	api, _, _ := setupTest(t)
 	mux := newMux(api)
 
-	api.storage.CreateVideo("v1", "a.mp4")
+	api.storage.CreateVideo("v1", "a.mp4", "user1")
 
 	req := httptest.NewRequest("GET", "/api/videos", nil)
+	req = req.WithContext(context.WithValue(req.Context(), "user_id", "user1"))
 	w := httptest.NewRecorder()
 	mux.ServeHTTP(w, req)
 

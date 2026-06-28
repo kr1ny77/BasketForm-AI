@@ -32,30 +32,51 @@ func main() {
 
 	storage := services.NewStorage(uploadDir, resultsDir)
 	processor := services.NewProcessor(storage)
+	auth := services.NewAuthService(storage)
 
 	h := handlers.New(uploadDir, resultsDir)
 	api := handlers.NewAPI(storage, processor, uploadDir)
+	authHandler := handlers.NewAuthHandler(auth, storage)
+	friendsHandler := handlers.NewFriendsHandler(storage)
+	shareHandler := handlers.NewShareHandler(storage)
+	middleware := handlers.NewMiddleware(auth)
 
 	mux := http.NewServeMux()
 
-	// Pages
+	// Auth pages (no auth required)
+	mux.HandleFunc("/login", h.LoginHandler)
+	mux.HandleFunc("/register", h.RegisterHandler)
+
+	// Auth API (no auth required for login/register)
+	authHandler.Register(mux)
+
+	// Protected page handlers
 	mux.HandleFunc("/", h.IndexHandler)
 	mux.HandleFunc("/upload", h.UploadPageHandler)
 	mux.HandleFunc("/results", h.ResultsPageHandler)
 	mux.HandleFunc("/profile", h.ProfilePageHandler)
 	mux.HandleFunc("/progress", h.ProgressPageHandler)
 	mux.HandleFunc("/export", h.ExportPageHandler)
+	mux.HandleFunc("/friends", h.FriendsPageHandler)
+	mux.HandleFunc("/shared", h.SharedResultsPageHandler)
 
-	// API
+	// Protected API routes
 	api.Register(mux)
+	friendsHandler.Register(mux)
+	shareHandler.Register(mux)
 
-	// Static files
+	// Static files (no auth required)
 	fs := http.FileServer(http.Dir("web/static"))
 	mux.Handle("/static/", http.StripPrefix("/static/", fs))
 
+	// Results files (no auth for now - videos need to be accessible)
+	mux.Handle("/results-files/", http.StripPrefix("/results-files/", h.ResultsFileServer()))
+
+	wrappedMux := middleware.AuthRequired(mux)
+
 	addr := fmt.Sprintf(":%s", port)
 	log.Printf("BasketForm-AI server starting on http://localhost%s", addr)
-	if err := http.ListenAndServe(addr, mux); err != nil {
+	if err := http.ListenAndServe(addr, wrappedMux); err != nil {
 		log.Fatalf("Server failed: %v", err)
 	}
 }

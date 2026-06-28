@@ -1,0 +1,9 @@
+{
+  "id": "vid2",
+  "user_id": "user1",
+  "filename": "test.mp4",
+  "status": "uploaded",
+  "progress": 0,
+  "created_at": "2026-06-28T15:10:31.101072+03:00",
+  "updated_at": "2026-06-28T15:10:31.101072+03:00"
+}
