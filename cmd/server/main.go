@@ -65,9 +65,14 @@ func main() {
 	friendsHandler.Register(mux)
 	shareHandler.Register(mux)
 
-	// Static files (no auth required)
+	// Static files (no auth required, no cache)
 	fs := http.FileServer(http.Dir("web/static"))
-	mux.Handle("/static/", http.StripPrefix("/static/", fs))
+	mux.Handle("/static/", http.StripPrefix("/static/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+		w.Header().Set("Pragma", "no-cache")
+		w.Header().Set("Expires", "0")
+		fs.ServeHTTP(w, r)
+	})))
 
 	// Results files (no auth for now - videos need to be accessible)
 	mux.Handle("/results-files/", http.StripPrefix("/results-files/", h.ResultsFileServer()))
