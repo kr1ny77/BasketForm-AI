@@ -7,7 +7,7 @@ import (
 func TestExtOf(t *testing.T) {
 	tests := []struct{ input, want string }{
 		{"video.mp4", ".mp4"},
-		{"clip.MOV", ".MOV"},
+		{"clip.MOV", ".mov"},
 		{"noext", ".mp4"},
 		{"path/to/file.avi", ".avi"},
 	}
