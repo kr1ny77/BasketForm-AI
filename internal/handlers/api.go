@@ -34,6 +34,7 @@ func (a *APIHandler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("/api/status/", a.Status)
 	mux.HandleFunc("/api/result/", a.Result)
 	mux.HandleFunc("/api/videos", a.Videos)
+	mux.HandleFunc("/api/video/delete", a.DeleteVideo)
 }
 
 func writeJSON(w http.ResponseWriter, status int, v any) {
@@ -224,4 +225,38 @@ func (a *APIHandler) Videos(w http.ResponseWriter, r *http.Request) {
 		videos = []*models.Video{}
 	}
 	writeJSON(w, http.StatusOK, videos)
+}
+
+func (a *APIHandler) DeleteVideo(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
+	userID := r.Context().Value("user_id").(string)
+
+	var req struct {
+		IDs []string `json:"ids"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+
+	if len(req.IDs) == 0 {
+		writeError(w, http.StatusBadRequest, "no IDs provided")
+		return
+	}
+
+	deleted := 0
+	for _, id := range req.IDs {
+		video, ok := a.storage.GetVideo(id)
+		if !ok || video.UserID != userID {
+			continue
+		}
+		a.storage.DeleteVideo(id)
+		deleted++
+	}
+
+	writeJSON(w, http.StatusOK, map[string]int{"deleted": deleted})
 }

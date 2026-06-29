@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results — BasketForm-AI</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=4">
+    <link rel="stylesheet" href="/static/css/style.css?v=5">
     <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="/static/js/i18n.js?v=5"></script>
 </head>
 <body>
     <canvas id="bgCanvas"></canvas>
@@ -16,12 +19,12 @@
         </div>
         <div class="nav-center">
             <ul class="nav-links">
-                <li><a href="/upload">Upload</a></li>
-                <li><a href="/results" class="active">Results</a></li>
-                <li><a href="/progress">Progress</a></li>
-                <li><a href="/export">Export</a></li>
-                <li><a href="/shared">Shared</a></li>
-                <li><a href="/friends">Friends</a></li>
+                <li><a href="/upload" data-i18n="nav_upload">Upload</a></li>
+                <li><a href="/results" class="active" data-i18n="nav_results">Results</a></li>
+                <li><a href="/progress" data-i18n="nav_progress">Progress</a></li>
+                <li><a href="/export" data-i18n="nav_export">Export</a></li>
+                <li><a href="/shared" data-i18n="nav_shared">Shared</a></li>
+                <li><a href="/friends" data-i18n="nav_friends">Friends</a></li>
             </ul>
         </div>
         <div class="nav-right">
@@ -29,25 +32,30 @@
                 <option value="en">EN</option>
                 <option value="ru">RU</option>
             </select>
-            <a href="/profile" class="nav-profile">Profile</a>
+            <a href="/profile" class="nav-profile" data-i18n="nav_profile">Profile</a>
         </div>
     </nav>
     <main class="content">
         <section class="page-header">
-            <h1>Analysis Results</h1>
-            <p>View your shooting form analyses</p>
+            <h1 data-i18n="results_title">Analysis Results</h1>
+            <p data-i18n="results_desc">View your shooting form analyses</p>
         </section>
         <div class="filter-bar">
-            <input type="text" id="filterName" placeholder="Filter by filename...">
+            <input type="text" id="filterName" data-i18n-placeholder="results_filter" placeholder="Filter by filename...">
             <select id="filterSort">
-                <option value="date-desc">Newest first</option>
-                <option value="date-asc">Oldest first</option>
-                <option value="score-desc">Highest score</option>
-                <option value="score-asc">Lowest score</option>
+                <option value="date-desc" data-i18n="results_sort_new">Newest first</option>
+                <option value="date-asc" data-i18n="results_sort_old">Oldest first</option>
+                <option value="score-desc" data-i18n="results_sort_high">Highest score</option>
+                <option value="score-asc" data-i18n="results_sort_low">Lowest score</option>
             </select>
         </div>
+        <div class="delete-bar" id="deleteBar" style="display:none;">
+            <span><span id="selectedCount">0</span> <span data-i18n="results_selected">selected</span></span>
+            <button class="btn btn-sm btn-outline" onclick="selectAll()" data-i18n="results_select_all">Select All</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteSelected()" data-i18n="results_delete">Delete</button>
+        </div>
         <section class="results-grid" id="resultsGrid">
-            <p class="empty-state"><span class="empty-icon">&#127936;</span><br>No analyses yet. Upload a video to get started.</p>
+            <p class="empty-state"><span class="empty-icon">&#127936;</span><br><span data-i18n="results_empty">No analyses yet. Upload a video to get started.</span></p>
         </section>
     </main>
     <div class="modal-overlay" id="modalOverlay">
@@ -59,15 +67,15 @@
     <div class="modal-overlay" id="shareOverlay">
         <div class="modal" id="shareModal" style="max-width:420px;">
             <button class="modal-close" id="shareClose">&times;</button>
-            <h2>Share Result</h2>
+            <h2 data-i18n="share_title">Share Result</h2>
             <div class="form-group">
-                <label for="friendSelect">Select a friend</label>
+                <label for="friendSelect" data-i18n="share_select">Select a friend</label>
                 <select id="friendSelect" class="form-group select-input">
-                    <option value="">Loading friends...</option>
+                    <option value="" data-i18n="share_loading">Loading friends...</option>
                 </select>
             </div>
             <div id="shareStatus" class="text-muted" style="margin-bottom:1rem;"></div>
-            <button class="btn btn-primary btn-block" id="shareBtn">Send</button>
+            <button class="btn btn-primary btn-block" id="shareBtn" data-i18n="share_send">Send</button>
         </div>
     </div>
     <script>
@@ -79,10 +87,23 @@
 
     fetch('/api/videos')
         .then(function (r) { return r.json(); })
-        .then(function (videos) { allVideos = videos; renderList(); });
+        .then(function (videos) {
+            if (Array.isArray(videos)) {
+                allVideos = videos;
+            } else {
+                allVideos = [];
+            }
+            renderList();
+        })
+        .catch(function (e) {
+            allVideos = [];
+            renderList();
+        });
 
     filterName.addEventListener('input', renderList);
     filterSort.addEventListener('change', renderList);
+
+    var selectedIds = new Set();
 
     function renderList() {
         var q = filterName.value.toLowerCase();
@@ -96,15 +117,26 @@
             if (sort === 'score-asc') return (a.score || 0) - (b.score || 0);
             return new Date(b.created_at) - new Date(a.created_at);
         });
+
+        var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
+
+        var deleteBar = document.getElementById('deleteBar');
+        if (deleteBar) {
+            deleteBar.style.display = selectedIds.size > 0 ? 'flex' : 'none';
+            var countEl = document.getElementById('selectedCount');
+            if (countEl) countEl.textContent = selectedIds.size;
+        }
+
         if (!list.length) {
-            grid.innerHTML = '<p class="empty-state"><span class="empty-icon">&#127936;</span><br>No results found.</p>';
+            grid.innerHTML = '<p class="empty-state"><span class="empty-icon">&#127936;</span><br>' + (t.results_no_match || 'No results found.') + '</p>';
             return;
         }
         grid.innerHTML = '';
         list.forEach(function (v) {
             var card = document.createElement('div');
-            card.className = 'result-card';
+            card.className = 'result-card' + (selectedIds.has(v.id) ? ' selected' : '');
             card.innerHTML =
+                '<input type="checkbox" class="result-checkbox" data-id="' + v.id + '"' + (selectedIds.has(v.id) ? ' checked' : '') + '>' +
                 '<div>' +
                     '<h3>' + escHtml(v.filename) + '</h3>' +
                     '<div class="meta">' +
@@ -116,8 +148,69 @@
                 '<div class="score">' +
                     (v.score != null ? v.score + '<small>/ 100</small>' : '&mdash;') +
                 '</div>';
-            card.style.cursor = 'pointer';
-            card.addEventListener('click', function () { openModal(v.id); });
+
+            var checkbox = card.querySelector('.result-checkbox');
+            checkbox.addEventListener('click', function (e) {
+                e.stopPropagation();
+                if (this.checked) {
+                    selectedIds.add(v.id);
+                    card.classList.add('selected');
+                } else {
+                    selectedIds.delete(v.id);
+                    card.classList.remove('selected');
+                }
+                updateDeleteBar();
+            });
+
+            card.addEventListener('click', function (e) {
+                if (e.target.tagName === 'INPUT') return;
+                openModal(v.id);
+            });
+            grid.appendChild(card);
+        });
+    }
+
+    function updateDeleteBar() {
+        var deleteBar = document.getElementById('deleteBar');
+        var countEl = document.getElementById('selectedCount');
+        if (deleteBar) {
+            deleteBar.style.display = selectedIds.size > 0 ? 'flex' : 'none';
+            if (countEl) countEl.textContent = selectedIds.size;
+        }
+    }
+
+    function deleteSelected() {
+        var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
+        if (!selectedIds.size) return;
+        if (!confirm(t.results_confirm_delete || 'Delete selected results? This cannot be undone.')) return;
+
+        fetch('/api/video/delete', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ids: Array.from(selectedIds) })
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+            allVideos = allVideos.filter(function (v) { return !selectedIds.has(v.id); });
+            selectedIds.clear();
+            updateDeleteBar();
+            renderList();
+        });
+    }
+
+    function selectAll() {
+        var list = allVideos.filter(function (v) {
+            var q = filterName.value.toLowerCase();
+            return !q || v.filename.toLowerCase().indexOf(q) !== -1;
+        });
+        var allSelected = list.every(function (v) { return selectedIds.has(v.id); });
+        if (allSelected) {
+            list.forEach(function (v) { selectedIds.delete(v.id); });
+        } else {
+            list.forEach(function (v) { selectedIds.add(v.id); });
+        }
+        renderList();
+    }
             grid.appendChild(card);
         });
     }
@@ -130,6 +223,7 @@
 
     function openModal(id) {
         currentResultId = id;
+        var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
         fetch('/api/result/' + id)
             .then(function (r) { return r.json(); })
             .then(function (data) {
@@ -150,7 +244,7 @@
                 '</div>';
 
                 if (data.phases && data.phases.length > 0) {
-                    html += '<div class="phases-section"><h3>Phase Analysis</h3><div class="phases-grid">';
+                    html += '<div class="phases-section"><h3>' + (t.results_phase_analysis || 'Phase Analysis') + '</h3><div class="phases-grid">';
                     data.phases.forEach(function (p) {
                         var color = p.score >= 80 ? 'var(--success)' : p.score >= 50 ? 'var(--warning)' : 'var(--danger)';
                         html += '<div class="phase-card">' +
@@ -167,13 +261,15 @@
 
                 var summary = (data.feedback || 'No feedback available.').split('\n')[0];
                 html += '<div class="feedback-section">' +
-                    '<strong>Analysis Report</strong>' +
+                    '<strong>' + (t.results_feedback || 'Analysis Report') + '</strong>' +
                     '<p class="feedback-summary">' + escHtml(summary) + '</p>' +
                     '<pre class="feedback-text feedback-hidden" id="feedbackFull">' + escHtml(data.feedback || '') + '</pre>' +
                     '<button class="btn btn-sm feedback-toggle" id="feedbackToggle" onclick="toggleFeedback()">&#9660; Show detailed analysis</button>' +
                 '</div>';
 
-                html += '<div class="chart-container"><canvas id="scoreChart" height="200"></canvas></div>';
+                if (data.scores && data.scores.length) {
+                    html += '<div class="chart-container"><canvas id="scoreChart" height="200"></canvas></div>';
+                }
 
                 html += '<div class="modal-actions">' +
                     '<button class="btn btn-primary" onclick="openShareModal()">&#128279; <span data-i18n="share_btn">Share</span></button>' +
@@ -184,7 +280,7 @@
                 document.getElementById('modalOverlay').classList.add('active');
                 drawScoreChart(data);
             })
-            .catch(function () { alert('Could not load results.'); });
+            .catch(function () {});
     }
 
     function toggleFeedback() {
@@ -212,6 +308,7 @@
     function drawScoreChart(data) {
         var canvas = document.getElementById('scoreChart');
         if (!canvas || typeof Chart === 'undefined') return;
+        var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
         var labels = ['Stance', 'Arm Angle', 'Release', 'Follow-through'];
         var values = data.scores || [0, 0, 0, 0];
         new Chart(canvas, {
@@ -219,7 +316,7 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Score Breakdown',
+                    label: t.results_radar || 'Score Breakdown',
                     data: values,
                     backgroundColor: 'rgba(255,106,0,0.15)',
                     borderColor: '#ff6a00',
@@ -250,16 +347,17 @@
     });
 
     function loadFriendsList() {
+        var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
         var sel = document.getElementById('friendSelect');
-        sel.innerHTML = '<option value="">Loading...</option>';
+        sel.innerHTML = '<option value="">' + (t.results_loading || 'Loading...') + '</option>';
         fetch('/api/friends')
             .then(function (r) { return r.json(); })
             .then(function (friends) {
                 if (!friends || friends.length === 0) {
-                    sel.innerHTML = '<option value="">No friends yet</option>';
+                    sel.innerHTML = '<option value="">' + (t.results_no_friends || 'No friends yet') + '</option>';
                     return;
                 }
-                sel.innerHTML = '<option value="">-- Select friend --</option>';
+                sel.innerHTML = '<option value="">' + (t.share_select || 'Select a friend') + '</option>';
                 friends.forEach(function (f) {
                     var opt = document.createElement('option');
                     opt.value = f.id;
@@ -270,10 +368,11 @@
     }
 
     document.getElementById('shareBtn').addEventListener('click', function () {
+        var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
         var friendId = document.getElementById('friendSelect').value;
         var status = document.getElementById('shareStatus');
         if (!friendId) {
-            status.textContent = 'Please select a friend.';
+            status.textContent = t.share_select || 'Please select a friend.';
             status.style.color = 'var(--danger)';
             return;
         }
@@ -297,70 +396,56 @@
 
     // --- PDF Export ---
     function exportPDF() {
-        var body = document.getElementById('modalBody');
-        if (!body) return;
+        if (typeof window.jspdf === 'undefined' || typeof html2canvas === 'undefined') {
+            alert('PDF library is loading, please try again.');
+            return;
+        }
+        var modalBody = document.getElementById('modalBody');
+        if (!modalBody) return;
 
-        var printWin = window.open('', '_blank');
-        var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
+        var btn = document.querySelector('.modal-actions .btn-outline');
+        if (btn) btn.style.display = 'none';
 
-        var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
-            '<style>' +
-            'body{font-family:Arial,sans-serif;padding:30px;color:#222;line-height:1.6;}' +
-            'h1{color:#ff6a00;font-size:22px;margin-bottom:5px;}' +
-            'h2{font-size:18px;margin:15px 0 8px;border-bottom:2px solid #ff6a00;padding-bottom:5px;}' +
-            '.meta{color:#666;font-size:13px;margin-bottom:15px;}' +
-            '.phase{background:#f5f5f5;padding:12px;border-radius:6px;margin-bottom:10px;}' +
-            '.phase-name{font-weight:bold;font-size:14px;}' +
-            '.phase-score{color:#ff6a00;font-weight:bold;font-size:16px;float:right;}' +
-            '.phase-fb{font-size:13px;color:#444;margin-top:5px;}' +
-            '.feedback{background:#fff3e0;padding:15px;border-left:3px solid #ff6a00;margin:15px 0;font-size:13px;white-space:pre-wrap;}' +
-            '.footer{margin-top:20px;padding-top:10px;border-top:1px solid #ddd;color:#999;font-size:11px;}' +
-            '</style></head><body>';
+        html2canvas(modalBody, {
+            scale: 2,
+            backgroundColor: '#121218',
+            useCORS: true,
+            logging: false
+        }).then(function (canvas) {
+            if (btn) btn.style.display = '';
 
-        var h2 = body.querySelector('h2');
-        html += '<h1>BasketForm-AI ' + (t.export_title || 'Report') + '</h1>';
-        html += '<div class="meta">' + (h2 ? h2.textContent.trim() : '') + ' | ' + new Date().toLocaleString() + '</div>';
+            var jsPDF = window.jspdf.jsPDF;
+            var imgData = canvas.toDataURL('image/png');
+            var imgWidth = canvas.width;
+            var imgHeight = canvas.height;
 
-        var allDetailItems = body.querySelectorAll('.detail-item');
-        var score = '', date = '';
-        allDetailItems.forEach(function (item) {
-            var label = item.querySelector('label');
-            var span = item.querySelector('span');
-            if (label && span) {
-                var lbl = label.textContent.trim();
-                var val = span.textContent.trim();
-                if (lbl === 'Score' || lbl === '\u0411\u0430\u043b\u043b') score = val;
-                if (lbl === 'Date' || lbl === '\u0414\u0430\u0442\u0430') date = val;
+            var pdfW = 210;
+            var pdfH = (imgHeight * pdfW) / imgWidth;
+
+            var doc = new jsPDF('p', 'mm', 'a4');
+            var pageH = 297;
+            var offset = 0;
+
+            while (offset < pdfH) {
+                if (offset > 0) doc.addPage();
+                var remaining = pdfH - offset;
+                var sliceH = Math.min(pageH, remaining);
+
+                var srcY = (offset / pdfH) * imgHeight;
+                var srcH = (sliceH / pdfH) * imgHeight;
+
+                var tmpCanvas = document.createElement('canvas');
+                tmpCanvas.width = imgWidth;
+                tmpCanvas.height = srcH;
+                var ctx = tmpCanvas.getContext('2d');
+                ctx.drawImage(canvas, 0, srcY, imgWidth, srcH, 0, 0, imgWidth, srcH);
+
+                doc.addImage(tmpCanvas.toDataURL('image/png'), 'PNG', 0, 0, pdfW, sliceH);
+                offset += pageH;
             }
+
+            doc.save('BasketForm-AI-Report.pdf');
         });
-        html += '<div class="meta">' + (t.results_detail_score || 'Score') + ': <b>' + score + '</b> | ' + (t.results_detail_date || 'Date') + ': ' + date + '</div>';
-
-        var phaseCards = body.querySelectorAll('.phase-card');
-        if (phaseCards.length) {
-            html += '<h2>' + (t.results_detail_score || 'Phase Analysis') + '</h2>';
-            phaseCards.forEach(function (card) {
-                var name = card.querySelector('.phase-name');
-                var sc = card.querySelector('.phase-score');
-                var fb = card.querySelector('.phase-feedback');
-                html += '<div class="phase">';
-                if (name) html += '<div class="phase-name">' + name.textContent.trim() + ' <span class="phase-score">' + (sc ? sc.textContent.trim() : '') + '</span></div>';
-                if (fb) html += '<div class="phase-fb">' + fb.textContent.trim() + '</div>';
-                html += '</div>';
-            });
-        }
-
-        var feedbackFull = document.getElementById('feedbackFull');
-        if (feedbackFull && feedbackFull.textContent.trim()) {
-            html += '<h2>' + (t.results_feedback || 'Feedback') + '</h2>';
-            html += '<div class="feedback">' + feedbackFull.textContent.trim() + '</div>';
-        }
-
-        html += '<div class="footer">BasketForm-AI \u2014 ' + new Date().toLocaleDateString() + '</div>';
-        html += '</body></html>';
-
-        printWin.document.write(html);
-        printWin.document.close();
-        setTimeout(function () { printWin.print(); }, 500);
     }
     </script>
     <script src="/static/js/canvas.js"></script>

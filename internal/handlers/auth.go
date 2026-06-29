@@ -2,7 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/kr1ny77/BasketForm-AI/internal/services"
 )
@@ -21,6 +25,7 @@ func (h *AuthHandler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("/api/login", h.LoginHandler)
 	mux.HandleFunc("/api/profile", h.ProfileHandler)
 	mux.HandleFunc("/api/profile/update", h.ProfileUpdateHandler)
+	mux.HandleFunc("/api/profile/avatar", h.AvatarHandler)
 }
 
 func (h *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
@@ -164,4 +169,56 @@ func (h *AuthHandler) ProfileUpdateHandler(w http.ResponseWriter, r *http.Reques
 	}
 
 	writeJSON(w, http.StatusOK, map[string]string{"message": "password updated"})
+}
+
+func (h *AuthHandler) AvatarHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
+	userID := r.Context().Value("user_id").(string)
+
+	if err := r.ParseMultipartForm(5 << 20); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid form data")
+		return
+	}
+
+	file, header, err := r.FormFile("avatar")
+	if err != nil {
+		writeError(w, http.StatusBadRequest, "missing avatar file")
+		return
+	}
+	defer file.Close()
+
+	allowed := map[string]bool{".jpg": true, ".jpeg": true, ".png": true, ".webp": true}
+	ext := strings.ToLower(filepath.Ext(header.Filename))
+	if !allowed[ext] {
+		writeError(w, http.StatusBadRequest, "unsupported format: use JPG, PNG, or WebP")
+		return
+	}
+
+	avatarsDir := filepath.Join("data", "avatars")
+	os.MkdirAll(avatarsDir, 0o755)
+
+	avatarPath := filepath.Join(avatarsDir, userID+ext)
+	dst, err := os.Create(avatarPath)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, "failed to save avatar")
+		return
+	}
+	defer dst.Close()
+
+	if _, err := io.Copy(dst, file); err != nil {
+		writeError(w, http.StatusInternalServerError, "failed to save avatar")
+		return
+	}
+
+	user, ok := h.storage.GetUserByID(userID)
+	if ok {
+		user.Avatar = "/api/avatar/" + userID
+		h.storage.SaveUser(user)
+	}
+
+	writeJSON(w, http.StatusOK, map[string]string{"avatar": user.Avatar})
 }
