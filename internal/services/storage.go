@@ -85,8 +85,11 @@ func (s *Storage) GetVideo(id string) (*models.Video, bool) {
 }
 
 func (s *Storage) GetAllVideos() []*models.Video {
+	s.loadAllVideosFromDisk()
+
 	s.mu.RLock()
 	defer s.mu.RUnlock()
+
 	var list []*models.Video
 	for _, v := range s.videos {
 		list = append(list, v)
@@ -98,8 +101,11 @@ func (s *Storage) GetAllVideos() []*models.Video {
 }
 
 func (s *Storage) GetVideosByUserID(userID string) []*models.Video {
+	s.loadAllVideosFromDisk()
+
 	s.mu.RLock()
 	defer s.mu.RUnlock()
+
 	var list []*models.Video
 	for _, v := range s.videos {
 		if v.UserID == userID {
@@ -200,6 +206,18 @@ func (s *Storage) SaveVideoJSON(v *models.Video) {
 	s.saveVideoJSON(v)
 }
 
+func (s *Storage) DeleteVideo(id string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	delete(s.videos, id)
+	os.Remove(filepath.Join(s.dataDir, "videos", id+".json"))
+	os.Remove(filepath.Join(s.resultsDir, id+".json"))
+	os.Remove(filepath.Join(s.uploadDir, id+".mp4"))
+	os.Remove(filepath.Join(s.uploadDir, id+".MP4"))
+	os.Remove(filepath.Join(s.uploadDir, id+".mov"))
+	os.Remove(filepath.Join(s.uploadDir, id+".avi"))
+}
+
 func (s *Storage) loadVideoJSON(id string) (*models.Video, bool) {
 	path := filepath.Join(s.dataDir, "videos", id+".json")
 	data, err := os.ReadFile(path)
@@ -212,6 +230,26 @@ func (s *Storage) loadVideoJSON(id string) (*models.Video, bool) {
 	}
 	s.videos[id] = &v
 	return &v, true
+}
+
+func (s *Storage) loadAllVideosFromDisk() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	entries, err := os.ReadDir(filepath.Join(s.dataDir, "videos"))
+	if err != nil {
+		return
+	}
+	for _, entry := range entries {
+		if entry.IsDir() || !strings.HasSuffix(entry.Name(), ".json") {
+			continue
+		}
+		id := strings.TrimSuffix(entry.Name(), ".json")
+		if _, loaded := s.videos[id]; loaded {
+			continue
+		}
+		s.loadVideoJSON(id)
+	}
 }
 
 // --- Users ---

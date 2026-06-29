@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type Handler struct {
@@ -80,4 +81,28 @@ func (h *Handler) ResultsFileServer() http.Handler {
 		abs = h.resultsDir
 	}
 	return http.StripPrefix("/results/", http.FileServer(http.Dir(abs)))
+}
+
+func AvatarHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		userID := strings.TrimPrefix(r.URL.Path, "/api/avatar/")
+		if userID == "" || strings.Contains(userID, "/") {
+			http.NotFound(w, r)
+			return
+		}
+		avatarsDir := filepath.Join("data", "avatars")
+		entries, err := os.ReadDir(avatarsDir)
+		if err != nil {
+			http.NotFound(w, r)
+			return
+		}
+		for _, entry := range entries {
+			if strings.HasPrefix(entry.Name(), userID+".") {
+				abs, _ := filepath.Abs(filepath.Join(avatarsDir, entry.Name()))
+				http.ServeFile(w, r, abs)
+				return
+			}
+		}
+		http.NotFound(w, r)
+	}
 }

@@ -65,6 +65,9 @@ func main() {
 	friendsHandler.Register(mux)
 	shareHandler.Register(mux)
 
+	// Avatar serving (public)
+	mux.HandleFunc("/api/avatar/", handlers.AvatarHandler())
+
 	// Static files (no auth required, no cache)
 	fs := http.FileServer(http.Dir("web/static"))
 	mux.Handle("/static/", http.StripPrefix("/static/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

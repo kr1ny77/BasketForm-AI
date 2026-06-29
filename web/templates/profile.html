@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile — BasketForm-AI</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=4">
+    <link rel="stylesheet" href="/static/css/style.css?v=5">
     <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
+    <script src="/static/js/i18n.js?v=5"></script>
 </head>
 <body>
     <canvas id="bgCanvas"></canvas>
@@ -15,12 +16,12 @@
         </div>
         <div class="nav-center">
             <ul class="nav-links">
-                <li><a href="/upload">Upload</a></li>
-                <li><a href="/results">Results</a></li>
-                <li><a href="/progress">Progress</a></li>
-                <li><a href="/export">Export</a></li>
-                <li><a href="/shared">Shared</a></li>
-                <li><a href="/friends">Friends</a></li>
+                <li><a href="/upload" data-i18n="nav_upload">Upload</a></li>
+                <li><a href="/results" data-i18n="nav_results">Results</a></li>
+                <li><a href="/progress" data-i18n="nav_progress">Progress</a></li>
+                <li><a href="/export" data-i18n="nav_export">Export</a></li>
+                <li><a href="/shared" data-i18n="nav_shared">Shared</a></li>
+                <li><a href="/friends" data-i18n="nav_friends">Friends</a></li>
             </ul>
         </div>
         <div class="nav-right">
@@ -28,44 +29,52 @@
                 <option value="en">EN</option>
                 <option value="ru">RU</option>
             </select>
-            <a href="/profile" class="nav-profile active">Profile</a>
+            <a href="/profile" class="nav-profile active" data-i18n="nav_profile">Profile</a>
         </div>
     </nav>
     <main class="content">
         <section class="page-header">
-            <h1>Profile</h1>
-            <p>Manage your account settings</p>
+            <h1 data-i18n="profile_title">Profile</h1>
+            <p data-i18n="profile_desc">Manage your account settings</p>
         </section>
         <section class="form-card">
             <div id="profileInfo" class="profile-info">
-                <div class="form-group">
-                    <label>Nickname</label>
-                    <p id="nickname" class="profile-value">Loading...</p>
+                <div class="avatar-section">
+                    <div class="avatar-large" id="avatarDisplay" onclick="document.getElementById('avatarInput').click()">
+                        <span id="avatarInitial" class="avatar-initial">?</span>
+                        <img id="avatarImg" class="avatar-img" style="display:none;">
+                        <div class="avatar-overlay">Change Photo</div>
+                    </div>
+                    <input type="file" id="avatarInput" accept="image/*" style="display:none;">
                 </div>
                 <div class="form-group">
-                    <label>Email</label>
-                    <p id="email" class="profile-value">Loading...</p>
+                    <label data-i18n="profile_nickname">Nickname</label>
+                    <p id="nickname" class="profile-value" data-i18n="profile_loading">Loading...</p>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="profile_email">Email</label>
+                    <p id="email" class="profile-value" data-i18n="profile_loading">Loading...</p>
                 </div>
             </div>
         </section>
         <section class="form-card">
-            <h2>Change Password</h2>
+            <h2 data-i18n="profile_change_pw">Change Password</h2>
             <form id="passwordForm">
                 <div class="form-group">
-                    <label for="oldPassword">Current Password</label>
-                    <input type="password" id="oldPassword" placeholder="Enter current password" required>
+                    <label for="oldPassword" data-i18n="profile_current_pw">Current Password</label>
+                    <input type="password" id="oldPassword" data-i18n-placeholder="profile_pw_hint" placeholder="Enter current password" required>
                 </div>
                 <div class="form-group">
-                    <label for="newPassword">New Password</label>
-                    <input type="password" id="newPassword" placeholder="At least 6 characters" required minlength="6">
+                    <label for="newPassword" data-i18n="profile_new_pw">New Password</label>
+                    <input type="password" id="newPassword" data-i18n-placeholder="profile_pw_hint3" placeholder="At least 6 characters" required minlength="6">
                 </div>
                 <div class="form-group">
-                    <label for="confirmPassword">Confirm New Password</label>
-                    <input type="password" id="confirmPassword" placeholder="Repeat new password" required>
+                    <label for="confirmPassword" data-i18n="profile_pw2">Confirm New Password</label>
+                    <input type="password" id="confirmPassword" data-i18n-placeholder="profile_pw_hint2" placeholder="Repeat new password" required>
                 </div>
                 <div id="errorMessage" class="error-message" style="display:none;"></div>
                 <div id="successMessage" class="success-message" style="display:none;"></div>
-                <button type="submit" class="btn btn-primary">Update Password</button>
+                <button type="submit" class="btn btn-primary" data-i18n="profile_update_pw">Update Password</button>
             </form>
         </section>
         <section class="form-card">
@@ -76,9 +85,19 @@
     fetch('/api/profile')
     .then(function(r) { return r.json(); })
     .then(function(data) {
+        var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
         if (data.error) { window.location.href = '/login'; return; }
         document.getElementById('nickname').textContent = data.nickname;
         document.getElementById('email').textContent = data.email;
+        var initial = document.getElementById('avatarInitial');
+        var img = document.getElementById('avatarImg');
+        if (data.avatar) {
+            initial.style.display = 'none';
+            img.src = data.avatar;
+            img.style.display = 'block';
+        } else {
+            initial.textContent = data.nickname ? data.nickname.charAt(0).toUpperCase() : '?';
+        }
     });
 
     document.getElementById('passwordForm').addEventListener('submit', function(e) {
@@ -90,14 +109,15 @@
         var successEl = document.getElementById('successMessage');
         errorEl.style.display = 'none';
         successEl.style.display = 'none';
+        var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
 
         if (newPw !== confirmPw) {
-            errorEl.textContent = 'Passwords do not match.';
+            errorEl.textContent = t.profile_mismatch || 'Passwords do not match.';
             errorEl.style.display = 'block';
             return;
         }
         if (newPw.length < 6) {
-            errorEl.textContent = 'Password must be at least 6 characters.';
+            errorEl.textContent = t.profile_pw_short || 'Password must be at least 6 characters.';
             errorEl.style.display = 'block';
             return;
         }
@@ -113,7 +133,7 @@
                 errorEl.textContent = data.error;
                 errorEl.style.display = 'block';
             } else {
-                successEl.textContent = 'Password updated successfully!';
+                successEl.textContent = t.profile_updated || 'Password updated successfully!';
                 successEl.style.display = 'block';
                 document.getElementById('passwordForm').reset();
             }
@@ -123,6 +143,27 @@
     document.getElementById('logoutBtn').addEventListener('click', function() {
         document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         window.location.href = '/login';
+    });
+
+    document.getElementById('avatarInput').addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        var formData = new FormData();
+        formData.append('avatar', file);
+        fetch('/api/profile/avatar', {
+            method: 'POST',
+            body: formData
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.avatar) {
+                var img = document.getElementById('avatarImg');
+                var initial = document.getElementById('avatarInitial');
+                img.src = data.avatar + '?t=' + Date.now();
+                img.style.display = 'block';
+                initial.style.display = 'none';
+            }
+        });
     });
     </script>
     <script src="/static/js/canvas.js"></script>

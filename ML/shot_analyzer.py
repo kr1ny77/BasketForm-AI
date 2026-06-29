@@ -164,6 +164,18 @@ class ShotPhaseStateMachine:
 
         self.scores["RELEASE"] = max(0, min(100, score_rel + random.randint(-3, 3)))
 
+        # FOLLOW-THROUGH: Based on frames in follow-through state and stability
+        ft = self.frames_in_follow_through
+        if ft > 30:
+            base_ft = 90
+        elif ft > 20:
+            base_ft = 75
+        elif ft > 10:
+            base_ft = 60
+        else:
+            base_ft = 40
+        self.scores["FOLLOW_THROUGH"] = max(0, min(100, base_ft + random.randint(-5, 5)))
+
     def finalize(self):
         """
         Принудительно считает оценки, если видео закончилось
