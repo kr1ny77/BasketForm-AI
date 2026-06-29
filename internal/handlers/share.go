@@ -20,6 +20,7 @@ func NewShareHandler(storage *services.Storage) *ShareHandler {
 func (h *ShareHandler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("/api/share/result", h.ShareResult)
 	mux.HandleFunc("/api/results/shared-with-me", h.SharedWithMe)
+	mux.HandleFunc("/api/results/shared-by-me", h.SharedByMe)
 }
 
 func (h *ShareHandler) ShareResult(w http.ResponseWriter, r *http.Request) {
@@ -99,6 +100,48 @@ func (h *ShareHandler) SharedWithMe(w http.ResponseWriter, r *http.Request) {
 			Score:        result.Score,
 			VideoID:      result.VideoID,
 			CreatedAt:    s.CreatedAt.Format(time.RFC3339),
+		})
+	}
+	if results == nil {
+		results = []sharedResp{}
+	}
+	writeJSON(w, http.StatusOK, results)
+}
+
+func (h *ShareHandler) SharedByMe(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
+	userID := r.Context().Value("user_id").(string)
+	shared := h.storage.GetSharedByMe(userID)
+
+	type sharedResp struct {
+		ID           string `json:"id"`
+		ResultID     string `json:"result_id"`
+		ToNickname   string `json:"to_nickname"`
+		Score        int    `json:"score"`
+		VideoID      string `json:"video_id"`
+		CreatedAt    string `json:"created_at"`
+	}
+	var results []sharedResp
+	for _, s := range shared {
+		result, err := h.storage.LoadResultByID(s.ResultID)
+		if err != nil {
+			continue
+		}
+		toNick := ""
+		if u, ok := h.storage.GetUserByID(s.ToUserID); ok {
+			toNick = u.Nickname
+		}
+		results = append(results, sharedResp{
+			ID:         s.ID,
+			ResultID:   s.ResultID,
+			ToNickname: toNick,
+			Score:      result.Score,
+			VideoID:    result.VideoID,
+			CreatedAt:  s.CreatedAt.Format(time.RFC3339),
 		})
 	}
 	if results == nil {

@@ -559,3 +559,30 @@ func (s *Storage) GetSharedWithMe(userID string) []*models.SharedResult {
 	}
 	return results
 }
+
+func (s *Storage) GetSharedByMe(userID string) []*models.SharedResult {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	var results []*models.SharedResult
+	entries, err := os.ReadDir(filepath.Join(s.dataDir, "shared"))
+	if err != nil {
+		return nil
+	}
+	for _, entry := range entries {
+		if entry.IsDir() {
+			continue
+		}
+		data, err := os.ReadFile(filepath.Join(s.dataDir, "shared", entry.Name()))
+		if err != nil {
+			continue
+		}
+		var sr models.SharedResult
+		if err := json.Unmarshal(data, &sr); err != nil {
+			continue
+		}
+		if sr.FromUserID == userID {
+			results = append(results, &sr)
+		}
+	}
+	return results
+}
