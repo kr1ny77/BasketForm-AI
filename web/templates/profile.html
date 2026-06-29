@@ -50,10 +50,6 @@
                 <div class="form-group">
                     <label data-i18n="profile_nickname">Nickname</label>
                     <p id="nickname" class="profile-value" data-i18n="profile_loading">Loading...</p>
-                    <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
-                        <button class="btn btn-sm btn-outline" onclick="openModal('nicknameModal')">Change Nickname</button>
-                        <button class="btn btn-sm btn-outline" onclick="openModal('passwordModal')">Change Password</button>
-                    </div>
                 </div>
                 <div class="form-group">
                     <label data-i18n="profile_email">Email</label>
@@ -61,6 +57,10 @@
                 </div>
             </div>
         </section>
+        <div style="display:flex;gap:1rem;margin-bottom:1.5rem;">
+            <button class="btn btn-primary" style="flex:1;padding:1rem 1.5rem;font-size:0.95rem;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));box-shadow:0 4px 15px rgba(255,106,0,0.25);" onclick="openModal('nicknameModal')">Change Nickname</button>
+            <button class="btn btn-primary" style="flex:1;padding:1rem 1.5rem;font-size:0.95rem;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));box-shadow:0 4px 15px rgba(255,106,0,0.25);" onclick="openModal('passwordModal')">Change Password</button>
+        </div>
         <section class="form-card">
             <button id="logoutBtn" class="btn btn-danger" data-i18n="profile_logout">Logout</button>
         </section>
