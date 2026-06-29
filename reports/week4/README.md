@@ -140,7 +140,7 @@ The automated tests, CI checks, quality requirement tests, and Definition of Don
 
 ## Screenshots
 
-> Screenshot files must be added to `reports/week4/images/`. The folder does not exist yet — the team needs to create it and commit the sanitized images.
+> The sanitized evidence screenshots below are stored in `reports/week4/images/`. The CI run and QA-check screenshots reflect the current (failing) state of the latest protected-default-branch run.
 
 - Sprint milestone: ![Sprint milestone](./images/sprint-milestone.png)
 - Latest protected-default-branch CI run: ![CI run](./images/ci-run.png)
@@ -157,7 +157,6 @@ BasketForm-AI now has a complete authentication system, social features (friends
 ## Next Steps
 
 - Fix the failing Lint and Test jobs so the protected-default-branch CI run passes before submission.
-- Add the `reports/week4/images/` folder with the required sanitized screenshots.
 - Publish the public sanitized demo video and link it here and from the v0.2.0 release.
 - Sprint 3: Comparison with professional players, progress tracking over time.
 - Performance optimization for large video files.
