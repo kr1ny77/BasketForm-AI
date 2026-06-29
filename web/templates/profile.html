@@ -50,6 +50,10 @@
                 <div class="form-group">
                     <label data-i18n="profile_nickname">Nickname</label>
                     <p id="nickname" class="profile-value" data-i18n="profile_loading">Loading...</p>
+                    <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+                        <button class="btn btn-sm btn-outline" onclick="openModal('nicknameModal')">Change Nickname</button>
+                        <button class="btn btn-sm btn-outline" onclick="openModal('passwordModal')">Change Password</button>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label data-i18n="profile_email">Email</label>
@@ -58,50 +62,84 @@
             </div>
         </section>
         <section class="form-card">
-            <h2 data-i18n="profile_change_nickname">Change Nickname</h2>
-            <form id="nicknameForm">
-                <div class="form-group">
-                    <label data-i18n="profile_new_nickname">New Nickname</label>
-                    <input type="text" id="newNickname" placeholder="Enter new nickname" required minlength="2" maxlength="30">
-                </div>
-                <div class="form-group">
-                    <label data-i18n="profile_confirm_pw">Confirm with Password</label>
-                    <input type="password" id="nicknamePassword" data-i18n-placeholder="profile_pw_hint" placeholder="Enter your password" required>
-                </div>
-                <div id="nicknameError" class="error-message" style="display:none;"></div>
-                <div id="nicknameSuccess" class="success-message" style="display:none;"></div>
-                <button type="submit" class="btn btn-primary" data-i18n="profile_update_nickname">Update Nickname</button>
-            </form>
-        </section>
-        <section class="form-card">
-            <h2 data-i18n="profile_change_pw">Change Password</h2>
-            <form id="passwordForm">
-                <div class="form-group">
-                    <label for="oldPassword" data-i18n="profile_current_pw">Current Password</label>
-                    <input type="password" id="oldPassword" data-i18n-placeholder="profile_pw_hint" placeholder="Enter current password" required>
-                </div>
-                <div class="form-group">
-                    <label for="newPassword" data-i18n="profile_new_pw">New Password</label>
-                    <input type="password" id="newPassword" data-i18n-placeholder="profile_pw_hint3" placeholder="At least 6 characters" required minlength="6">
-                </div>
-                <div class="form-group">
-                    <label for="confirmPassword" data-i18n="profile_pw2">Confirm New Password</label>
-                    <input type="password" id="confirmPassword" data-i18n-placeholder="profile_pw_hint2" placeholder="Repeat new password" required>
-                </div>
-                <div id="errorMessage" class="error-message" style="display:none;"></div>
-                <div id="successMessage" class="success-message" style="display:none;"></div>
-                <button type="submit" class="btn btn-primary" data-i18n="profile_update_pw">Update Password</button>
-            </form>
-        </section>
-        <section class="form-card">
             <button id="logoutBtn" class="btn btn-danger" data-i18n="profile_logout">Logout</button>
         </section>
     </main>
+
+    <!-- Nickname Modal -->
+    <div class="modal-overlay" id="nicknameModal">
+        <div class="modal" style="max-width:420px;">
+            <button class="modal-close" onclick="closeModal('nicknameModal')">&times;</button>
+            <h2>Change Nickname</h2>
+            <form id="nicknameForm">
+                <div class="form-group">
+                    <label>New Nickname</label>
+                    <input type="text" id="newNickname" placeholder="Enter new nickname" required minlength="2" maxlength="30">
+                </div>
+                <div class="form-group">
+                    <label>Confirm with Password</label>
+                    <input type="password" id="nicknamePassword" placeholder="Enter your password" required>
+                </div>
+                <div id="nicknameError" class="error-message" style="display:none;"></div>
+                <div id="nicknameSuccess" class="success-message" style="display:none;"></div>
+                <button type="submit" class="btn btn-primary btn-block">Update Nickname</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div class="modal-overlay" id="passwordModal">
+        <div class="modal" style="max-width:420px;">
+            <button class="modal-close" onclick="closeModal('passwordModal')">&times;</button>
+            <h2>Change Password</h2>
+            <form id="passwordForm">
+                <div class="form-group">
+                    <label>Current Password</label>
+                    <input type="password" id="oldPassword" placeholder="Enter current password" required>
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" id="newPassword" placeholder="At least 6 characters" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label>Confirm New Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Repeat new password" required>
+                </div>
+                <div id="pwError" class="error-message" style="display:none;"></div>
+                <div id="pwSuccess" class="success-message" style="display:none;"></div>
+                <button type="submit" class="btn btn-primary btn-block">Update Password</button>
+            </form>
+        </div>
+    </div>
+
     <script>
+    function openModal(id) {
+        document.getElementById(id).classList.add('active');
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('active');
+        var err = document.getElementById(id).querySelector('.error-message');
+        var suc = document.getElementById(id).querySelector('.success-message');
+        if (err) err.style.display = 'none';
+        if (suc) suc.style.display = 'none';
+    }
+
+    document.querySelectorAll('.modal-overlay').forEach(function(el) {
+        el.addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('active');
+        });
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal-overlay.active').forEach(function(el) {
+                el.classList.remove('active');
+            });
+        }
+    });
+
     fetch('/api/profile')
     .then(function(r) { return r.json(); })
     .then(function(data) {
-        var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
         if (data.error) { window.location.href = '/login'; return; }
         document.getElementById('nickname').textContent = data.nickname;
         document.getElementById('email').textContent = data.email;
@@ -114,72 +152,6 @@
         } else {
             initial.textContent = data.nickname ? data.nickname.charAt(0).toUpperCase() : '?';
         }
-    });
-
-    document.getElementById('passwordForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        var oldPw = document.getElementById('oldPassword').value;
-        var newPw = document.getElementById('newPassword').value;
-        var confirmPw = document.getElementById('confirmPassword').value;
-        var errorEl = document.getElementById('errorMessage');
-        var successEl = document.getElementById('successMessage');
-        errorEl.style.display = 'none';
-        successEl.style.display = 'none';
-        var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
-
-        if (newPw !== confirmPw) {
-            errorEl.textContent = t.profile_mismatch || 'Passwords do not match.';
-            errorEl.style.display = 'block';
-            return;
-        }
-        if (newPw.length < 6) {
-            errorEl.textContent = t.profile_pw_short || 'Password must be at least 6 characters.';
-            errorEl.style.display = 'block';
-            return;
-        }
-
-        fetch('/api/profile/update', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({old_password: oldPw, new_password: newPw})
-        })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            if (data.error) {
-                errorEl.textContent = data.error;
-                errorEl.style.display = 'block';
-            } else {
-                successEl.textContent = t.profile_updated || 'Password updated successfully!';
-                successEl.style.display = 'block';
-                document.getElementById('passwordForm').reset();
-            }
-        });
-    });
-
-    document.getElementById('logoutBtn').addEventListener('click', function() {
-        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-        window.location.href = '/login';
-    });
-
-    document.getElementById('avatarInput').addEventListener('change', function(e) {
-        var file = e.target.files[0];
-        if (!file) return;
-        var formData = new FormData();
-        formData.append('avatar', file);
-        fetch('/api/profile/avatar', {
-            method: 'POST',
-            body: formData
-        })
-        .then(function(r) { return r.json(); })
-        .then(function(data) {
-            if (data.avatar) {
-                var img = document.getElementById('avatarImg');
-                var initial = document.getElementById('avatarInitial');
-                img.src = data.avatar + '?t=' + Date.now();
-                img.style.display = 'block';
-                initial.style.display = 'none';
-            }
-        });
     });
 
     document.getElementById('nicknameForm').addEventListener('submit', function(e) {
@@ -217,6 +189,73 @@
                 if (initial.style.display !== 'none') {
                     initial.textContent = data.nickname.charAt(0).toUpperCase();
                 }
+                setTimeout(function() { closeModal('nicknameModal'); }, 1500);
+            }
+        });
+    });
+
+    document.getElementById('passwordForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var oldPw = document.getElementById('oldPassword').value;
+        var newPw = document.getElementById('newPassword').value;
+        var confirmPw = document.getElementById('confirmPassword').value;
+        var errorEl = document.getElementById('pwError');
+        var successEl = document.getElementById('pwSuccess');
+        errorEl.style.display = 'none';
+        successEl.style.display = 'none';
+
+        if (newPw !== confirmPw) {
+            errorEl.textContent = 'Passwords do not match.';
+            errorEl.style.display = 'block';
+            return;
+        }
+        if (newPw.length < 6) {
+            errorEl.textContent = 'Password must be at least 6 characters.';
+            errorEl.style.display = 'block';
+            return;
+        }
+
+        fetch('/api/profile/update', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({old_password: oldPw, new_password: newPw})
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.error) {
+                errorEl.textContent = data.error;
+                errorEl.style.display = 'block';
+            } else {
+                successEl.textContent = 'Password updated successfully!';
+                successEl.style.display = 'block';
+                document.getElementById('passwordForm').reset();
+                setTimeout(function() { closeModal('passwordModal'); }, 1500);
+            }
+        });
+    });
+
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        window.location.href = '/login';
+    });
+
+    document.getElementById('avatarInput').addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        var formData = new FormData();
+        formData.append('avatar', file);
+        fetch('/api/profile/avatar', {
+            method: 'POST',
+            body: formData
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.avatar) {
+                var img = document.getElementById('avatarImg');
+                var initial = document.getElementById('avatarInitial');
+                img.src = data.avatar + '?t=' + Date.now();
+                img.style.display = 'block';
+                initial.style.display = 'none';
             }
         });
     });
