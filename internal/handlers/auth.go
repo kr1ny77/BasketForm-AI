@@ -26,6 +26,7 @@ func (h *AuthHandler) Register(mux *http.ServeMux) {
 	mux.HandleFunc("/api/profile", h.ProfileHandler)
 	mux.HandleFunc("/api/profile/update", h.ProfileUpdateHandler)
 	mux.HandleFunc("/api/profile/avatar", h.AvatarHandler)
+	mux.HandleFunc("/api/profile/nickname", h.ChangeNicknameHandler)
 }
 
 func (h *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
@@ -222,4 +223,48 @@ func (h *AuthHandler) AvatarHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	writeJSON(w, http.StatusOK, map[string]string{"avatar": user.Avatar})
+}
+
+func (h *AuthHandler) ChangeNicknameHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		writeError(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
+	userID := r.Context().Value("user_id").(string)
+
+	var req struct {
+		Password    string `json:"password"`
+		NewNickname string `json:"new_nickname"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid request body")
+		return
+	}
+
+	if req.Password == "" || req.NewNickname == "" {
+		writeError(w, http.StatusBadRequest, "password and new_nickname are required")
+		return
+	}
+
+	if len(req.NewNickname) < 2 {
+		writeError(w, http.StatusBadRequest, "nickname must be at least 2 characters")
+		return
+	}
+
+	if err := h.auth.ChangeNickname(userID, req.Password, req.NewNickname); err != nil {
+		switch err {
+		case services.ErrInvalidCredentials:
+			writeError(w, http.StatusUnauthorized, "incorrect password")
+		case services.ErrNicknameTaken:
+			writeError(w, http.StatusConflict, "nickname already taken")
+		case services.ErrUserNotFound:
+			writeError(w, http.StatusNotFound, "user not found")
+		default:
+			writeError(w, http.StatusInternalServerError, "internal error")
+		}
+		return
+	}
+
+	writeJSON(w, http.StatusOK, map[string]string{"nickname": req.NewNickname})
 }
