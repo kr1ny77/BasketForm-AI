@@ -113,6 +113,7 @@
     }
 
     function loadMyResults() {
+        var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
         var el = document.getElementById('shareResultsList');
         el.innerHTML = '<p class="text-muted">' + (t.results_loading || 'Loading...') + '</p>';
         fetch('/api/videos').then(function(r) { return r.json(); }).then(function(videos) {
