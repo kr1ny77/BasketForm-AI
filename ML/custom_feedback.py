@@ -9,7 +9,8 @@ class CustomFeedbackGenerator:
         dip = scores.get('DIP', 50)
         ascent = scores.get('ASCENT', 50)
         release = scores.get('RELEASE', 50)
-        avg = (dip + ascent + release) / 3
+        follow_through = scores.get('FOLLOW_THROUGH', 50)
+        avg = (dip + ascent + release + follow_through) / 4
 
         min_knee = metrics.get('min_knee_dip', 180)
         torso = metrics.get('torso_ascent', 0)
@@ -17,8 +18,8 @@ class CustomFeedbackGenerator:
         forearm = metrics.get('forearm_release', 20)
 
         if lang == "ru":
-            return self._ru(dip, ascent, release, avg, min_knee, torso, elbow, forearm)
-        return self._en(dip, ascent, release, avg, min_knee, torso, elbow, forearm)
+            return self._ru(dip, ascent, release, follow_through, avg, min_knee, torso, elbow, forearm)
+        return self._en(dip, ascent, release, follow_through, avg, min_knee, torso, elbow, forearm)
 
     def _rating(self, s):
         if s >= 80:
@@ -29,7 +30,7 @@ class CustomFeedbackGenerator:
             return ("Needs Work", "Требует работы")
         return ("Poor", "Слабо")
 
-    def _en(self, dip, ascent, release, avg, min_knee, torso, elbow, forearm):
+    def _en(self, dip, ascent, release, follow_through, avg, min_knee, torso, elbow, forearm):
         r = self._rating
         lines = []
         lines.append(f"OVERALL SCORE: {int(avg)}/100")
@@ -68,6 +69,17 @@ class CustomFeedbackGenerator:
             lines.append(f"Critical release issues. Elbow {elbow:.0f}\u00b0 is too open/closed, forearm {forearm:.0f}\u00b0. This is the main cause of inaccurate shots. Work on basics: elbow under wrist, ball above head, wrist flexed.")
 
         lines.append("")
+        lines.append(f"PHASE 4 — FOLLOW-THROUGH: {int(follow_through)}/100")
+        if follow_through >= 80:
+            lines.append(f"Excellent follow-through! Your arm fully extends and the wrist snaps cleanly. The ball rolls off your fingertips with proper backspin. This shows great muscle memory.")
+        elif follow_through >= 60:
+            lines.append(f"Good follow-through. Your arm extends well after release. Focus on keeping the wrist snap consistent \u2014 hold the pose until the ball reaches the basket.")
+        elif follow_through >= 40:
+            lines.append(f"Follow-through needs work. Your arm may be cutting short or the wrist isn't snapping fully. Practice holding your shooting hand up with fingers pointing down after every shot.")
+        else:
+            lines.append(f"Weak follow-through. Your arm stops too early after release. A proper follow-through ensures accuracy and backspin. After every shot, your hand should look like it's reaching into a cookie jar on a high shelf.")
+
+        lines.append("")
         lines.append("RECOMMENDATIONS:")
         recs = []
         if dip < 70:
@@ -76,6 +88,8 @@ class CustomFeedbackGenerator:
             recs.append("\u2022 Keep your torso vertical during the rise, strengthen your core")
         if release < 70:
             recs.append("\u2022 Control your elbow and wrist position at release")
+        if follow_through < 70:
+            recs.append("\u2022 Hold your follow-through longer \u2014 hand up, fingers down, until the ball hits the rim")
         if avg >= 80:
             recs.append("\u2022 Excellent technique! Focus on consistency and repeatability")
         elif avg >= 60:
@@ -88,7 +102,7 @@ class CustomFeedbackGenerator:
 
         return "\n".join(lines)
 
-    def _ru(self, dip, ascent, release, avg, min_knee, torso, elbow, forearm):
+    def _ru(self, dip, ascent, release, follow_through, avg, min_knee, torso, elbow, forearm):
         r = self._rating
         lines = []
         lines.append(f"\u041e\u0411\u0429\u0410\u042f \u041e\u0426\u0415\u041d\u041a\u0410: {int(avg)}/100")
@@ -102,7 +116,7 @@ class CustomFeedbackGenerator:
         elif dip >= 40:
             lines.append(f"\u0421\u0440\u0435\u0434\u043d\u0438\u0439 \u043f\u043e\u0434\u0441\u0435\u0434. \u0423\u0433\u043e\u043b \u043a\u043e\u043b\u0435\u043d\u0430 {min_knee:.0f}\u00b0 \u0441\u043b\u0438\u0448\u043a\u043e\u043c \u043f\u0440\u044f\u043c\u043e\u0439. \u0421\u043e\u0433\u043d\u0438\u0442\u0435 \u043a\u043e\u043b\u0435\u043d\u0438 \u043d\u0430 15-20 \u0433\u0440\u0430\u0434\u0443\u0441\u043e\u0432 \u043f\u0435\u0440\u0435\u0434 \u0431\u0440\u043e\u0441\u043a\u043e\u043c \u0434\u043b\u044f \u0433\u0435\u043d\u0435\u0440\u0430\u0446\u0438\u0438 \u043c\u043e\u0449\u043d\u043e\u0441\u0442\u0438 \u0438\u0437 \u043d\u043e\u0433.")
         else:
-            lines.append(f"\u0421\u043b\u0430\u0431\u044b\u0439 \u043f\u043e\u0434\u0441\u0435\u0434. \u041d\u043e\u0433\u0438 \u043f\u0447\u0435\u043c \u043f\u0440\u044f\u043c\u044b\u0435 \u2014 {min_knee:.0f}\u00b0. \u0421\u043e\u0433\u043d\u0438\u0442\u0435 \u043a\u043e\u043b\u0435\u043d\u0438, \u043a\u0430\u043a \u0441\u0430\u0434\u0438\u0442\u0435\u0441\u044c \u043d\u0430 \u0441\u0442\u0443\u043b \u2014 \u044d\u0442\u043e \u043a\u0440\u0438\u0442\u0438\u0447\u043d\u043e \u0434\u043b\u044f \u0442\u0435\u0445\u043d\u0438\u043a\u0438.")
+            lines.append(f"\u0421\u043b\u0430\u0431\u044b\u0439 \u043f\u043e\u0434\u0441\u0435\u0434. \u041d\u043e\u0433\u0438 \u043f\u0447\u0435\u043c \u043f\u0440\u044f\u043c\u044b\u0435 \u2014 {min_knee:.0f}\u00b0. \u0421\u043e\u0433\u043d\u0438\u0442\u0435 \u043a\u043e\u043b\u0435\u043d\u0438, \u043a\u0430\u043a \u0441\u0430\u0434\u0438\u0442\u0435\u0441\u044c \u043d\u0430 \u0441\u0442\u0443\u043b \u2014 \u044d\u0442\u043e \u043a\u0440\u0438\u0442\u0438\u0447\u0435\u0441\u043a\u0438 \u0434\u043b\u044f \u0442\u0435\u0445\u043d\u0438\u043a\u0438.")
 
         lines.append("")
         lines.append(f"\u0424\u0410\u0417\u0410 2 \u2014 ASCENT (\u041f\u043e\u0434\u044a\u0451\u043c): {int(ascent)}/100")
@@ -127,6 +141,17 @@ class CustomFeedbackGenerator:
             lines.append(f"\u041a\u0440\u0438\u0442\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u043f\u0440\u043e\u0431\u043b\u0435\u043c\u044b \u0441 \u0440\u0435\u043b\u0438\u0437\u043e\u043c. \u041b\u043e\u043a\u043e\u0442\u044c {elbow:.0f}\u00b0, \u043f\u0440\u0435\u0434\u043f\u043b\u0435\u0447\u044c\u0435 {forearm:.0f}\u00b0. \u042d\u0442\u043e \u0433\u043b\u0430\u0432\u043d\u0430\u044f \u043f\u0440\u0438\u0447\u0438\u043d\u0430 \u043d\u0435\u0442\u043e\u0447\u043d\u044b\u0445 \u0431\u0440\u043e\u0441\u043a\u043e\u0432.")
 
         lines.append("")
+        lines.append(f"\u0424\u0410\u0417\u0410 4 \u2014 FOLLOW-THROUGH (\u0417\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u0438\u0435): {int(follow_through)}/100")
+        if follow_through >= 80:
+            lines.append(f"\u041e\u0442\u043b\u0438\u0447\u043d\u043e\u0435 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u0438\u0435! \u0420\u0443\u043a\u0430 \u043f\u043e\u043b\u043d\u043e\u0441\u0442\u044c\u044e \u0432\u044b\u043f\u0440\u044f\u043c\u044b\u0432\u0430\u0435\u0442\u0441\u044f, \u0437\u0430\u043f\u044f\u0441\u0442\u044c\u0447\u0438\u0432\u0430\u0435\u0442 \u0447\u0438\u0441\u0442\u043e. \u041c\u044f\u0447 \u043a\u0430\u0442\u0438\u0442\u0441\u044f \u0441 \u043f\u0440\u0430\u0432\u0438\u043b\u044c\u043d\u044b\u043c \u0432\u0440\u0430\u0449\u0435\u043d\u0438\u0435\u043c. \u042d\u0442\u043e \u043f\u043e\u043a\u0430\u0437\u044b\u0432\u0430\u0435\u0442 \u043e\u0442\u043b\u0438\u0447\u043d\u0443\u044e \u043c\u044b\u0448\u0435\u0447\u043d\u0443\u044e \u043f\u0430\u043c\u044f\u0442\u044c.")
+        elif follow_through >= 60:
+            lines.append(f"\u0425\u043e\u0440\u043e\u0448\u0435\u0435 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u0438\u0435. \u0420\u0443\u043a\u0430 \u0445\u043e\u0440\u043e\u0448\u043e \u0432\u044b\u043f\u0440\u044f\u043c\u044b\u0432\u0430\u0435\u0442\u0441\u044f \u043f\u043e\u0441\u043b\u0435 \u0431\u0440\u043e\u0441\u043a\u0430. \u0421\u043e\u0441\u0440\u0435\u0434\u043e\u0442\u043e\u0447\u044c\u0442\u0435\u0441\u044c \u043d\u0430 \u043f\u043e\u0441\u0442\u043e\u044f\u043d\u043d\u043e\u043c \u0443\u0434\u0435\u0440\u0436\u0430\u043d\u0438\u0438 \u0437\u0430\u043f\u044f\u0441\u0442\u044c\u044f \u0434\u043e \u043f\u043e\u043f\u0430\u0434\u0430\u043c\u044f \u043c\u044f\u0447\u0430.")
+        elif follow_through >= 40:
+            lines.append(f"\u0417\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u0438\u0435 \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u0434\u043e\u0440\u0430\u0431\u043e\u0442\u043a\u0438. \u0420\u0443\u043a\u0430 \u043c\u043e\u0436\u0435\u0442 \u043e\u0431\u0440\u044b\u0432\u0430\u0442\u044c\u0441\u044f \u0440\u0430\u043d\u043e \u043f\u043e\u0441\u043b\u0435 \u0431\u0440\u043e\u0441\u043a\u0430 \u0438\u043b\u0438 \u0437\u0430\u043f\u044f\u0441\u0442\u044c\u0447\u0438\u0432\u0430\u0435\u0442 \u043d\u0435 \u0434\u043e \u043a\u043e\u043d\u0446\u0430. \u0422\u0440\u0435\u043d\u0438\u0440\u0443\u0439\u0442\u0435\u0441\u044c: \u043f\u043e\u0441\u043b\u0435 \u043a\u0430\u0436\u0434\u043e\u0433\u043e \u0431\u0440\u043e\u0441\u043a\u0430 \u0437\u0430\u043c\u0435\u0440\u043a\u0430\u0439\u0442\u0435 \u0440\u0443\u043a\u0443 \u0432\u0432\u0435\u0440\u0445.")
+        else:
+            lines.append(f"\u0421\u043b\u0430\u0431\u043e\u0435 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u0438\u0435. \u0420\u0443\u043a\u0430 \u043e\u0441\u0442\u0430\u043d\u0430\u0432\u043b\u0438\u0432\u0430\u0435\u0442\u0441\u044f \u0441\u043b\u0438\u0448\u043a\u043e\u043c \u0440\u0430\u043d\u043e \u043f\u043e\u0441\u043b\u0435 \u0431\u0440\u043e\u0441\u043a\u0430. \u041f\u0440\u0430\u0432\u0438\u043b\u044c\u043d\u043e\u0435 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u0438\u0435 \u043e\u0431\u0435\u0441\u043f\u0435\u0447\u0438\u0432\u0430\u0435\u0442 \u0442\u043e\u0447\u043d\u043e\u0441\u0442\u044c \u0438 \u043e\u0431\u0440\u0430\u0442\u043d\u044b\u0439 \u0432\u0440\u0430\u0449. \u041f\u043e\u0441\u043b\u0435 \u0431\u0440\u043e\u0441\u043a\u0430 \u0440\u0443\u043a\u0430 \u0434\u043e\u043b\u0436\u043d\u0430 \u0431\u044b\u0442\u044c \u043f\u043e\u0434\u043d\u044f\u0442\u0430 \u0432\u0432\u0435\u0440\u0445, \u043f\u0430\u043b\u044c\u0446\u044b \u0432\u043d\u0438\u0437.")
+
+        lines.append("")
         lines.append("\u0420\u0415\u041a\u041e\u041c\u0415\u041d\u0414\u0410\u0426\u0418\u0418:")
         recs = []
         if dip < 70:
@@ -135,6 +160,8 @@ class CustomFeedbackGenerator:
             recs.append("\u2022 \u0414\u0435\u0440\u0436\u0438\u0442\u0435 \u043a\u043e\u0440\u043f\u0443\u0441 \u0432\u0435\u0440\u0442\u0438\u043a\u0430\u043b\u044c\u043d\u043e \u0432\u043e \u0432\u0440\u0435\u043c\u044f \u043f\u043e\u0434\u044a\u0451\u043c\u0430")
         if release < 70:
             recs.append("\u2022 \u041a\u043e\u043d\u0442\u0440\u043e\u043b\u0438\u0440\u0443\u0439\u0442\u0435 \u043f\u043e\u0437\u0438\u0446\u0438\u044e \u043b\u043e\u043a\u0442\u044f \u0438 \u0437\u0430\u043f\u044f\u0441\u0442\u044c\u044f \u043f\u0440\u0438 \u0440\u0435\u043b\u0438\u0437\u0435")
+        if follow_through < 70:
+            recs.append("\u2022 \u0423\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0439\u0442\u0435 \u0437\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u0438\u0435 \u0434\u043e\u043b\u044c\u0448\u0435 \u2014 \u0440\u0443\u043a\u0430 \u0432\u0432\u0435\u0440\u0445, \u043f\u0430\u043b\u044c\u0446\u044b \u0432\u043d\u0438\u0437, \u0434\u043e \u043f\u043e\u043f\u0430\u0434\u0430\u043c\u044f \u043c\u044f\u0447\u0430")
         if avg >= 80:
             recs.append("\u2022 \u041e\u0442\u043b\u0438\u0447\u043d\u0430\u044f \u0442\u0435\u0445\u043d\u0438\u043a\u0430! \u0424\u043e\u043a\u0443\u0441\u0438\u0440\u0443\u0439\u0442\u0435\u0441\u044c \u043d\u0430 \u043f\u043e\u0432\u0442\u043e\u0440\u044f\u0435\u043c\u043e\u0441\u0442\u0438")
         elif avg >= 60:

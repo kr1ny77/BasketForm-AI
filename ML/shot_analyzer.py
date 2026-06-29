@@ -39,7 +39,13 @@ class ShotPhaseStateMachine:
         self.torso_ascent = 180
         self.elbow_release = 0
         self.forearm_release = 90
-        self.scores = {"DIP": 0, "ASCENT": 0, "RELEASE": 0}
+        self.scores = {"DIP": 0, "ASCENT": 0, "RELEASE": 0, "FOLLOW_THROUGH": 0}
+
+        # Follow-through specific metrics
+        self.ft_wrist_angles = []
+        self.ft_elbow_stability = []
+        self.ft_arm_extension = []
+        self.ft_entry_elbow = 0
 
     def update(self, knee_angle, elbow_angle, ball_center, wrist_center, torso_angle, forearm_angle):
         knee = self.smooth_knee.update(knee_angle)
@@ -58,13 +64,21 @@ class ShotPhaseStateMachine:
         elif self.state == "RELEASE":
             self.elbow_release = max(self.elbow_release, elbow)
             self.forearm_release = forearm_angle
+        elif self.state == "FOLLOW_THROUGH":
+            self.ft_elbow_stability.append(elbow)
+            self.ft_arm_extension.append(forearm_angle)
+            if ball_center and wrist_center:
+                self.ft_wrist_angles.append(ball_wrist_dist if ball_wrist_dist else 0)
 
         # State transition logic
         if self.state == "IDLE":
             if knee < 160:
                 self.state = "DIP"
                 self.frames_since_release = 0
-                self.min_knee_dip = 180  # Reset metrics for new shot
+                self.min_knee_dip = 180
+                self.ft_wrist_angles = []
+                self.ft_elbow_stability = []
+                self.ft_arm_extension = []
 
         elif self.state == "DIP":
             if knee > self.prev_knee + 2.0:
@@ -90,14 +104,16 @@ class ShotPhaseStateMachine:
             if self.frames_since_release > 10 and elbow < 140:
                 self.state = "FOLLOW_THROUGH"
                 self.frames_in_follow_through = 0
+                self.ft_entry_elbow = elbow
+                self.ft_wrist_angles = []
+                self.ft_elbow_stability = []
+                self.ft_arm_extension = []
 
         elif self.state == "FOLLOW_THROUGH":
             self.frames_in_follow_through += 1
-            # Force follow-through to last at least 30 frames (~1 second)
-            # AND wait until the player bends their knees again (new shot or landing)
             if self.frames_in_follow_through > 30 and knee < 140:
                 self.state = "IDLE"
-                self._calculate_scores()  # Calculate scores at the end of the shot
+                self._calculate_scores()
 
         self.prev_knee = knee
         self.prev_elbow = elbow
@@ -164,22 +180,66 @@ class ShotPhaseStateMachine:
 
         self.scores["RELEASE"] = max(0, min(100, score_rel + random.randint(-3, 3)))
 
-        # FOLLOW-THROUGH: Based on frames in follow-through state and stability
+        # FOLLOW-THROUGH: Based on duration + elbow snap + arm extension consistency
         ft = self.frames_in_follow_through
-        if ft > 30:
-            base_ft = 90
+
+        # Duration score (0-30 pts): longer follow-through is better
+        if ft > 40:
+            dur_score = 30
+        elif ft > 30:
+            dur_score = 25
         elif ft > 20:
-            base_ft = 75
+            dur_score = 18
         elif ft > 10:
-            base_ft = 60
+            dur_score = 10
         else:
-            base_ft = 40
-        self.scores["FOLLOW_THROUGH"] = max(0, min(100, base_ft + random.randint(-5, 5)))
+            dur_score = 5
+
+        # Elbow snap score (0-35 pts): elbow should bend quickly after release
+        elbow_snap = 0
+        if self.ft_entry_elbow > 0 and len(self.ft_elbow_stability) > 0:
+            min_ft_elbow = min(self.ft_elbow_stability) if self.ft_elbow_stability else self.ft_entry_elbow
+            snap_diff = self.ft_entry_elbow - min_ft_elbow
+            if snap_diff > 40:
+                elbow_snap = 35
+            elif snap_diff > 25:
+                elbow_snap = 28
+            elif snap_diff > 15:
+                elbow_snap = 20
+            elif snap_diff > 5:
+                elbow_snap = 12
+            else:
+                elbow_snap = 5
+
+        # Arm extension consistency (0-35 pts): forearm should stay stable during follow-through
+        ext_consistency = 0
+        if len(self.ft_arm_extension) > 3:
+            ext_values = self.ft_arm_extension
+            ext_mean = np.mean(ext_values)
+            ext_std = np.std(ext_values)
+            # Lower std = more consistent = better
+            if ext_std < 5:
+                ext_consistency = 35
+            elif ext_std < 10:
+                ext_consistency = 28
+            elif ext_std < 15:
+                ext_consistency = 20
+            elif ext_std < 25:
+                ext_consistency = 12
+            else:
+                ext_consistency = 5
+            # Bonus for good angle (forearm close to vertical)
+            if ext_mean < 20:
+                ext_consistency = min(35, ext_consistency + 5)
+        else:
+            ext_consistency = 10
+
+        base_ft = dur_score + elbow_snap + ext_consistency
+        self.scores["FOLLOW_THROUGH"] = max(0, min(100, base_ft + random.randint(-3, 3)))
 
     def finalize(self):
         """
-        Принудительно считает оценки, если видео закончилось
-        до естественного завершения цикла броска.
+        Force-calculate scores if the video ended before the shot cycle completed naturally.
         """
         if self.state != "IDLE":
             self._calculate_scores()
