@@ -127,6 +127,7 @@ func (h *AuthHandler) ProfileHandler(w http.ResponseWriter, r *http.Request) {
 		"id":       user.ID,
 		"email":    user.Email,
 		"nickname": user.Nickname,
+		"avatar":   user.Avatar,
 	})
 }
 
