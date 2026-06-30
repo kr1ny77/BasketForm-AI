@@ -27,6 +27,10 @@ func (m *Middleware) AuthRequired(next http.Handler) http.Handler {
 			next.ServeHTTP(w, r)
 			return
 		}
+		if strings.HasPrefix(path, "/api/result/") || strings.HasPrefix(path, "/api/avatar/") {
+			next.ServeHTTP(w, r)
+			return
+		}
 
 		token, err := r.Cookie("token")
 		if err != nil || token.Value == "" {

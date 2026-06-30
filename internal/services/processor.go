@@ -80,8 +80,8 @@ func (p *Processor) ProcessVideo(id string) {
 
 	p.storage.UpdateStatus(id, "processing", 90)
 
-	phaseNames := []string{"Stance (DIP)", "Ascent (ASCENT)", "Release (RELEASE)"}
-	mlKeys := []string{"DIP", "ASCENT", "RELEASE"}
+	phaseNames := []string{"Stance (DIP)", "Ascent (ASCENT)", "Release (RELEASE)", "Follow-through"}
+	mlKeys := []string{"DIP", "ASCENT", "RELEASE", "FOLLOW_THROUGH"}
 
 	var phases []models.PhaseScore
 	var scoreList []int
@@ -136,6 +136,9 @@ func (p *Processor) ProcessVideo(id string) {
 	p.storage.SetScore(id, overall)
 	p.storage.UpdateStatus(id, "done", 100)
 	log.Printf("Video %s processed: score=%d", id, overall)
+
+	// Delete uploaded video file to save disk space
+	os.Remove(videoPath)
 }
 
 func findPython() string {

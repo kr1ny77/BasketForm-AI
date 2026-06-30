@@ -118,6 +118,24 @@ func (a *AuthService) ChangePassword(userID, oldPassword, newPassword string) er
 	return a.storage.SaveUser(user)
 }
 
+func (a *AuthService) ChangeNickname(userID, password, newNickname string) error {
+	user, ok := a.storage.GetUserByID(userID)
+	if !ok {
+		return ErrUserNotFound
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
+		return ErrInvalidCredentials
+	}
+
+	if _, ok := a.storage.GetUserByNickname(newNickname); ok {
+		return ErrNicknameTaken
+	}
+
+	user.Nickname = newNickname
+	return a.storage.SaveUser(user)
+}
+
 func (a *AuthService) generateToken(userID string) (string, error) {
 	claims := jwt.MapClaims{
 		"user_id": userID,
