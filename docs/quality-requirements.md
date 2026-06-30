@@ -10,6 +10,8 @@ Quality requirements for BasketForm-AI, structured by ISO/IEC 25010 quality sub-
 
 **Why this matters:** Users need fast feedback when browsing their analyses. Slow API responses degrade the user experience and block the main workflow of reviewing shooting form results.
 
+**Related PBI:** [#64](https://github.com/kr1ny77/BasketForm-AI/issues/64) (PBI-016: ML integration — API response time matters for real processing pipeline)
+
 **Linked quality requirement tests:** [QRT-001](quality-requirement-tests.md#qrt-001-api-response-time)
 
 ## QR-002: Authentication Security
@@ -19,6 +21,8 @@ Quality requirements for BasketForm-AI, structured by ISO/IEC 25010 quality sub-
 **Scenario:** When an unauthenticated user attempts to access a protected endpoint (e.g., `/upload`, `/results`, `/api/videos`), the system shall reject the request with HTTP 401/403 and redirect to `/login`. A user shall not be able to access another user's results or data through direct URL manipulation.
 
 **Why this matters:** User data (video uploads, analysis results, friend lists) must remain private. Unauthorized access would expose personal data and violate user trust.
+
+**Related PBI:** [#66](https://github.com/kr1ny77/BasketForm-AI/issues/66) (PBI-018: Authentication and data persistence)
 
 **Linked quality requirement tests:** [QRT-002](quality-requirement-tests.md#qrt-002-authentication-security)
 
@@ -30,6 +34,8 @@ Quality requirements for BasketForm-AI, structured by ISO/IEC 25010 quality sub-
 
 **Why this matters:** Core business logic (authentication, storage, video processing) must be directly verifiable so defects can be detected before merge. Low coverage leads to undetected regressions in critical user workflows.
 
+**Related PBI:** [#68](https://github.com/kr1ny77/BasketForm-AI/issues/68) (PBI-019: Automated tests for ML integration, validation, and persistence)
+
 **Linked quality requirement tests:** [QRT-003](quality-requirement-tests.md#qrt-003-critical-module-unit-coverage)
 
 ## QR-004: Usability — Form Guidance
@@ -39,5 +45,7 @@ Quality requirements for BasketForm-AI, structured by ISO/IEC 25010 quality sub-
 **Scenario:** When a user opens any form page (login, register, upload, profile), all input fields shall contain placeholder text or visible labels that explain what data is expected, within the initial page render.
 
 **Why this matters:** Clear guidance reduces user errors, lowers support needs, and makes the application accessible to new users without external documentation.
+
+**Related PBI:** [#67](https://github.com/kr1ny77/BasketForm-AI/issues/67) (PBI-019: Social features — friend system and sharing require clear form guidance)
 
 **Linked quality requirement tests:** [QRT-004](quality-requirement-tests.md#qrt-004-usability-form-guidance)
