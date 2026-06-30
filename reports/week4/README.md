@@ -29,7 +29,7 @@ Deployment: http://80.74.30.14/
 
 - **URL:** http://80.74.30.14/
 - **Run instructions:** See [README.md](../../README.md)
-- **Public sanitized demo video:** _Pending publication — link to be added before submission._
+- **Public sanitized demo video: https://youtu.be/BjLcVhTe_RE
 
 ## Customer Feedback Response Table
 
