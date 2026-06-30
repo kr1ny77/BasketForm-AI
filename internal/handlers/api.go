@@ -124,12 +124,16 @@ func (a *APIHandler) Upload(w http.ResponseWriter, r *http.Request) {
 	video.Lang = lang
 	a.storage.SaveVideoJSON(video)
 
+	respID := video.ID
+	respFilename := video.Filename
+	respStatus := video.Status
+
 	go a.processor.ProcessVideo(id)
 
 	writeJSON(w, http.StatusCreated, map[string]string{
-		"id":       video.ID,
-		"filename": video.Filename,
-		"status":   video.Status,
+		"id":       respID,
+		"filename": respFilename,
+		"status":   respStatus,
 	})
 }
 
@@ -151,10 +155,14 @@ func (a *APIHandler) Status(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	videoID := video.ID
+	videoStatus := video.Status
+	videoProgress := video.Progress
+
 	writeJSON(w, http.StatusOK, map[string]any{
-		"id":       video.ID,
-		"status":   video.Status,
-		"progress": video.Progress,
+		"id":       videoID,
+		"status":   videoStatus,
+		"progress": videoProgress,
 	})
 }
 

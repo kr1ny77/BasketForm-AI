@@ -1,7 +1,7 @@
 # Customer Review Summary — Week 4
 
 **Date:** 2026-06-28
-**Participants:** Customer (Anastasia Malakhova), Development team
+**Participants:** Customer, Development team
 
 ## Sprint Goal Reviewed
 
@@ -19,10 +19,10 @@ The team demonstrated:
 
 ## UAT Results
 
-- UAT-001 (Registration and Login): **Passed** — user can register and log in successfully
-- UAT-002 (Video Upload and Analysis): **Passed** — video uploads, processes, and shows phases with annotated video
-- UAT-003 (Share Result): **Passed** — result is shared and friend can view it
-- UAT-004 (Friend Request): **Passed** — friend request workflow works end-to-end
+- UAT-001 (Video Upload and Analysis): **Passed** — customer uploaded a basketball video, processing completed, and results with score and recommendations were displayed correctly
+- UAT-002 (PDF Export): **Passed** — customer exported analysis report as PDF, file downloaded and contained the throw report
+- UAT-003 (Canvas Animation and UI Interaction): **Passed** — customer confirmed basketball-themed background animation works smoothly, UI elements remain fully functional and clickable
+- UAT-004 (Account Creation and Login): **Passed** — customer confirmed registration and login workflow works end-to-end
 
 ## Quality Evidence Discussed
 
