@@ -118,7 +118,7 @@ The default branch `main` is protected by repository rulesets requiring pull req
 
 Week 4 UAT execution covered at least three active end-user scenarios from [docs/user-acceptance-tests.md](../../docs/user-acceptance-tests.md).
 
-- **Passed scenarios:** upload and analysis, account creation/login, result sharing with friends.
+- **Passed scenarios:** video upload and analysis, PDF export, canvas animation and UI interaction, account creation and login.
 - **Scenarios needing changes:** none blocking; minor usability feedback captured as backlog items.
 - See [Customer Review Summary](./customer-review-summary.md) for full details (sanitized).
 
@@ -128,15 +128,13 @@ The automated tests, CI checks, quality requirement tests, and Definition of Don
 
 ## Contribution Traceability
 
-| Team member | Area of contribution |
-|---|---|
-| [@kr1ny77](https://github.com/kr1ny77) | Backend, ML integration, CI configuration, releases |
-| [@Koomaz](https://github.com/Koomaz) | Backend, handlers, tests |
-| [@romasntlv](https://github.com/romasntlv) | ML / ball tracking, UAT, customer review docs |
-| [@gimacorp](https://github.com/gimacorp) | Documentation, reports, deployment |
-| [@mentalafffection](https://github.com/mentalafffection) | Frontend, quality requirements |
-
-> Per-issue/PR mapping to be finalized; see the [Product Backlog board](https://github.com/users/kr1ny77/projects/7) and [closed PRs](https://github.com/kr1ny77/BasketForm-AI/pulls?q=is%3Apr+is%3Aclosed) for detailed traceability.
+| Team member | Issues | PRs | Reviews | Testing | Quality | Automation | Documentation |
+|---|---|---|---|---|---|---|---|
+| [@kr1ny77](https://github.com/kr1ny77) | [#64](https://github.com/kr1ny77/BasketForm-AI/issues/64), [#66](https://github.com/kr1ny77/BasketForm-AI/issues/66) | [PRs](https://github.com/kr1ny77/BasketForm-AI/pulls?q=author%3Akr1ny77) | [Reviews](https://github.com/kr1ny77/BasketForm-AI/pulls?q=reviewed-by%3Akr1ny77) | Unit tests for auth service | CI pipeline, QRT setup | CI workflow (lint, test, coverage, QRT, govulncheck) | CHANGELOG, README |
+| [@Koomaz](https://github.com/Koomaz) | [#65](https://github.com/kr1ny77/BasketForm-AI/issues/65), [#66](https://github.com/kr1ny77/BasketForm-AI/issues/66) | [PRs](https://github.com/kr1ny77/BasketForm-AI/pulls?q=author%3AKoomaz) | [Reviews](https://github.com/kr1ny77/BasketForm-AI/pulls?q=reviewed-by%3AKoomaz) | Integration tests, handler tests | Quality requirements | QRT test implementation | Quality docs |
+| [@romasntlv](https://github.com/romasntlv) | [#64](https://github.com/kr1ny77/BasketForm-AI/issues/64) | [PRs](https://github.com/kr1ny77/BasketForm-AI/pulls?q=author%3Aromasntlv) | [Reviews](https://github.com/kr1ny77/BasketForm-AI/pulls?q=reviewed-by%3Aromasntlv) | ML pipeline testing | — | ML integration | Customer review docs |
+| [@gimacorp](https://github.com/gimacorp) | — | [PRs](https://github.com/kr1ny77/BasketForm-AI/pulls?q=author%3Agimacorp) | [Reviews](https://github.com/kr1ny77/BasketForm-AI/pulls?q=reviewed-by%3Agimacorp) | — | — | Deployment scripts | Reports, roadmap, UAT docs |
+| [@mentalafffection](https://github.com/mentalafffection) | [#67](https://github.com/kr1ny77/BasketForm-AI/issues/67) | [PRs](https://github.com/kr1ny77/BasketForm-AI/pulls?q=author%3Amentalafffection) | [Reviews](https://github.com/kr1ny77/BasketForm-AI/pulls?q=reviewed-by%3Amentalafffection) | — | Quality requirements, Usability QR | Frontend QA | Quality requirements docs |
 
 ## Screenshots
 

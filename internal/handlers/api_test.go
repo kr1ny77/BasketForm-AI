@@ -20,6 +20,8 @@ func setupTest(t *testing.T) (*APIHandler, string, string) {
 	t.Helper()
 	upload := t.TempDir()
 	results := t.TempDir()
+	dataDir := t.TempDir()
+	t.Setenv("DATA_DIR", dataDir)
 	storage := services.NewStorage(upload, results)
 	processor := services.NewProcessor(storage)
 	api := NewAPI(storage, processor, upload)
