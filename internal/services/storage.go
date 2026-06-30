@@ -81,7 +81,11 @@ func (s *Storage) GetVideo(id string) (*models.Video, bool) {
 	if !ok {
 		v, ok = s.loadVideoJSON(id)
 	}
-	return v, ok
+	if !ok {
+		return nil, false
+	}
+	copy := *v
+	return &copy, true
 }
 
 func (s *Storage) GetAllVideos() []*models.Video {
