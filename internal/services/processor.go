@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/kr1ny77/BasketForm-AI/internal/models"
@@ -186,5 +185,5 @@ func extOf(filename string) string {
 	if ext == "" {
 		return ".mp4"
 	}
-	return strings.ToLower(ext)
+	return ext
 }
