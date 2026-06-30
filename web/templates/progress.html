@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Progress — BasketForm-AI</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=4">
+    <link rel="stylesheet" href="/static/css/style2.css?v=1">
     <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
 </head>
 <body>
@@ -14,12 +14,12 @@
         </div>
         <div class="nav-center">
             <ul class="nav-links">
-                <li><a href="/upload">Upload</a></li>
-                <li><a href="/results">Results</a></li>
-                <li><a href="/progress" class="active">Progress</a></li>
-                <li><a href="/export">Export</a></li>
-                <li><a href="/shared">Shared</a></li>
-                <li><a href="/friends">Friends</a></li>
+                <li><a href="/upload" data-i18n="nav_upload">Upload</a></li>
+                <li><a href="/results" data-i18n="nav_results">Results</a></li>
+                <li><a href="/progress" class="active" data-i18n="nav_progress">Progress</a></li>
+                <li><a href="/export" data-i18n="nav_export">Export</a></li>
+                <li><a href="/shared" data-i18n="nav_shared">Shared</a></li>
+                <li><a href="/friends" data-i18n="nav_friends">Friends</a></li>
             </ul>
         </div>
         <div class="nav-right">
@@ -27,7 +27,7 @@
                 <option value="en">EN</option>
                 <option value="ru">RU</option>
             </select>
-            <a href="/profile" class="nav-profile">Profile</a>
+            <a href="/profile" class="nav-profile" data-i18n="nav_profile">Profile</a>
         </div>
     </nav>
     <main class="content">
@@ -102,7 +102,7 @@
         </div>
     </main>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
-    <script src="/static/js/i18n.js"></script>
+    <script src="/static/js/i18n.js?v=5"></script>
     <script src="/static/js/canvas.js"></script>
     <script>
     var params = new URLSearchParams(window.location.search);
@@ -126,9 +126,9 @@
                     document.getElementById('processingDone').style.display = 'block';
                     loadHistory();
                 } else if (data.status === 'error') {
-                    document.getElementById('processingStatus').textContent = 'Processing failed.';
+                    document.getElementById('processingStatus').textContent = t.processing_failed || 'Processing failed.';
                 } else {
-                    document.getElementById('processingStatus').textContent = (t.progress_proc || 'Processing video...') + ' ' + data.status;
+                    document.getElementById('processingStatus').textContent = t.progress_proc || 'Processing video...';
                     setTimeout(pollStatus, 1000);
                 }
             })

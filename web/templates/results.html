@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results — BasketForm-AI</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=4">
+    <link rel="stylesheet" href="/static/css/style2.css?v=1">
     <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="/static/js/i18n.js?v=6"></script>
 </head>
 <body>
     <canvas id="bgCanvas"></canvas>
@@ -16,12 +19,12 @@
         </div>
         <div class="nav-center">
             <ul class="nav-links">
-                <li><a href="/upload">Upload</a></li>
-                <li><a href="/results" class="active">Results</a></li>
-                <li><a href="/progress">Progress</a></li>
-                <li><a href="/export">Export</a></li>
-                <li><a href="/shared">Shared</a></li>
-                <li><a href="/friends">Friends</a></li>
+                <li><a href="/upload" data-i18n="nav_upload">Upload</a></li>
+                <li><a href="/results" class="active" data-i18n="nav_results">Results</a></li>
+                <li><a href="/progress" data-i18n="nav_progress">Progress</a></li>
+                <li><a href="/export" data-i18n="nav_export">Export</a></li>
+                <li><a href="/shared" data-i18n="nav_shared">Shared</a></li>
+                <li><a href="/friends" data-i18n="nav_friends">Friends</a></li>
             </ul>
         </div>
         <div class="nav-right">
@@ -29,25 +32,34 @@
                 <option value="en">EN</option>
                 <option value="ru">RU</option>
             </select>
-            <a href="/profile" class="nav-profile">Profile</a>
+            <a href="/profile" class="nav-profile" data-i18n="nav_profile">Profile</a>
         </div>
     </nav>
     <main class="content">
         <section class="page-header">
-            <h1>Analysis Results</h1>
-            <p>View your shooting form analyses</p>
+            <h1 data-i18n="results_title">Analysis Results</h1>
+            <p data-i18n="results_desc">View your shooting form analyses</p>
         </section>
         <div class="filter-bar">
-            <input type="text" id="filterName" placeholder="Filter by filename...">
+            <input type="text" id="filterName" data-i18n-placeholder="results_filter" placeholder="Filter by filename...">
             <select id="filterSort">
-                <option value="date-desc">Newest first</option>
-                <option value="date-asc">Oldest first</option>
-                <option value="score-desc">Highest score</option>
-                <option value="score-asc">Lowest score</option>
+                <option value="date-desc" data-i18n="results_sort_new">Newest first</option>
+                <option value="date-asc" data-i18n="results_sort_old">Oldest first</option>
+                <option value="score-desc" data-i18n="results_sort_high">Highest score</option>
+                <option value="score-asc" data-i18n="results_sort_low">Lowest score</option>
             </select>
         </div>
+        <div class="delete-bar" id="deleteBar" style="display:none;">
+            <span><span id="selectedCount">0</span> <span data-i18n="results_selected">selected</span></span>
+            <div class="delete-bar-actions">
+                <button class="btn btn-sm btn-outline" onclick="selectAll()" data-i18n="results_select_all">Select All</button>
+                <button class="btn btn-sm btn-danger" onclick="deleteSelected()" data-i18n="results_delete_selected">Delete</button>
+                <button class="btn btn-sm btn-outline" onclick="exitSelectionMode()" data-i18n="results_cancel">Cancel</button>
+            </div>
+        </div>
+        <button class="btn btn-sm btn-danger" id="deleteModeBtn" style="margin-bottom:1rem;" onclick="enterSelectionMode()" data-i18n="results_delete">Delete</button>
         <section class="results-grid" id="resultsGrid">
-            <p class="empty-state"><span class="empty-icon">&#127936;</span><br>No analyses yet. Upload a video to get started.</p>
+            <p class="empty-state"><span class="empty-icon">&#127936;</span><br><span data-i18n="results_empty">No analyses yet. Upload a video to get started.</span></p>
         </section>
     </main>
     <div class="modal-overlay" id="modalOverlay">
@@ -59,15 +71,15 @@
     <div class="modal-overlay" id="shareOverlay">
         <div class="modal" id="shareModal" style="max-width:420px;">
             <button class="modal-close" id="shareClose">&times;</button>
-            <h2>Share Result</h2>
+            <h2 data-i18n="share_title">Share Result</h2>
             <div class="form-group">
-                <label for="friendSelect">Select a friend</label>
+                <label for="friendSelect" data-i18n="share_select">Select a friend</label>
                 <select id="friendSelect" class="form-group select-input">
-                    <option value="">Loading friends...</option>
+                    <option value="" data-i18n="share_loading">Loading friends...</option>
                 </select>
             </div>
             <div id="shareStatus" class="text-muted" style="margin-bottom:1rem;"></div>
-            <button class="btn btn-primary btn-block" id="shareBtn">Send</button>
+            <button class="btn btn-primary btn-block" id="shareBtn" data-i18n="share_send">Send</button>
         </div>
     </div>
     <script>
@@ -76,10 +88,17 @@
     var filterName = document.getElementById('filterName');
     var filterSort = document.getElementById('filterSort');
     var currentResultId = null;
+    var selectedIds = new Set();
+    var selectionMode = false;
+    var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
 
     fetch('/api/videos')
         .then(function (r) { return r.json(); })
-        .then(function (videos) { allVideos = videos; renderList(); });
+        .then(function (videos) {
+            allVideos = Array.isArray(videos) ? videos : [];
+            renderList();
+        })
+        .catch(function () { allVideos = []; renderList(); });
 
     filterName.addEventListener('input', renderList);
     filterSort.addEventListener('change', renderList);
@@ -89,278 +108,201 @@
         var list = allVideos.filter(function (v) {
             return !q || v.filename.toLowerCase().indexOf(q) !== -1;
         });
-        var sort = filterSort.value;
         list.sort(function (a, b) {
+            var sort = filterSort.value;
             if (sort === 'date-asc') return new Date(a.created_at) - new Date(b.created_at);
             if (sort === 'score-desc') return (b.score || 0) - (a.score || 0);
             if (sort === 'score-asc') return (a.score || 0) - (b.score || 0);
             return new Date(b.created_at) - new Date(a.created_at);
         });
+
+        var deleteBar = document.getElementById('deleteBar');
+        if (deleteBar) deleteBar.style.display = selectionMode ? 'flex' : 'none';
+        var countEl = document.getElementById('selectedCount');
+        if (countEl) countEl.textContent = selectedIds.size;
+
         if (!list.length) {
-            grid.innerHTML = '<p class="empty-state"><span class="empty-icon">&#127936;</span><br>No results found.</p>';
+            grid.innerHTML = '<p class="empty-state"><span class="empty-icon">&#127936;</span><br>' + (t.results_no_match || 'No results found.') + '</p>';
             return;
         }
         grid.innerHTML = '';
         list.forEach(function (v) {
             var card = document.createElement('div');
-            card.className = 'result-card';
+            card.className = 'result-card' + (selectedIds.has(v.id) ? ' selected' : '');
             card.innerHTML =
-                '<div>' +
-                    '<h3>' + escHtml(v.filename) + '</h3>' +
-                    '<div class="meta">' +
-                        '<span>ID: ' + v.id.substring(0, 8) + '</span>' +
-                        '<span>' + new Date(v.created_at).toLocaleDateString() + '</span>' +
-                        '<span class="badge badge-' + v.status + '">' + v.status + '</span>' +
-                    '</div>' +
-                '</div>' +
-                '<div class="score">' +
-                    (v.score != null ? v.score + '<small>/ 100</small>' : '&mdash;') +
-                '</div>';
-            card.style.cursor = 'pointer';
-            card.addEventListener('click', function () { openModal(v.id); });
+                (selectionMode ? '<input type="checkbox" class="result-checkbox" data-id="' + v.id + '"' + (selectedIds.has(v.id) ? ' checked' : '') + '>' : '') +
+                '<div class="score">' + (v.score != null ? '<span class="score-num">' + v.score + '</span><span class="score-of">/100</span>' : '&mdash;') + '</div>' +
+                '<div class="result-info"><h3>' + escHtml(v.filename) + '</h3>' +
+                '<div class="meta"><span>ID: ' + v.id.substring(0, 8) + '</span>' +
+                '<span>' + new Date(v.created_at).toLocaleDateString() + '</span>' +
+                '<span class="badge badge-' + v.status + '">' + v.status + '</span></div></div>';
+
+            if (selectionMode) {
+                card.querySelector('.result-checkbox').addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    if (this.checked) { selectedIds.add(v.id); card.classList.add('selected'); }
+                    else { selectedIds.delete(v.id); card.classList.remove('selected'); }
+                    document.getElementById('selectedCount').textContent = selectedIds.size;
+                });
+            }
+
+            card.addEventListener('click', function (e) {
+                if (selectionMode && e.target.tagName === 'INPUT') return;
+                if (selectionMode) {
+                    var cb = card.querySelector('.result-checkbox');
+                    if (cb) { cb.checked = !cb.checked; cb.dispatchEvent(new Event('click')); }
+                    return;
+                }
+                openModal(v.id);
+            });
             grid.appendChild(card);
         });
     }
 
-    function escHtml(s) {
-        var d = document.createElement('div');
-        d.textContent = s;
-        return d.innerHTML;
+    function selectAll() {
+        var q = filterName.value.toLowerCase();
+        var list = allVideos.filter(function (v) { return !q || v.filename.toLowerCase().indexOf(q) !== -1; });
+        var allSel = list.every(function (v) { return selectedIds.has(v.id); });
+        list.forEach(function (v) { allSel ? selectedIds.delete(v.id) : selectedIds.add(v.id); });
+        renderList();
     }
+
+    function enterSelectionMode() {
+        selectionMode = true;
+        selectedIds.clear();
+        document.getElementById('deleteModeBtn').style.display = 'none';
+        document.getElementById('deleteBar').style.display = 'flex';
+        document.getElementById('selectedCount').textContent = '0';
+        renderList();
+    }
+
+    function exitSelectionMode() {
+        selectionMode = false;
+        selectedIds.clear();
+        document.getElementById('deleteModeBtn').style.display = '';
+        document.getElementById('deleteBar').style.display = 'none';
+        renderList();
+    }
+
+    function deleteSelected() {
+        if (!selectedIds.size) return;
+        if (!confirm(t.results_confirm_delete || 'Delete?')) return;
+        fetch('/api/video/delete', {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ids: Array.from(selectedIds)})
+        }).then(function (r) { return r.json(); }).then(function () {
+            allVideos = allVideos.filter(function (v) { return !selectedIds.has(v.id); });
+            selectedIds.clear();
+            renderList();
+        });
+    }
+
+    function escHtml(s) { var d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
 
     function openModal(id) {
         currentResultId = id;
+        var tl = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
         fetch('/api/result/' + id)
             .then(function (r) { return r.json(); })
             .then(function (data) {
                 var body = document.getElementById('modalBody');
                 var html = '<h2>' + escHtml(data.filename || id) + '</h2>';
-
-                if (data.output_video_url) {
-                    html += '<div class="video-section">' +
-                        '<video controls class="result-video" src="' + data.output_video_url + '"></video>' +
-                    '</div>';
-                }
-
+                if (data.output_video_url) html += '<div class="video-section"><video controls class="result-video" src="' + data.output_video_url + '"></video></div>';
                 html += '<div class="detail-grid">' +
                     '<div class="detail-item"><label>Score</label><span>' + (data.score != null ? data.score + ' / 100' : 'N/A') + '</span></div>' +
                     '<div class="detail-item"><label>Video ID</label><span>' + id + '</span></div>' +
                     '<div class="detail-item"><label>Date</label><span>' + new Date(data.created_at || Date.now()).toLocaleString() + '</span></div>' +
-                    '<div class="detail-item"><label>Status</label><span class="badge badge-done">done</span></div>' +
-                '</div>';
-
-                if (data.phases && data.phases.length > 0) {
-                    html += '<div class="phases-section"><h3>Phase Analysis</h3><div class="phases-grid">';
+                    '<div class="detail-item"><label>Status</label><span class="badge badge-done">done</span></div></div>';
+                if (data.phases && data.phases.length) {
+                    html += '<div class="phases-section"><h3>' + (tl.results_phase_analysis || 'Phase Analysis') + '</h3><div class="phases-grid">';
                     data.phases.forEach(function (p) {
-                        var color = p.score >= 80 ? 'var(--success)' : p.score >= 50 ? 'var(--warning)' : 'var(--danger)';
-                        html += '<div class="phase-card">' +
-                            '<div class="phase-header">' +
-                                '<span class="phase-name">' + escHtml(p.phase_name) + '</span>' +
-                                '<span class="phase-score" style="color:' + color + '">' + Math.round(p.score) + '/100</span>' +
-                            '</div>' +
-                            '<div class="phase-bar"><div class="phase-fill" style="width:' + p.score + '%;background:' + color + '"></div></div>' +
-                            '<p class="phase-feedback">' + escHtml(p.feedback || '') + '</p>' +
-                        '</div>';
+                        var c = p.score >= 80 ? 'var(--success)' : p.score >= 50 ? 'var(--warning)' : 'var(--danger)';
+                        html += '<div class="phase-card"><div class="phase-header"><span class="phase-name">' + escHtml(p.phase_name) + '</span><span class="phase-score" style="color:' + c + '">' + Math.round(p.score) + '/100</span></div><div class="phase-bar"><div class="phase-fill" style="width:' + p.score + '%;background:' + c + '"></div></div><p class="phase-feedback">' + escHtml(p.feedback || '') + '</p></div>';
                     });
                     html += '</div></div>';
                 }
-
-                var summary = (data.feedback || 'No feedback available.').split('\n')[0];
-                html += '<div class="feedback-section">' +
-                    '<strong>Analysis Report</strong>' +
-                    '<p class="feedback-summary">' + escHtml(summary) + '</p>' +
-                    '<pre class="feedback-text feedback-hidden" id="feedbackFull">' + escHtml(data.feedback || '') + '</pre>' +
-                    '<button class="btn btn-sm feedback-toggle" id="feedbackToggle" onclick="toggleFeedback()">&#9660; Show detailed analysis</button>' +
-                '</div>';
-
-                html += '<div class="chart-container"><canvas id="scoreChart" height="200"></canvas></div>';
-
-                html += '<div class="modal-actions">' +
-                    '<button class="btn btn-primary" onclick="openShareModal()">&#128279; <span data-i18n="share_btn">Share</span></button>' +
-                    '<button class="btn btn-outline" onclick="exportPDF()">&#128196; <span data-i18n="export_pdf_btn">Export PDF</span></button>' +
-                '</div>';
-
+                var summary = (data.feedback || '').split('\n')[0];
+                html += '<div class="feedback-section"><strong>' + (tl.results_feedback || 'Analysis Report') + '</strong><p class="feedback-summary">' + escHtml(summary) + '</p><pre class="feedback-text feedback-hidden" id="feedbackFull">' + escHtml(data.feedback || '') + '</pre><button class="btn btn-sm feedback-toggle" id="feedbackToggle" onclick="toggleFeedback()">&#9660; Show detailed analysis</button></div>';
+                if (data.scores && data.scores.length) html += '<div class="chart-container"><canvas id="scoreChart" height="200"></canvas></div>';
+                html += '<div class="modal-actions"><button class="btn btn-primary" onclick="openShareModal()">&#128279; <span data-i18n="share_btn">Share</span></button><button class="btn btn-outline" onclick="exportPDF()">&#128196; <span data-i18n="export_pdf_btn">Export PDF</span></button></div>';
                 body.innerHTML = html;
                 document.getElementById('modalOverlay').classList.add('active');
-                drawScoreChart(data);
-            })
-            .catch(function () { alert('Could not load results.'); });
+                if (data.scores && data.scores.length) drawScoreChart(data);
+            }).catch(function () {});
     }
 
     function toggleFeedback() {
         var full = document.getElementById('feedbackFull');
         var btn = document.getElementById('feedbackToggle');
-        if (full.classList.contains('feedback-hidden')) {
-            full.classList.remove('feedback-hidden');
-            btn.innerHTML = '&#9650; Hide detailed analysis';
-        } else {
-            full.classList.add('feedback-hidden');
-            btn.innerHTML = '&#9660; Show detailed analysis';
-        }
+        if (full.classList.contains('feedback-hidden')) { full.classList.remove('feedback-hidden'); btn.innerHTML = '&#9650; Hide'; }
+        else { full.classList.add('feedback-hidden'); btn.innerHTML = '&#9660; Show'; }
     }
 
-    document.getElementById('modalClose').addEventListener('click', closeModal);
-    document.getElementById('modalOverlay').addEventListener('click', function (e) {
-        if (e.target === this) closeModal();
-    });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeModal(); });
-
-    function closeModal() {
-        document.getElementById('modalOverlay').classList.remove('active');
-    }
+    document.getElementById('modalClose').addEventListener('click', function () { document.getElementById('modalOverlay').classList.remove('active'); });
+    document.getElementById('modalOverlay').addEventListener('click', function (e) { if (e.target === this) this.classList.remove('active'); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') document.getElementById('modalOverlay').classList.remove('active'); });
 
     function drawScoreChart(data) {
         var canvas = document.getElementById('scoreChart');
         if (!canvas || typeof Chart === 'undefined') return;
-        var labels = ['Stance', 'Arm Angle', 'Release', 'Follow-through'];
-        var values = data.scores || [0, 0, 0, 0];
-        new Chart(canvas, {
-            type: 'radar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Score Breakdown',
-                    data: values,
-                    backgroundColor: 'rgba(255,106,0,0.15)',
-                    borderColor: '#ff6a00',
-                    pointBackgroundColor: '#ff6a00',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                scales: { r: { beginAtZero: true, max: 100, ticks: { color: '#888', backdropColor: 'transparent' }, grid: { color: 'rgba(255,255,255,0.06)' }, pointLabels: { color: '#ccc' } } },
-                plugins: { legend: { display: false } }
-            }
-        });
+        var tl = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
+        new Chart(canvas, { type: 'radar', data: { labels: ['Stance', 'Arm Angle', 'Release', 'Follow-through'], datasets: [{ label: tl.results_radar || 'Score', data: data.scores || [0,0,0,0], backgroundColor: 'rgba(255,106,0,0.15)', borderColor: '#ff6a00', pointBackgroundColor: '#ff6a00', borderWidth: 2 }] }, options: { scales: { r: { beginAtZero: true, max: 100, ticks: { color: '#888', backdropColor: 'transparent' }, grid: { color: 'rgba(255,255,255,0.06)' }, pointLabels: { color: '#ccc' } } }, plugins: { legend: { display: false } } } });
     }
 
-    // --- Share ---
-    function openShareModal() {
-        document.getElementById('shareOverlay').classList.add('active');
-        document.getElementById('shareStatus').textContent = '';
-        document.getElementById('shareBtn').disabled = false;
-        loadFriendsList();
-    }
-
-    document.getElementById('shareClose').addEventListener('click', function () {
-        document.getElementById('shareOverlay').classList.remove('active');
-    });
-    document.getElementById('shareOverlay').addEventListener('click', function (e) {
-        if (e.target === this) this.classList.remove('active');
-    });
+    // Share
+    function openShareModal() { document.getElementById('shareOverlay').classList.add('active'); document.getElementById('shareBtn').disabled = false; loadFriendsList(); }
+    document.getElementById('shareClose').addEventListener('click', function () { document.getElementById('shareOverlay').classList.remove('active'); });
+    document.getElementById('shareOverlay').addEventListener('click', function (e) { if (e.target === this) this.classList.remove('active'); });
 
     function loadFriendsList() {
         var sel = document.getElementById('friendSelect');
-        sel.innerHTML = '<option value="">Loading...</option>';
-        fetch('/api/friends')
-            .then(function (r) { return r.json(); })
-            .then(function (friends) {
-                if (!friends || friends.length === 0) {
-                    sel.innerHTML = '<option value="">No friends yet</option>';
-                    return;
-                }
-                sel.innerHTML = '<option value="">-- Select friend --</option>';
-                friends.forEach(function (f) {
-                    var opt = document.createElement('option');
-                    opt.value = f.id;
-                    opt.textContent = f.nickname;
-                    sel.appendChild(opt);
-                });
-            });
+        var tl = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
+        sel.innerHTML = '<option value="">' + (tl.results_loading || 'Loading...') + '</option>';
+        fetch('/api/friends').then(function (r) { return r.json(); }).then(function (friends) {
+            if (!friends || !friends.length) { sel.innerHTML = '<option value="">' + (tl.results_no_friends || 'No friends') + '</option>'; return; }
+            sel.innerHTML = '<option value="">' + (tl.share_select || 'Select friend') + '</option>';
+            friends.forEach(function (f) { var o = document.createElement('option'); o.value = f.id; o.textContent = f.nickname; sel.appendChild(o); });
+        });
     }
 
     document.getElementById('shareBtn').addEventListener('click', function () {
         var friendId = document.getElementById('friendSelect').value;
         var status = document.getElementById('shareStatus');
-        if (!friendId) {
-            status.textContent = 'Please select a friend.';
-            status.style.color = 'var(--danger)';
-            return;
-        }
-        fetch('/api/share/result', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ result_id: currentResultId, friend_id: friendId })
-        })
-        .then(function (r) { return r.json(); })
-        .then(function (data) {
-            if (data.error) {
-                status.textContent = data.error;
-                status.style.color = 'var(--danger)';
-            } else {
-                status.textContent = 'Result shared successfully!';
-                status.style.color = 'var(--success)';
-                document.getElementById('shareBtn').disabled = true;
-            }
+        var tl = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
+        if (!friendId) { status.textContent = tl.share_select || 'Select a friend.'; status.style.color = 'var(--danger)'; return; }
+        fetch('/api/share/result', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({result_id: currentResultId, friend_id: friendId}) })
+        .then(function (r) { return r.json(); }).then(function (d) {
+            if (d.error) { status.textContent = d.error; status.style.color = 'var(--danger)'; }
+            else { status.textContent = 'Shared!'; status.style.color = 'var(--success)'; document.getElementById('shareBtn').disabled = true; }
         });
     });
 
-    // --- PDF Export ---
+    // PDF
     function exportPDF() {
-        var body = document.getElementById('modalBody');
-        if (!body) return;
-
-        var printWin = window.open('', '_blank');
-        var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
-
-        var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
-            '<style>' +
-            'body{font-family:Arial,sans-serif;padding:30px;color:#222;line-height:1.6;}' +
-            'h1{color:#ff6a00;font-size:22px;margin-bottom:5px;}' +
-            'h2{font-size:18px;margin:15px 0 8px;border-bottom:2px solid #ff6a00;padding-bottom:5px;}' +
-            '.meta{color:#666;font-size:13px;margin-bottom:15px;}' +
-            '.phase{background:#f5f5f5;padding:12px;border-radius:6px;margin-bottom:10px;}' +
-            '.phase-name{font-weight:bold;font-size:14px;}' +
-            '.phase-score{color:#ff6a00;font-weight:bold;font-size:16px;float:right;}' +
-            '.phase-fb{font-size:13px;color:#444;margin-top:5px;}' +
-            '.feedback{background:#fff3e0;padding:15px;border-left:3px solid #ff6a00;margin:15px 0;font-size:13px;white-space:pre-wrap;}' +
-            '.footer{margin-top:20px;padding-top:10px;border-top:1px solid #ddd;color:#999;font-size:11px;}' +
-            '</style></head><body>';
-
-        var h2 = body.querySelector('h2');
-        html += '<h1>BasketForm-AI ' + (t.export_title || 'Report') + '</h1>';
-        html += '<div class="meta">' + (h2 ? h2.textContent.trim() : '') + ' | ' + new Date().toLocaleString() + '</div>';
-
-        var allDetailItems = body.querySelectorAll('.detail-item');
-        var score = '', date = '';
-        allDetailItems.forEach(function (item) {
-            var label = item.querySelector('label');
-            var span = item.querySelector('span');
-            if (label && span) {
-                var lbl = label.textContent.trim();
-                var val = span.textContent.trim();
-                if (lbl === 'Score' || lbl === '\u0411\u0430\u043b\u043b') score = val;
-                if (lbl === 'Date' || lbl === '\u0414\u0430\u0442\u0430') date = val;
+        if (typeof window.jspdf === 'undefined' || typeof html2canvas === 'undefined') { alert('Loading...'); return; }
+        var modalBody = document.getElementById('modalBody');
+        if (!modalBody) return;
+        var btn = document.querySelector('.modal-actions .btn-outline');
+        if (btn) btn.style.display = 'none';
+        html2canvas(modalBody, { scale: 2, backgroundColor: '#121218', useCORS: true, logging: false }).then(function (canvas) {
+            if (btn) btn.style.display = '';
+            var jsPDF = window.jspdf.jsPDF;
+            var imgData = canvas.toDataURL('image/png');
+            var imgW = canvas.width, imgH = canvas.height;
+            var pdfW = 210, pdfH = (imgH * pdfW) / imgW;
+            var doc = new jsPDF('p', 'mm', 'a4');
+            var pH = 297, off = 0;
+            while (off < pdfH) {
+                if (off > 0) doc.addPage();
+                var sH = Math.min(pH, pdfH - off);
+                var srcY = (off / pdfH) * imgH, srcH = (sH / pdfH) * imgH;
+                var tc = document.createElement('canvas'); tc.width = imgW; tc.height = srcH;
+                tc.getContext('2d').drawImage(canvas, 0, srcY, imgW, srcH, 0, 0, imgW, srcH);
+                doc.addImage(tc.toDataURL('image/png'), 'PNG', 0, 0, pdfW, sH);
+                off += pH;
             }
+            doc.save('BasketForm-AI-Report.pdf');
         });
-        html += '<div class="meta">' + (t.results_detail_score || 'Score') + ': <b>' + score + '</b> | ' + (t.results_detail_date || 'Date') + ': ' + date + '</div>';
-
-        var phaseCards = body.querySelectorAll('.phase-card');
-        if (phaseCards.length) {
-            html += '<h2>' + (t.results_detail_score || 'Phase Analysis') + '</h2>';
-            phaseCards.forEach(function (card) {
-                var name = card.querySelector('.phase-name');
-                var sc = card.querySelector('.phase-score');
-                var fb = card.querySelector('.phase-feedback');
-                html += '<div class="phase">';
-                if (name) html += '<div class="phase-name">' + name.textContent.trim() + ' <span class="phase-score">' + (sc ? sc.textContent.trim() : '') + '</span></div>';
-                if (fb) html += '<div class="phase-fb">' + fb.textContent.trim() + '</div>';
-                html += '</div>';
-            });
-        }
-
-        var feedbackFull = document.getElementById('feedbackFull');
-        if (feedbackFull && feedbackFull.textContent.trim()) {
-            html += '<h2>' + (t.results_feedback || 'Feedback') + '</h2>';
-            html += '<div class="feedback">' + feedbackFull.textContent.trim() + '</div>';
-        }
-
-        html += '<div class="footer">BasketForm-AI \u2014 ' + new Date().toLocaleDateString() + '</div>';
-        html += '</body></html>';
-
-        printWin.document.write(html);
-        printWin.document.close();
-        setTimeout(function () { printWin.print(); }, 500);
     }
     </script>
     <script src="/static/js/canvas.js"></script>

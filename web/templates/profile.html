@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Profile — BasketForm-AI</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=4">
+    <link rel="stylesheet" href="/static/css/style2.css?v=1">
     <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
+    <script src="/static/js/i18n.js?v=5"></script>
 </head>
 <body>
     <canvas id="bgCanvas"></canvas>
@@ -15,12 +16,12 @@
         </div>
         <div class="nav-center">
             <ul class="nav-links">
-                <li><a href="/upload">Upload</a></li>
-                <li><a href="/results">Results</a></li>
-                <li><a href="/progress">Progress</a></li>
-                <li><a href="/export">Export</a></li>
-                <li><a href="/shared">Shared</a></li>
-                <li><a href="/friends">Friends</a></li>
+                <li><a href="/upload" data-i18n="nav_upload">Upload</a></li>
+                <li><a href="/results" data-i18n="nav_results">Results</a></li>
+                <li><a href="/progress" data-i18n="nav_progress">Progress</a></li>
+                <li><a href="/export" data-i18n="nav_export">Export</a></li>
+                <li><a href="/shared" data-i18n="nav_shared">Shared</a></li>
+                <li><a href="/friends" data-i18n="nav_friends">Friends</a></li>
             </ul>
         </div>
         <div class="nav-right">
@@ -28,57 +29,169 @@
                 <option value="en">EN</option>
                 <option value="ru">RU</option>
             </select>
-            <a href="/profile" class="nav-profile active">Profile</a>
+            <a href="/profile" class="nav-profile active" data-i18n="nav_profile">Profile</a>
         </div>
     </nav>
     <main class="content">
         <section class="page-header">
-            <h1>Profile</h1>
-            <p>Manage your account settings</p>
+            <h1 data-i18n="profile_title">Profile</h1>
+            <p data-i18n="profile_desc">Manage your account settings</p>
         </section>
         <section class="form-card">
             <div id="profileInfo" class="profile-info">
-                <div class="form-group">
-                    <label>Nickname</label>
-                    <p id="nickname" class="profile-value">Loading...</p>
+                <div class="avatar-section">
+                    <div class="avatar-large" id="avatarDisplay" onclick="document.getElementById('avatarInput').click()">
+                        <span id="avatarInitial" class="avatar-initial">?</span>
+                        <img id="avatarImg" class="avatar-img" style="display:none;">
+                        <div class="avatar-overlay">Change Photo</div>
+                    </div>
+                    <input type="file" id="avatarInput" accept="image/*" style="display:none;">
                 </div>
                 <div class="form-group">
-                    <label>Email</label>
-                    <p id="email" class="profile-value">Loading...</p>
+                    <label data-i18n="profile_nickname">Nickname</label>
+                    <p id="nickname" class="profile-value" data-i18n="profile_loading">Loading...</p>
+                </div>
+                <div class="form-group">
+                    <label data-i18n="profile_email">Email</label>
+                    <p id="email" class="profile-value" data-i18n="profile_loading">Loading...</p>
                 </div>
             </div>
         </section>
-        <section class="form-card">
-            <h2>Change Password</h2>
-            <form id="passwordForm">
-                <div class="form-group">
-                    <label for="oldPassword">Current Password</label>
-                    <input type="password" id="oldPassword" placeholder="Enter current password" required>
-                </div>
-                <div class="form-group">
-                    <label for="newPassword">New Password</label>
-                    <input type="password" id="newPassword" placeholder="At least 6 characters" required minlength="6">
-                </div>
-                <div class="form-group">
-                    <label for="confirmPassword">Confirm New Password</label>
-                    <input type="password" id="confirmPassword" placeholder="Repeat new password" required>
-                </div>
-                <div id="errorMessage" class="error-message" style="display:none;"></div>
-                <div id="successMessage" class="success-message" style="display:none;"></div>
-                <button type="submit" class="btn btn-primary">Update Password</button>
-            </form>
-        </section>
+        <div style="display:flex;gap:1rem;margin-bottom:1.5rem;">
+            <button class="btn btn-primary" style="flex:1;padding:1rem 1.5rem;font-size:0.95rem;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));box-shadow:0 4px 15px rgba(255,106,0,0.25);" onclick="openModal('nicknameModal')">Change Nickname</button>
+            <button class="btn btn-primary" style="flex:1;padding:1rem 1.5rem;font-size:0.95rem;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-dark));box-shadow:0 4px 15px rgba(255,106,0,0.25);" onclick="openModal('passwordModal')">Change Password</button>
+        </div>
         <section class="form-card">
             <button id="logoutBtn" class="btn btn-danger" data-i18n="profile_logout">Logout</button>
         </section>
     </main>
+
+    <!-- Nickname Modal -->
+    <div class="modal-overlay" id="nicknameModal">
+        <div class="modal" style="max-width:420px;">
+            <button class="modal-close" onclick="closeModal('nicknameModal')">&times;</button>
+            <h2>Change Nickname</h2>
+            <form id="nicknameForm">
+                <div class="form-group">
+                    <label>New Nickname</label>
+                    <input type="text" id="newNickname" placeholder="Enter new nickname" required minlength="2" maxlength="30">
+                </div>
+                <div class="form-group">
+                    <label>Confirm with Password</label>
+                    <input type="password" id="nicknamePassword" placeholder="Enter your password" required>
+                </div>
+                <div id="nicknameError" class="error-message" style="display:none;"></div>
+                <div id="nicknameSuccess" class="success-message" style="display:none;"></div>
+                <button type="submit" class="btn btn-primary btn-block">Update Nickname</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div class="modal-overlay" id="passwordModal">
+        <div class="modal" style="max-width:420px;">
+            <button class="modal-close" onclick="closeModal('passwordModal')">&times;</button>
+            <h2>Change Password</h2>
+            <form id="passwordForm">
+                <div class="form-group">
+                    <label>Current Password</label>
+                    <input type="password" id="oldPassword" placeholder="Enter current password" required>
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <input type="password" id="newPassword" placeholder="At least 6 characters" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label>Confirm New Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Repeat new password" required>
+                </div>
+                <div id="pwError" class="error-message" style="display:none;"></div>
+                <div id="pwSuccess" class="success-message" style="display:none;"></div>
+                <button type="submit" class="btn btn-primary btn-block">Update Password</button>
+            </form>
+        </div>
+    </div>
+
     <script>
+    function openModal(id) {
+        document.getElementById(id).classList.add('active');
+    }
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('active');
+        var err = document.getElementById(id).querySelector('.error-message');
+        var suc = document.getElementById(id).querySelector('.success-message');
+        if (err) err.style.display = 'none';
+        if (suc) suc.style.display = 'none';
+    }
+
+    document.querySelectorAll('.modal-overlay').forEach(function(el) {
+        el.addEventListener('click', function(e) {
+            if (e.target === this) this.classList.remove('active');
+        });
+    });
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal-overlay.active').forEach(function(el) {
+                el.classList.remove('active');
+            });
+        }
+    });
+
     fetch('/api/profile')
     .then(function(r) { return r.json(); })
     .then(function(data) {
         if (data.error) { window.location.href = '/login'; return; }
         document.getElementById('nickname').textContent = data.nickname;
         document.getElementById('email').textContent = data.email;
+        var initial = document.getElementById('avatarInitial');
+        var img = document.getElementById('avatarImg');
+        if (data.avatar) {
+            initial.style.display = 'none';
+            img.src = data.avatar;
+            img.style.display = 'block';
+        } else {
+            initial.textContent = data.nickname ? data.nickname.charAt(0).toUpperCase() : '?';
+        }
+    });
+
+    document.getElementById('nicknameForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var newNick = document.getElementById('newNickname').value.trim();
+        var pw = document.getElementById('nicknamePassword').value;
+        var errorEl = document.getElementById('nicknameError');
+        var successEl = document.getElementById('nicknameSuccess');
+        errorEl.style.display = 'none';
+        successEl.style.display = 'none';
+
+        if (newNick.length < 2) {
+            errorEl.textContent = 'Nickname must be at least 2 characters.';
+            errorEl.style.display = 'block';
+            return;
+        }
+
+        fetch('/api/profile/nickname', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({password: pw, new_nickname: newNick})
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.error) {
+                errorEl.textContent = data.error;
+                errorEl.style.display = 'block';
+            } else {
+                successEl.textContent = 'Nickname updated to ' + data.nickname + '!';
+                successEl.style.display = 'block';
+                document.getElementById('nickname').textContent = data.nickname;
+                document.getElementById('newNickname').value = '';
+                document.getElementById('nicknamePassword').value = '';
+                var initial = document.getElementById('avatarInitial');
+                if (initial.style.display !== 'none') {
+                    initial.textContent = data.nickname.charAt(0).toUpperCase();
+                }
+                setTimeout(function() { closeModal('nicknameModal'); }, 1500);
+            }
+        });
     });
 
     document.getElementById('passwordForm').addEventListener('submit', function(e) {
@@ -86,8 +199,8 @@
         var oldPw = document.getElementById('oldPassword').value;
         var newPw = document.getElementById('newPassword').value;
         var confirmPw = document.getElementById('confirmPassword').value;
-        var errorEl = document.getElementById('errorMessage');
-        var successEl = document.getElementById('successMessage');
+        var errorEl = document.getElementById('pwError');
+        var successEl = document.getElementById('pwSuccess');
         errorEl.style.display = 'none';
         successEl.style.display = 'none';
 
@@ -116,6 +229,7 @@
                 successEl.textContent = 'Password updated successfully!';
                 successEl.style.display = 'block';
                 document.getElementById('passwordForm').reset();
+                setTimeout(function() { closeModal('passwordModal'); }, 1500);
             }
         });
     });
@@ -123,6 +237,27 @@
     document.getElementById('logoutBtn').addEventListener('click', function() {
         document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         window.location.href = '/login';
+    });
+
+    document.getElementById('avatarInput').addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (!file) return;
+        var formData = new FormData();
+        formData.append('avatar', file);
+        fetch('/api/profile/avatar', {
+            method: 'POST',
+            body: formData
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.avatar) {
+                var img = document.getElementById('avatarImg');
+                var initial = document.getElementById('avatarInitial');
+                img.src = data.avatar + '?t=' + Date.now();
+                img.style.display = 'block';
+                initial.style.display = 'none';
+            }
+        });
     });
     </script>
     <script src="/static/js/canvas.js"></script>

@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Friends — BasketForm-AI</title>
-    <link rel="stylesheet" href="/static/css/style.css?v=4">
+    <link rel="stylesheet" href="/static/css/style2.css?v=1">
     <link rel="icon" href="/static/images/favicon.svg" type="image/svg+xml">
+    <script src="/static/js/i18n.js?v=5"></script>
 </head>
 <body>
     <canvas id="bgCanvas"></canvas>
@@ -15,12 +16,12 @@
         </div>
         <div class="nav-center">
             <ul class="nav-links">
-                <li><a href="/upload">Upload</a></li>
-                <li><a href="/results">Results</a></li>
-                <li><a href="/progress">Progress</a></li>
-                <li><a href="/export">Export</a></li>
-                <li><a href="/shared">Shared</a></li>
-                <li><a href="/friends" class="active">Friends</a></li>
+                <li><a href="/upload" data-i18n="nav_upload">Upload</a></li>
+                <li><a href="/results" data-i18n="nav_results">Results</a></li>
+                <li><a href="/progress" data-i18n="nav_progress">Progress</a></li>
+                <li><a href="/export" data-i18n="nav_export">Export</a></li>
+                <li><a href="/shared" data-i18n="nav_shared">Shared</a></li>
+                <li><a href="/friends" class="active" data-i18n="nav_friends">Friends</a></li>
             </ul>
         </div>
         <div class="nav-right">
@@ -28,7 +29,7 @@
                 <option value="en">EN</option>
                 <option value="ru">RU</option>
             </select>
-            <a href="/profile" class="nav-profile">Profile</a>
+            <a href="/profile" class="nav-profile" data-i18n="nav_profile">Profile</a>
         </div>
     </nav>
     <main class="content">
@@ -71,26 +72,31 @@
     <script>
     var selectedFriendId = null;
 
-    function getInitial(name) {
-        return name ? name.charAt(0).toUpperCase() : '?';
+    function getAvatarHTML(nickname, userId) {
+        var initial = nickname ? nickname.charAt(0).toUpperCase() : '?';
+        return '<div class="user-avatar" onclick="event.stopPropagation()">' +
+            '<img src="/api/avatar/' + userId + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'" class="avatar-mini-img" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:none;">' +
+            '<span class="avatar-mini-initial" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;">' + initial + '</span>' +
+        '</div>';
     }
 
     function loadFriends() {
+        var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
         fetch('/api/friends').then(function(r) { return r.json(); }).then(function(data) {
             var el = document.getElementById('friendsList');
             if (!data || data.length === 0) {
-                el.innerHTML = '<p class="text-muted">No friends yet. Search above to connect!</p>';
+                el.innerHTML = '<p class="text-muted">' + (t.friends_my_empty || 'No friends yet.') + '</p>';
                 return;
             }
             el.innerHTML = data.map(function(f) {
                 var sel = selectedFriendId === f.id ? ' selected' : '';
                 return '<div class="user-item friend-item' + sel + '" onclick="selectFriend(\'' + f.id + '\', \'' + f.nickname + '\')">' +
                     '<div class="user-info">' +
-                        '<div class="user-avatar">' + getInitial(f.nickname) + '</div>' +
+                        getAvatarHTML(f.nickname, f.id) +
                         '<span class="user-name">' + f.nickname + '</span>' +
                     '</div>' +
                     '<div class="user-actions">' +
-                        '<span class="friend-select-hint">Select to share &#10132;</span>' +
+                        '<span class="friend-select-hint">' + (t.friends_hint || 'Select to share') + ' &#10132;</span>' +
                     '</div>' +
                 '</div>';
             }).join('');
@@ -107,8 +113,9 @@
     }
 
     function loadMyResults() {
+        var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
         var el = document.getElementById('shareResultsList');
-        el.innerHTML = '<p class="text-muted">Loading...</p>';
+        el.innerHTML = '<p class="text-muted">' + (t.results_loading || 'Loading...') + '</p>';
         fetch('/api/videos').then(function(r) { return r.json(); }).then(function(videos) {
             var done = videos.filter(function(v) { return v.status === 'done' && v.score != null; });
             if (!done.length) {
@@ -152,22 +159,23 @@
     }
 
     function loadRequests() {
+        var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
         fetch('/api/friends/requests').then(function(r) { return r.json(); }).then(function(data) {
             var el = document.getElementById('requestsList');
             var pending = (data || []).filter(function(r) { return r.status === 'pending'; });
             if (pending.length === 0) {
-                el.innerHTML = '<p class="text-muted">No pending requests.</p>';
+                el.innerHTML = '<p class="text-muted">' + (t.friends_requests_empty || 'No pending requests.') + '</p>';
                 return;
             }
             el.innerHTML = pending.map(function(r) {
                 return '<div class="user-item">' +
                     '<div class="user-info">' +
-                        '<div class="user-avatar">' + getInitial(r.from_nickname) + '</div>' +
+                        getAvatarHTML(r.from_nickname, r.from_user_id) +
                         '<span class="user-name">' + r.from_nickname + '</span>' +
                     '</div>' +
                     '<div class="user-actions">' +
-                        '<button class="btn btn-sm btn-primary" onclick="acceptRequest(\'' + r.id + '\')">Accept</button>' +
-                        '<button class="btn btn-sm btn-danger" onclick="rejectRequest(\'' + r.id + '\')">Decline</button>' +
+                        '<button class="btn btn-sm btn-primary" onclick="acceptRequest(\'' + r.id + '\')">' + (t.friends_accept || 'Accept') + '</button>' +
+                        '<button class="btn btn-sm btn-danger" onclick="rejectRequest(\'' + r.id + '\')">' + (t.friends_decline || 'Decline') + '</button>' +
                     '</div>' +
                 '</div>';
             }).join('');
@@ -177,22 +185,23 @@
     function searchUsers() {
         var q = document.getElementById('searchInput').value.trim();
         if (!q) return;
+        var t = translations[window.getLang ? window.getLang() : 'en'] || translations.en;
         fetch('/api/friends/search?q=' + encodeURIComponent(q))
         .then(function(r) { return r.json(); })
         .then(function(data) {
             var el = document.getElementById('searchResults');
             if (!data || data.length === 0) {
-                el.innerHTML = '<p class="text-muted">No users found.</p>';
+                el.innerHTML = '<p class="text-muted">' + (t.friends_search_empty || 'No users found.') + '</p>';
                 return;
             }
             el.innerHTML = data.map(function(u) {
                 return '<div class="user-item">' +
                     '<div class="user-info">' +
-                        '<div class="user-avatar">' + getInitial(u.nickname) + '</div>' +
+                        getAvatarHTML(u.nickname, u.id) +
                         '<span class="user-name">' + u.nickname + '</span>' +
                     '</div>' +
                     '<div class="user-actions">' +
-                        '<button class="btn btn-sm btn-primary" onclick="sendRequest(\'' + u.id + '\')">Add Friend</button>' +
+                        '<button class="btn btn-sm btn-primary" onclick="sendRequest(\'' + u.id + '\')">' + (t.friends_add || 'Add Friend') + '</button>' +
                     '</div>' +
                 '</div>';
             }).join('');
