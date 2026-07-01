@@ -1,59 +1,81 @@
-from transformers import AutoModelForCausalLM, AutoTokenizer
-import torch
+import requests
+import json
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
 class FeedbackGenerator:
-    def __init__(self, model_name="Qwen/Qwen2.5-3B-Instruct"):
-        print(f"Loading local LLM ({model_name})... This may take a minute on first run.")
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+    def __init__(self, api_key=None):
+        # Сначала смотрим, передали ли ключ явно, потом ищем в переменных окружения (из .env)
+        self.api_key = api_key or os.environ.get("OPENROUTER_API_KEY")
 
-        # Use float16 for GPU, float32 for CPU
-        dtype = torch.float16 if torch.cuda.is_available() else torch.float32
-        self.model = AutoModelForCausalLM.from_pretrained(
-            model_name,
-            torch_dtype=dtype,
-            device_map="auto" if torch.cuda.is_available() else None
-        )
-        if not torch.cuda.is_available():
-            self.model.to('cpu')
+        if not self.api_key:
+            raise ValueError(
+                "API key for OpenRouter is missing. Please create a .env file with OPENROUTER_API_KEY=your_key")
 
-    def generate_feedback(self, scores, metrics, language="Russian"):
-        # 1. Формируем промпт только с данными
-        prompt_data = f"""Оценки по фазам (из 100):
-DIP (Подсед): {scores.get('DIP', 0)}
-ASCENT (Подъем): {scores.get('ASCENT', 0)}
-RELEASE (Релиз): {scores.get('RELEASE', 0)}
-Биомеханические метрики:
-Минимальный угол в коленях (DIP): {metrics.get('min_knee_dip', 0):.1f}°
-Угол наклона корпуса (ASCENT): {metrics.get('torso_ascent', 0):.1f}°
-Максимальный угол в локте (RELEASE): {metrics.get('elbow_release', 0):.1f}°
-Угол предплечья относительно вертикали (RELEASE): {metrics.get('forearm_release', 0):.1f}°
+        self.api_url = "https://openrouter.ai/api/v1/chat/completions"
+        self.model_name = "poolside/laguna-m.1:free"  # Или ваша рабочая модель
+        print(f"Initialized OpenRouter API client with model: {self.model_name}")
 
-Напиши короткое, ободряющее резюме (2-3 предложения) и 3 конкретных пункта в виде списка, что игроку нужно исправить в технике. Объем: до 150 слов."""
+    def generate_feedback(self, scores, metrics, language="English"):
+        # 1. Промпт полностью на английском
+        prompt_data = f"""Scores by phase (out of 100):
+DIP (Squat): {scores.get('DIP ', scores.get('DIP', 0))}
+ASCENT (Rise): {scores.get('ASCENT ', scores.get('ASCENT', 0))}
+RELEASE: {scores.get('RELEASE ', scores.get('RELEASE', 0))}
 
-        # 2. Используем правильный формат чата (Chat Template)
+Biomechanical metrics:
+Minimum knee angle (DIP): {metrics.get('min_knee_dip ', metrics.get('min_knee_dip', 0)):.1f}°
+Torso lean angle (ASCENT): {metrics.get('torso_ascent ', metrics.get('torso_ascent', 0)):.1f}°
+Maximum elbow angle (RELEASE): {metrics.get('elbow_release ', metrics.get('elbow_release', 0)):.1f}°
+Forearm angle relative to vertical (RELEASE): {metrics.get('forearm_release ', metrics.get('forearm_release', 0)):.1f}°
+
+Write a short, encouraging summary (2-3 sentences) and 3 specific bullet points on what the player needs to fix in their technique. Length: up to 150 words. Write entirely in English."""
+
+        # 2. Системное сообщение тоже на английском
         messages = [
-            {"role": "system",
-             "content": "Ты — профессиональный тренер по баскетболу. Твоя задача — анализировать биомеханические метрики броска и давать краткую, конструктивную обратную связь на русском языке."},
-            {"role": "user", "content": prompt_data}
+            {
+                "role": "system",
+                "content": "You are a professional basketball coach. Your task is to analyze shooting biomechanical metrics and provide brief, constructive feedback in English."
+            },
+            {
+                "role": "user",
+                "content": prompt_data
+            }
         ]
 
-        # Применяем шаблон чата, чтобы модель поняла структуру диалога
-        text = self.tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-        inputs = self.tokenizer(text, return_tensors="pt").to(self.model.device)
+        headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json",
+        }
 
-        # 3. Генерация с правильными параметрами (без галлюцинаций)
-        with torch.no_grad():
-            outputs = self.model.generate(
-                **inputs,
-                max_new_tokens=350,
-                temperature=0.1,  # Почти детерминированный вывод
-                do_sample=False,  # Жадный декодинг (greedy)
-                pad_token_id=self.tokenizer.eos_token_id
+        payload = {
+            "model": self.model_name,
+            "messages": messages,
+        }
+
+        try:
+            response = requests.post(
+                url=self.api_url,
+                headers=headers,
+                data=json.dumps(payload),
+                timeout=60
             )
 
-        response = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
+            response.raise_for_status()
+            response_data = response.json()
 
-        # Извлекаем только сгенерированную часть (отсекаем сам промпт)
-        feedback = response[len(text):].strip()
-        return feedback
+            assistant_message = response_data['choices'][0]['message']
+            feedback = assistant_message.get('content', '').strip()
+
+            return feedback
+
+        except requests.exceptions.RequestException as e:
+            print(f"ERROR: API request failed: {e}")
+            if hasattr(e, 'response') and e.response is not None:
+                print(f"Response body: {e.response.text}")
+            return "Failed to get feedback from AI coach due to a network error."
+        except (KeyError, IndexError) as e:
+            print(f"ERROR: Failed to parse API response: {e}")
+            return "Failed to parse AI coach response."
