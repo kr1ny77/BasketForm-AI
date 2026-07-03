@@ -140,7 +140,7 @@ def process_video(input_path, output_path, lang="en"):
     ai_feedback = ""
     final_scores = None
 
-    llm_scores, llm_feedback = score_with_llm(final_metrics, lang)
+    llm_scores, llm_feedback = score_with_llm(final_metrics, lang, video_path=input_path)
     if llm_scores is not None:
         final_scores = llm_scores
         ai_feedback = llm_feedback
