@@ -6,69 +6,129 @@ import urllib.error
 
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-VISION_MODEL = "google/gemini-2.0-flash-001"
+VISION_MODEL = "openai/gpt-4o"
 
-SYSTEM_PROMPT_EN = """You are a professional basketball shooting form coach and biomechanics analyst.
+SYSTEM_PROMPT_EN = """You are an expert basketball shooting form coach with 20+ years of experience analyzing biomechanics.
 
-You will receive key frames from a basketball shot video along with biomechanical metrics. Analyze the VISUAL evidence in the frames AND the metrics to score the shot.
+You will receive 12 sequential frames from a basketball shot video. These frames capture the ENTIRE shot from start to finish. Analyze EVERY frame carefully.
 
-Score each phase from 0 to 100:
-- DIP (Squat/Knee Bend): Look at knee bend depth. Ideal: 90-110 degrees.
-- ASCENT (Rise): Look at torso posture. Ideal: upright, 165-180 degrees.
-- RELEASE: Look at arm extension and ball position. Ideal: full extension, clean release.
-- FOLLOW_THROUGH: Look at wrist snap and arm position after release. Ideal: arm extended, wrist flexed down.
+Your task:
+1. Score each phase from 0 to 100 based on what you SEE in the frames
+2. Write detailed feedback
 
-Also consider these metrics if provided:
-- Knee angle, torso angle, elbow angle, forearm angle
-- Follow-through duration, elbow snap, arm stability
+PHASE DETECTION GUIDE (based on frames):
+- FRAMES 1-3: DIP phase — look for knee bend, lowering of body
+- FRAMES 4-6: ASCENT phase — look for upward drive, torso posture
+- FRAMES 7-9: RELEASE phase — look at arm extension, ball leaving hand, wrist position
+- FRAMES 10-12: FOLLOW-THROUGH — look at arm after release, wrist snap, landing
 
-IMPORTANT: If tracking metrics are unreliable (default values), rely more on the visual evidence from the frames.
+SCORING RUBRIC (be precise, not generous):
 
-Respond in valid JSON:
+DIP (Squat):
+- 90-110: Deep knee bend visible → 85-100
+- 110-130: Moderate bend → 70-84
+- 130-150: Shallow bend → 50-69
+- 150+: Legs barely bent → 20-49
+
+ASCENT (Rise):
+- Torso upright, smooth upward motion → 85-100
+- Slight lean but controlled → 70-84
+- Noticeable lean forward/back → 50-69
+- Major balance issues → 20-49
+
+RELEASE:
+- Full arm extension, ball rolls off fingertips, clean wrist → 85-100
+- Good extension, minor wrist issues → 70-84
+- Partial extension or early release → 50-69
+- Pushing motion, no clean release → 20-49
+
+FOLLOW-THROUGH:
+- Arm fully extended, wrist snapped down, held pose → 85-100
+- Good extension, decent snap → 70-84
+- Arm drops early or no snap → 50-69
+- No follow-through visible → 20-49
+
+IMPORTANT RULES:
+- A GOOD shot should score 75-95. Don't be overly harsh.
+- An AVERAGE shot should score 55-74.
+- A POOR shot should score below 55.
+- Look at the actual body positions in the frames, not just metrics.
+- If the shot looks clean and professional, give it a high score.
+
+Respond in EXACT JSON format:
 {
-  "scores": {
-    "DIP": <int 0-100>,
-    "ASCENT": <int 0-100>,
-    "RELEASE": <int 0-100>,
-    "FOLLOW_THROUGH": <int 0-100>
-  },
-  "feedback": "<detailed feedback 100-200 words: what looks good, what needs improvement, specific drills>"
+  "scores": {"DIP": <int>, "ASCENT": <int>, "RELEASE": <int>, "FOLLOW_THROUGH": <int>},
+  "feedback": "<150-250 words detailed analysis>"
 }
 
-Be encouraging but honest. Base feedback on what you actually SEE in the frames."""
+Structure your feedback as:
+1. Overall impression (1 sentence)
+2. Phase-by-phase breakdown with specific observations from the frames
+3. Top 2 things to improve
+4. Encouraging closing"""
 
-SYSTEM_PROMPT_RU = """Ты — профессиональный тренер по баскетболу и аналитик биомеханики.
+SYSTEM_PROMPT_RU = """Ты — эксперт-тренер по биомеханике броска в баскетболе с 20+ летним опытом.
 
-Ты получишь ключевые кадры из видео броска вместе с биомеханическими метриками. Проанализируй ВИЗУАЛЬНЫЕEvidence на кадрах И метрики.
+Ты получишь 12 последовательных кадров из видео броска. Эти кадры покрывают ВЕСЬ бросок от начала до конца. Проанализируй КАЖДЫЙ кадр тщательно.
 
-Оцени каждую фазу от 0 до 100:
-- DIP (Присед): Глубина сгибания коленей. Идеал: 90-110 градусов.
-- ASCENT (Подъём): Осанка корпуса. Идеал: прямо, 165-180 градусов.
-- RELEASE (Релиз): Выпрямление руки и позиция мяча. Идеал: полное выпрямление, чистый бросок.
-- FOLLOW-THROUGH (Завершение): Хлопок запястьем и позиция руки после броска. Идеал: рука выпрямлена, запястье согнуто вниз.
+ОПРЕДЕЛЕНИЕ ФАЗ (по кадрам):
+- КАДРЫ 1-3: Фаза DIP — ищи сгибание коленей, опускание тела
+- КАДРЫ 4-6: Фаза ASCENT — ищи подъём вверх, осанку корпуса
+- КАДРЫ 7-9: Фаза RELEASE — смотри на выпрямление руки, отпускание мяча, позицию запястья
+- КАДРЫ 10-12: FOLLOW-THROUGH — смотри на руку после броска, хлопок запястья, приземление
 
-Учитывай метрики если они надёжные.
+КРИТЕРИИ ОЦЕНКИ (будь точным, не скупым):
 
-ОТВЕТЬ В JSON:
+DIP (Присед):
+- Глубокий сгиб коленей виден → 85-100
+- Умеренный сгиб → 70-84
+- Слабый сгиб → 50-69
+- Ноги почти прямые → 20-49
+
+ASCENT (Подъём):
+- Корпус прямой, плавный подъём → 85-100
+- Лёгкий наклон но контролируемый → 70-84
+- Заметный наклон → 50-69
+- Проблемы с балансом → 20-49
+
+RELEASE (Релиз):
+- Полное выпрямление руки, чистый бросок → 85-100
+- Хорошее выпрямление → 70-84
+- Частичное выпрямление → 50-69
+- Толкающее движение → 20-49
+
+FOLLOW-THROUGH (Завершение):
+- Рука выпрямлена, запястье хлопнуло вниз → 85-100
+- Хорошее выпрямление → 70-84
+- Рука падает рано → 50-69
+- Завершения не видно → 20-49
+
+ВАЖНЫЕ ПРАВИЛА:
+- Хороший бросок должен получить 75-95. Не будь слишком строгим.
+- Средний бросок — 55-74.
+- Плохой бросок — ниже 55.
+- Смотри на реальные позы тела на кадрах.
+- Если бросок выглядит чисто и профессионально — ставь высокую оценку.
+
+ОТВЕТЬ СТРОГО В JSON:
 {
-  "scores": {
-    "DIP": <число 0-100>,
-    "ASCENT": <число 0-100>,
-    "RELEASE": <число 0-100>,
-    "FOLLOW_THROUGH": <число 0-100>
-  },
-  "feedback": "<подробная обратная связь 100-200 слов>"
+  "scores": {"DIP": <число>, "ASCENT": <число>, "RELEASE": <число>, "FOLLOW_THROUGH": <число>},
+  "feedback": "<150-250 слов подробный анализ>"
 }
 
-Будь ободряющим, но честным. Опирайся на то, что ВИДИШЬ на кадрах."""
+Структура обратной связи:
+1. Общее впечатление (1 предложение)
+2. Разбор по фазам с конкретными наблюдениями с кадров
+3. Топ-2 чего улучшить
+4. Ободряющее заключение"""
 
 
-def extract_key_frames(video_path, output_dir):
-    """Extract 4 key frames from video: one per phase."""
+def extract_key_frames(video_path, output_dir, num_frames=12):
+    """Extract evenly spaced frames from video."""
     try:
         import cv2
     except ImportError:
-        print("OpenCV not available for frame extraction")
+        print("OpenCV not available")
         return []
 
     cap = cv2.VideoCapture(video_path)
@@ -76,23 +136,24 @@ def extract_key_frames(video_path, output_dir):
         return []
 
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-    if total_frames < 4:
-        cap.release()
-        return []
-
-    # Extract frames at 10%, 35%, 60%, 85% of video
-    positions = [0.10, 0.35, 0.60, 0.85]
-    frames = []
+    if total_frames < num_frames:
+        num_frames = max(total_frames, 1)
 
     os.makedirs(output_dir, exist_ok=True)
+    frames = []
 
-    for i, pos in enumerate(positions):
-        frame_num = int(total_frames * pos)
+    for i in range(num_frames):
+        frame_num = int(total_frames * (i + 0.5) / num_frames)
         cap.set(cv2.CAP_PROP_POS_FRAMES, frame_num)
         ret, frame = cap.read()
         if ret:
-            path = os.path.join(output_dir, f"frame_{i}.jpg")
-            cv2.imwrite(path, frame, [cv2.IMWRITE_JPEG_QUALITY, 85])
+            # Resize for faster upload (max 720p)
+            h, w = frame.shape[:2]
+            if h > 720:
+                scale = 720 / h
+                frame = cv2.resize(frame, (int(w * scale), 720))
+            path = os.path.join(output_dir, f"frame_{i:02d}.jpg")
+            cv2.imwrite(path, frame, [cv2.IMWRITE_JPEG_QUALITY, 80])
             frames.append(path)
 
     cap.release()
@@ -100,93 +161,57 @@ def extract_key_frames(video_path, output_dir):
 
 
 def encode_image(path):
-    """Encode image to base64."""
     with open(path, "rb") as f:
         return base64.b64encode(f.read()).decode("utf-8")
 
 
 def score_with_llm(metrics, lang="en", video_path=None, frames_dir=None):
-    """Send video frames + metrics to vision LLM and get scores + feedback."""
+    """Send video frames + metrics to vision LLM."""
     system_prompt = SYSTEM_PROMPT_RU if lang == "ru" else SYSTEM_PROMPT_EN
 
-    # Try to extract frames if video_path is provided
     frame_paths = []
     if video_path and os.path.exists(video_path):
         if frames_dir is None:
             frames_dir = os.path.join(os.path.dirname(video_path), "frames")
-        frame_paths = extract_key_frames(video_path, frames_dir)
-        print(f"Extracted {len(frame_paths)} key frames from video")
+        frame_paths = extract_key_frames(video_path, frames_dir, num_frames=12)
+        print(f"Extracted {len(frame_paths)} frames")
 
-    # Build user message
-    phase_names = ["DIP (Присед/Сquat)", "ASCENT (Подъём/Rise)", "RELEASE (Релиз)", "FOLLOW-THROUGH (Завершение)"]
-
-    metrics_text = ""
+    # Build metrics summary
     if lang == "ru":
-        unreliable_count = 0
-        if metrics.get('min_knee_dip', 180) >= 175: unreliable_count += 1
-        if metrics.get('elbow_release', 0) <= 5: unreliable_count += 1
-        if metrics.get('forearm_release', 90) >= 85: unreliable_count += 1
-        if metrics.get('frames_in_follow_through', 0) <= 1: unreliable_count += 1
-
-        tracking = "ХОРОШЕЕ" if unreliable_count < 2 else "ЧАСТИЧНОЕ" if unreliable_count < 4 else "ПЛОХОЕ"
-
-        metrics_text = f"""
-Метрики трекинга (качество: {tracking}):
-- Угол колена (DIP): {metrics.get('min_knee_dip', 'N/A')}°
-- Угол корпуса (ASCENT): {metrics.get('torso_ascent', 'N/A')}°
-- Угол локтя (RELEASE): {metrics.get('elbow_release', 'N/A')}°
-- Предплечье от вертикали: {metrics.get('forearm_release', 'N/A')}°
-- Завершение: {metrics.get('frames_in_follow_through', 0)} кадров (~{round(metrics.get('frames_in_follow_through', 0) / 30, 1)}с)
-- Сгибание локтя: {metrics.get('elbow_snap', 0)}°
-- Стабильность предплечья: {metrics.get('arm_stability_std', 0)}° откл."""
+        metrics_text = f"""Биомеханические метрики (для дополнения визуального анализа):
+- Мин. угол колена: {metrics.get('min_knee_dip', 'N/A')}°
+- Угол корпуса: {metrics.get('torso_ascent', 'N/A')}°
+- Угол локтя при релизе: {metrics.get('elbow_release', 'N/A')}°
+- Предплечье: {metrics.get('forearm_release', 'N/A')}° от вертикали
+- Завершение: {metrics.get('frames_in_follow_through', 0)} кадров (~{round(metrics.get('frames_in_follow_through', 0) / 30, 1)}с)"""
     else:
-        unreliable_count = 0
-        if metrics.get('min_knee_dip', 180) >= 175: unreliable_count += 1
-        if metrics.get('elbow_release', 0) <= 5: unreliable_count += 1
-        if metrics.get('forearm_release', 90) >= 85: unreliable_count += 1
-        if metrics.get('frames_in_follow_through', 0) <= 1: unreliable_count += 1
+        metrics_text = f"""Biomechanical metrics (supplement visual analysis):
+- Min knee angle: {metrics.get('min_knee_dip', 'N/A')}°
+- Torso angle: {metrics.get('torso_ascent', 'N/A')}°
+- Elbow angle at release: {metrics.get('elbow_release', 'N/A')}°
+- Forearm: {metrics.get('forearm_release', 'N/A')}° from vertical
+- Follow-through: {metrics.get('frames_in_follow_through', 0)} frames (~{round(metrics.get('frames_in_follow_through', 0) / 30, 1)}s)"""
 
-        tracking = "GOOD" if unreliable_count < 2 else "PARTIAL" if unreliable_count < 4 else "POOR"
+    if lang == "ru":
+        text_content = f"""Проанализируй этот бросок в баскетболе. 12 кадров показывают весь бросок от начала до конца.
 
-        metrics_text = f"""
-Tracking metrics (quality: {tracking}):
-- Knee angle (DIP): {metrics.get('min_knee_dip', 'N/A')}°
-- Torso angle (ASCENT): {metrics.get('torso_ascent', 'N/A')}°
-- Elbow angle (RELEASE): {metrics.get('elbow_release', 'N/A')}°
-- Forearm from vertical: {metrics.get('forearm_release', 'N/A')}°
-- Follow-through: {metrics.get('frames_in_follow_through', 0)} frames (~{round(metrics.get('frames_in_follow_through', 0) / 30, 1)}s)
-- Elbow snap: {metrics.get('elbow_snap', 0)}°
-- Arm stability: {metrics.get('arm_stability_std', 0)}° std"""
+{metrics_text}
 
-    text_content = f"""Analyze this basketball shot. Key frames show the shot at different phases.
+Оцени каждую фазу 0-100 и дай подробную обратную связь."""
+    else:
+        text_content = f"""Analyze this basketball shot. 12 frames show the entire shot from start to finish.
 
-Frame order: {', '.join(phase_names[:len(frame_paths)])}
 {metrics_text}
 
 Score each phase 0-100 and provide detailed feedback."""
 
-    if lang == "ru":
-        text_content = f"""Проанализируй этот бросок. Ключевые кадры показывают бросок на разных фазах.
+    content = [{"type": "text", "text": text_content}]
 
-Порядок кадров: {', '.join(phase_names[:len(frame_paths)])}
-{metrics_text}
-
-Оцени каждую фазу 0-100 и дай подробную обратную связь."""
-
-    # Build message content with images
-    content = []
-
-    # Add text
-    content.append({"type": "text", "text": text_content})
-
-    # Add images if available
     for frame_path in frame_paths:
         b64 = encode_image(frame_path)
         content.append({
             "type": "image_url",
-            "image_url": {
-                "url": f"data:image/jpeg;base64,{b64}"
-            }
+            "image_url": {"url": f"data:image/jpeg;base64,{b64}"}
         })
 
     payload = {
@@ -195,14 +220,13 @@ Score each phase 0-100 and provide detailed feedback."""
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": content}
         ],
-        "temperature": 0.3,
-        "max_tokens": 1000
+        "temperature": 0.2,
+        "max_tokens": 1200
     }
 
     data = json.dumps(payload).encode('utf-8')
     req = urllib.request.Request(
-        OPENROUTER_URL,
-        data=data,
+        OPENROUTER_URL, data=data,
         headers={
             "Content-Type": "application/json",
             "Authorization": f"Bearer {OPENROUTER_API_KEY}",
@@ -212,40 +236,39 @@ Score each phase 0-100 and provide detailed feedback."""
     )
 
     try:
-        print(f"Calling vision LLM ({VISION_MODEL}) with {len(frame_paths)} frames...")
-        with urllib.request.urlopen(req, timeout=90) as response:
+        print(f"Calling {VISION_MODEL} with {len(frame_paths)} frames...")
+        with urllib.request.urlopen(req, timeout=120) as response:
             result = json.loads(response.read().decode('utf-8'))
 
-        content_text = result['choices'][0]['message']['content']
+        text = result['choices'][0]['message']['content']
 
-        # Extract JSON from response
-        if '```json' in content_text:
-            content_text = content_text.split('```json')[1].split('```')[0].strip()
-        elif '```' in content_text:
-            content_text = content_text.split('```')[1].split('```')[0].strip()
+        if '```json' in text:
+            text = text.split('```json')[1].split('```')[0].strip()
+        elif '```' in text:
+            text = text.split('```')[1].split('```')[0].strip()
 
-        parsed = json.loads(content_text)
-
+        parsed = json.loads(text)
         scores = parsed.get("scores", {})
         feedback = parsed.get("feedback", "")
 
         for key in ["DIP", "ASCENT", "RELEASE", "FOLLOW_THROUGH"]:
             if key not in scores:
-                scores[key] = 50
+                scores[key] = 70
             scores[key] = max(0, min(100, int(scores[key])))
 
-        print(f"Vision LLM scoring: DIP={scores['DIP']}, ASCENT={scores['ASCENT']}, "
-              f"RELEASE={scores['RELEASE']}, FOLLOW_THROUGH={scores['FOLLOW_THROUGH']}")
+        avg = sum(scores.values()) / 4
+        print(f"Scoring done: DIP={scores['DIP']}, ASCENT={scores['ASCENT']}, "
+              f"RELEASE={scores['RELEASE']}, FOLLOW_THROUGH={scores['FOLLOW_THROUGH']}, AVG={avg:.0f}")
 
         return scores, feedback
 
     except urllib.error.HTTPError as e:
-        error_body = e.read().decode('utf-8') if e.readable() else str(e)
-        print(f"Vision LLM API error {e.code}: {error_body}", flush=True)
+        body = e.read().decode('utf-8') if e.readable() else str(e)
+        print(f"API error {e.code}: {body[:300]}")
         return None, None
     except json.JSONDecodeError as e:
-        print(f"Vision LLM returned invalid JSON: {e}", flush=True)
+        print(f"Invalid JSON from LLM: {e}")
         return None, None
     except Exception as e:
-        print(f"Vision LLM scoring failed: {e}", flush=True)
+        print(f"LLM failed: {e}")
         return None, None
