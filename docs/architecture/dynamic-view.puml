@@ -1,0 +1,38 @@
+@startuml
+!theme plain
+skinparam sequenceMessageAlign center
+
+actor User
+participant "Frontend\n(HTML/CSS/JS)" as FE
+participant "Go HTTP Server" as Server
+participant "Auth Middleware" as Auth
+participant "Upload Handler" as Upload
+participant "Storage Service" as Storage
+participant "ML Processor" as ML
+participant "LLM API" as LLM
+participant "Results Handler" as Results
+
+User -> FE : Upload video
+FE -> Server : POST /api/upload
+Server -> Auth : Validate JWT
+Auth -> Upload : Process upload
+Upload -> Storage : Save video file
+Storage -> ML : Trigger processing
+ML -> ML : Extract keypoints (MediaPipe)
+ML -> ML : Analyze phases (Stance, Arm Angle, Release, Follow-through)
+ML -> Storage : Save results + annotated video
+ML -> LLM : Send analysis for personalized feedback
+LLM -> Storage : Save feedback
+Storage -> Server : Return status
+Server -> FE : Return upload status
+FE -> User : Show processing progress
+
+User -> FE : View results
+FE -> Server : GET /api/result/{id}
+Server -> Auth : Validate JWT
+Server -> Results : Fetch results
+Results -> Storage : Load results + feedback
+Storage -> Server : Return data
+Server -> FE : Return results JSON
+FE -> User : Display score, feedback, annotated video
+@enduml
