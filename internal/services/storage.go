@@ -81,11 +81,7 @@ func (s *Storage) GetVideo(id string) (*models.Video, bool) {
 	if !ok {
 		v, ok = s.loadVideoJSON(id)
 	}
-	if !ok {
-		return nil, false
-	}
-	copy := *v
-	return &copy, true
+	return v, ok
 }
 
 func (s *Storage) GetAllVideos() []*models.Video {
@@ -303,7 +299,7 @@ func (s *Storage) GetUserByEmail(email string) (*models.User, bool) {
 		if err := json.Unmarshal(data, &u); err != nil {
 			continue
 		}
-		if u.Email == email {
+		if strings.EqualFold(u.Email, email) {
 			return &u, true
 		}
 	}
@@ -329,11 +325,15 @@ func (s *Storage) GetUserByNickname(nickname string) (*models.User, bool) {
 		if err := json.Unmarshal(data, &u); err != nil {
 			continue
 		}
-		if u.Nickname == nickname {
+		if strings.EqualFold(u.Nickname, nickname) {
 			return &u, true
 		}
 	}
 	return nil, false
+}
+
+func (s *Storage) GetUserByNicknameCaseInsensitive(nickname string) (*models.User, bool) {
+	return s.GetUserByNickname(nickname)
 }
 
 func (s *Storage) SearchUsersByNickname(query string) []*models.User {
