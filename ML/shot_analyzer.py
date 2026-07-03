@@ -46,6 +46,8 @@ class ShotPhaseStateMachine:
         self.ft_elbow_stability = []
         self.ft_arm_extension = []
         self.ft_entry_elbow = 0
+        self.elbow_snap = 0
+        self.arm_stability_std = 0
 
     def update(self, knee_angle, elbow_angle, ball_center, wrist_center, torso_angle, forearm_angle):
         knee = self.smooth_knee.update(knee_angle)
@@ -195,36 +197,27 @@ class ShotPhaseStateMachine:
         else:
             dur_score = 5
 
-        # Elbow snap score (0-35 pts): elbow should bend quickly after release
-        elbow_snap = 0
+        # Elbow snap: elbow should bend quickly after release
+        self.elbow_snap = 0
         if self.ft_entry_elbow > 0 and len(self.ft_elbow_stability) > 0:
             min_ft_elbow = min(self.ft_elbow_stability) if self.ft_elbow_stability else self.ft_entry_elbow
-            snap_diff = self.ft_entry_elbow - min_ft_elbow
-            if snap_diff > 40:
-                elbow_snap = 35
-            elif snap_diff > 25:
-                elbow_snap = 28
-            elif snap_diff > 15:
-                elbow_snap = 20
-            elif snap_diff > 5:
-                elbow_snap = 12
-            else:
-                elbow_snap = 5
+            self.elbow_snap = self.ft_entry_elbow - min_ft_elbow
 
-        # Arm extension consistency (0-35 pts): forearm should stay stable during follow-through
+        # Arm extension consistency: forearm should stay stable during follow-through
+        self.arm_stability_std = 0
         ext_consistency = 0
         if len(self.ft_arm_extension) > 3:
             ext_values = self.ft_arm_extension
             ext_mean = np.mean(ext_values)
-            ext_std = np.std(ext_values)
+            self.arm_stability_std = float(np.std(ext_values))
             # Lower std = more consistent = better
-            if ext_std < 5:
+            if self.arm_stability_std < 5:
                 ext_consistency = 35
-            elif ext_std < 10:
+            elif self.arm_stability_std < 10:
                 ext_consistency = 28
-            elif ext_std < 15:
+            elif self.arm_stability_std < 15:
                 ext_consistency = 20
-            elif ext_std < 25:
+            elif self.arm_stability_std < 25:
                 ext_consistency = 12
             else:
                 ext_consistency = 5
@@ -234,7 +227,8 @@ class ShotPhaseStateMachine:
         else:
             ext_consistency = 10
 
-        base_ft = dur_score + elbow_snap + ext_consistency
+        # Local scoring as fallback
+        base_ft = dur_score + ext_consistency
         self.scores["FOLLOW_THROUGH"] = max(0, min(100, base_ft + random.randint(-3, 3)))
 
     def finalize(self):
