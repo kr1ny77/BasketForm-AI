@@ -4,11 +4,11 @@ import sys
 import os
 from collections import deque
 import json
-from feedback_generator import FeedbackGenerator
 from ball_tracker import BallTracker
 from pose_tracker import PoseTracker
 from shot_analyzer import ShotPhaseStateMachine
 from custom_feedback import CustomFeedbackGenerator
+from llm_scorer import score_with_llm
 import mediapipe as mp
 
 mp_drawing = mp.solutions.drawing_utils
@@ -126,24 +126,37 @@ def process_video(input_path, output_path, lang="en"):
 
     print(f"Processing complete! Processed {frame_count} frames")
 
-    final_scores = phase_machine.scores
     final_metrics = {
         "min_knee_dip": phase_machine.min_knee_dip,
         "torso_ascent": phase_machine.torso_ascent,
         "elbow_release": phase_machine.elbow_release,
-        "forearm_release": phase_machine.forearm_release
+        "forearm_release": phase_machine.forearm_release,
+        "frames_in_follow_through": phase_machine.frames_in_follow_through,
+        "elbow_snap": phase_machine.elbow_snap,
+        "arm_stability_std": phase_machine.arm_stability_std
     }
 
+    # Try LLM scoring first
     ai_feedback = ""
-    try:
-        generator = CustomFeedbackGenerator()
-        ai_feedback = generator.generate(final_scores, final_metrics, lang)
-        print("--- AI COACH FEEDBACK ---")
+    final_scores = None
+
+    llm_scores, llm_feedback = score_with_llm(final_metrics, lang)
+    if llm_scores is not None:
+        final_scores = llm_scores
+        ai_feedback = llm_feedback
+        print("--- LLM COACH FEEDBACK ---")
         print(ai_feedback)
         print("--------------------------")
-    except Exception as e:
-        print(f"WARNING: Could not generate feedback. Error: {e}", file=sys.stderr)
-        ai_feedback = "Scores received. Work on your shooting technique."
+    else:
+        print("LLM scoring failed, falling back to local scoring...")
+        # Fallback: use local scoring
+        phase_machine._calculate_scores()
+        final_scores = phase_machine.scores
+        generator = CustomFeedbackGenerator()
+        ai_feedback = generator.generate(final_scores, final_metrics, lang)
+        print("--- LOCAL COACH FEEDBACK ---")
+        print(ai_feedback)
+        print("---------------------------")
 
     report = {
         "scores": final_scores,
