@@ -75,8 +75,13 @@ func (s *Storage) CreateVideo(id, filename, userID string) *models.Video {
 }
 
 func (s *Storage) GetVideo(id string) (*models.Video, bool) {
+<<<<<<< HEAD
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+=======
 	s.mu.Lock()
 	defer s.mu.Unlock()
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
 	v, ok := s.videos[id]
 	if !ok {
 		v, ok = s.loadVideoJSON(id)

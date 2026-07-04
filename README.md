@@ -2,6 +2,24 @@
 
 Web service for analyzing basketball shooting form via video upload, biomechanical keypoint extraction, technique scoring, and personalized AI feedback.
 
+<<<<<<< HEAD
+**Live:** http://80.74.30.14/ · [v0.3.0 Release](https://github.com/kr1ny77/BasketForm-AI/releases/tag/v0.2.0)
+
+## Project Overview
+
+BasketForm-AI is an AI-powered platform that helps basketball players improve their shooting technique through video analysis and personalized feedback. Users upload shooting videos, the system extracts biomechanical keypoints, evaluates stance, arm angle, release point, and follow-through, then generates actionable recommendations.
+
+## Key Features
+
+- **User Accounts:** Registration with email/nickname/password, JWT-based login
+- **Video Upload:** Drag-and-drop or file picker for basketball shot videos (MP4, MOV, AVI)
+- **Biomechanical Analysis:** Automatic extraction of key body points using MediaPipe
+- **Technique Evaluation:** Scoring of stance, arm angle, release point, and follow-through (0–100)
+- **Annotated Video:** Output video with pose overlay, keypoints, skeleton, and HUD
+- **Phase Analysis:** Detailed per-phase scoring and personalized feedback
+- **Social Features:** Search users, friend requests, share results with friends
+- **PDF Export:** Download analysis reports with full score breakdown and feedback
+=======
 **Live:** http://80.74.30.14/ · [v0.3.0 Release](https://github.com/kr1ny77/BasketForm-AI/releases/tag/v0.3.0)
 
 ## Project Overview
@@ -19,19 +37,28 @@ BasketForm-AI is an AI-powered platform that helps basketball players improve th
 - **Social Features:** Search users, friend requests, share results with friends
 - **PDF Export:** Download analysis reports with full score breakdown and feedback
 - **Profile Management:** Avatar upload, nickname change (with password confirmation), password change
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
 - **Dark Theme:** Glass-morphism design, orange accents, Canvas background animation
 
 ## Tech Stack
 
 - **Backend:** Go 1.22+ (standard library `net/http`)
 - **Frontend:** HTML + CSS + JavaScript, Canvas animations, Chart.js, jsPDF
+<<<<<<< HEAD
+- **ML:** MediaPipe Holistic + OpenCV (Python scripts via `exec`)
+=======
 - **ML:** MediaPipe Holistic + OpenCV + YOLO (Python scripts via `exec`)
 - **LLM:** OpenRouter API — GPT-4o-mini (vision model for frame analysis)
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
 - **Auth:** bcrypt password hashing, JWT tokens (HMAC-SHA256), HttpOnly cookies
 - **Storage:** Local JSON files in `data/` directory
 - **Testing:** Go `testing`, `httptest` (unit + integration + QRT tests)
 - **CI:** GitHub Actions — golangci-lint, test, coverage, QRT, govulncheck, Lychee
+<<<<<<< HEAD
+- **Deployment:** Binary or Docker
+=======
 - **Deployment:** Binary on VM with Nginx reverse proxy
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
 - **License:** MIT
 
 ## Quick Start
@@ -48,7 +75,11 @@ go run ./cmd/server/
 ### Prerequisites
 
 - Go 1.22 or later
+<<<<<<< HEAD
+- Python 3 with MediaPipe, OpenCV (for ML analysis)
+=======
 - Python 3.12+ with MediaPipe, OpenCV, YOLO (for ML analysis)
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
 - `golangci-lint` (for linting, optional)
 
 ### Installation
@@ -64,6 +95,9 @@ go run ./cmd/server/
    pip install -r requirements.txt
    ```
 
+<<<<<<< HEAD
+3. **Run the server:**
+=======
 3. **Set environment variables:**
    ```bash
    export OPENROUTER_API_KEY="your-api-key"
@@ -71,11 +105,16 @@ go run ./cmd/server/
    ```
 
 4. **Run the server:**
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
    ```bash
    go run ./cmd/server/
    ```
 
+<<<<<<< HEAD
+4. **Open in browser:**
+=======
 5. **Open in browser:**
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
    ```
    http://localhost:8080
    ```
@@ -112,7 +151,10 @@ golangci-lint run
 | `RESULTS_DIR` | `results` | Analysis results directory |
 | `DATA_DIR` | `data` | User/video/friend JSON storage |
 | `JWT_SECRET` | default | JWT signing secret |
+<<<<<<< HEAD
+=======
 | `OPENROUTER_API_KEY` | — | OpenRouter API key for LLM scoring |
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
 
 ## Deployment
 
@@ -120,6 +162,14 @@ golangci-lint run
 
 ```bash
 # Build
+<<<<<<< HEAD
+go build -o /usr/local/bin/basketform-ai ./cmd/server/
+
+# Run
+PORT=80 /usr/local/bin/basketform-ai
+```
+
+=======
 go build -o bin/server ./cmd/server/
 
 # Run with env vars
@@ -129,11 +179,16 @@ PORT=8080 ./bin/server
 
 Nginx reverse proxy configured on port 80 → 8080.
 
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
 ### Docker
 
 ```bash
 docker build -t basketform-ai .
+<<<<<<< HEAD
+docker run -p 8080:8080 basketform-ai
+=======
 docker run -p 8080:8080 -e OPENROUTER_API_KEY=your-key basketform-ai
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
 ```
 
 ## Project Structure
@@ -143,11 +198,19 @@ BasketForm-AI/
 ├── cmd/server/main.go              # Application entry point
 ├── internal/
 │   ├── handlers/                   # HTTP handlers
+<<<<<<< HEAD
+│   │   ├── handlers.go             # Page handlers
+│   │   ├── api.go                  # API handlers
+│   │   ├── auth.go                 # Auth handlers
+│   │   ├── friends.go              # Friends handlers
+│   │   ├── share.go                # Share handlers
+=======
 │   │   ├── handlers.go             # Page handlers + AvatarHandler
 │   │   ├── api.go                  # API handlers (upload, status, result, videos, delete)
 │   │   ├── auth.go                 # Auth handlers (register, login, profile, nickname, avatar)
 │   │   ├── friends.go              # Friends handlers
 │   │   ├── share.go                # Share handlers (with-me, by-me)
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
 │   │   ├── middleware.go           # JWT auth middleware
 │   │   └── *_test.go               # Tests
 │   ├── models/                     # Data structures
@@ -156,6 +219,8 @@ BasketForm-AI/
 │   │   ├── storage.go              # JSON file storage
 │   │   └── processor.go            # ML video processing
 │   └── qrt/                        # Quality requirement tests
+<<<<<<< HEAD
+=======
 ├── ML/                             # Python ML pipeline
 │   ├── main.py                     # Entry point for video analysis
 │   ├── ball_tracker.py             # YOLO-based ball detection
@@ -164,6 +229,7 @@ BasketForm-AI/
 │   ├── feedback_generator.py       # LLM scoring via OpenRouter API
 │   ├── custom_feedback.py          # Rule-based fallback scoring
 │   └── best.pt                     # YOLO model weights
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
 ├── web/
 │   ├── templates/                  # HTML templates
 │   │   ├── login.html, signup.html # Auth pages
@@ -171,6 +237,15 @@ BasketForm-AI/
 │   │   ├── results.html            # Analysis results
 │   │   ├── friends.html            # Friend management
 │   │   ├── shared.html             # Shared results
+<<<<<<< HEAD
+│   │   └── profile.html            # User profile
+│   └── static/                     # CSS, JS, images
+├── scripts/                        # Python ML scripts
+├── data/                           # JSON user/video/friend storage
+├── uploads/                        # Uploaded video files
+├── results/                        # Analysis result files + output videos
+├── docs/                           # Project documentation
+=======
 │   │   └── profile.html            # User profile (with modals)
 │   └── static/                     # CSS, JS, images
 ├── data/                           # JSON user/video/friend storage
@@ -185,6 +260,7 @@ BasketForm-AI/
 │   │   └── adr/                    # Architecture Decision Records
 │   ├── quality-requirements.md     # QR-001 to QR-004
 │   └── ...
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
 ├── reports/                        # Course reports
 ├── Dockerfile                      # Container build
 ├── CHANGELOG.md                    # Version history
@@ -193,6 +269,8 @@ BasketForm-AI/
 
 ## Documentation
 
+<<<<<<< HEAD
+=======
 ### Architecture
 - [Architecture Overview](docs/architecture/README.md)
 - [Component Diagram](docs/architecture/static-view/component-diagram.puml)
@@ -202,6 +280,7 @@ BasketForm-AI/
 - [ADR-002: exec ML Integration](docs/architecture/adr/ADR-002-exec-ml-script.md)
 - [ADR-003: JWT Authentication](docs/architecture/adr/ADR-003-jwt-auth.md)
 
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
 ### Reports
 - [Week 5 Report](reports/week5/README.md)
 - [Week 4 Report](reports/week4/README.md)
@@ -222,6 +301,19 @@ BasketForm-AI/
 - [Architecture Documentation](docs/architecture/)
 - [Changelog](CHANGELOG.md)
 
+<<<<<<< HEAD
+
+## Architecture
+- [Architecture Overview](docs/architecture/README.md)
+- [Component Diagram](docs/architecture/static-view/component-diagram.puml)
+- [Sequence Diagram](docs/architecture/dynamic-view/sequence-diagram.puml)
+- [Deployment Diagram](docs/architecture/deployment-view/deployment-diagram.puml)
+- [ADR-001: JSON Storage](docs/architecture/adr/ADR-001-use-json-storage.md)
+- [ADR-002: exec ML Integration](docs/architecture/adr/ADR-002-exec-ml-script.md)
+- [ADR-003: JWT Authentication](docs/architecture/adr/ADR-003-jwt-auth.md)
+
+=======
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
 ## License
 
 This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
