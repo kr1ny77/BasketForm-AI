@@ -86,9 +86,9 @@ End-user-facing scenarios for BasketForm-AI. These are executed by the customer 
 
 **Step-by-step instructions:**
 1. Navigate to the "Friends" page using the main navigation menu.
-2. Locate the "Add Friend" or "Send Request" input field.
+2. Locate the "Search" field.
 3. Enter the exact username of the target user.
-4. Click the "Send Request" button.
+4. Click the "Search" button and then "Send request".
 5. Verify the success message or UI update indicating the request was sent.
 
 **Expected outcome:** The friend request is successfully sent. The UI displays a confirmation message (e.g., "Friend request sent"), and the target user's username appears in the "Pending" or "Sent Requests" section.
@@ -106,7 +106,7 @@ End-user-facing scenarios for BasketForm-AI. These are executed by the customer 
 **Step-by-step instructions:**
 1. Log in to the application as the user who received the friend request.
 2. Navigate to the "Friends" page using the main navigation menu.
-3. Locate the "Incoming Requests" or "Pending" section.
+3. Locate the "Pending requests" section.
 4. Find the friend request from the target user.
 5. Click the "Accept" button next to the request.
 6. Verify the UI updates to show the user is now in the active "Friends" list.
