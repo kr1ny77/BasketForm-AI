@@ -45,4 +45,55 @@ That actually sounds great. It's probably even great from the perspective that y
 Okay. What other suggestions do you have, what can be done, how can it be improved?
 
 ### [00:05:37] — Customer
-What needs to be improved? If you don't mind, I'll open our spreadsheet for a second and see what we discussed in detail. So, you ended up making the apps into websites, which is cool and convenient. But we definitely won't have time to make an app. Yes, I understand. I'm just skimming through it. In fact, it seems like you've more or less fulfilled all the requirements I originally wrote down. Yes, some of them have been modified, but firstly, I approved that, and
+What needs to be improved? If you don't mind, I'll open our spreadsheet for a second and see what we discussed in detail. So, you ended up making the apps into websites, which is cool and convenient. But we definitely won't have time to make an app. Yes, I understand. I'm just skimming through it. In fact, it seems like you've more or less fulfilled all the requirements I originally wrote down. Yes, some of them have been modified, but firstly, I approved that, and secondly, they've been improved. There you go. Okay, and now we're discussing what we can do besides adding video uploads with several throws in a row. What if... as a suggestion, we could compare the two videos. Specifically, what's changed in the feature. That is, compare, for example, today's throw with yesterday's throw.
+
+### [00:08:15] — ML Engineer
+But we already have a progress system that shows how much...
+
+### [00:08:19] — Customer
+by the way, it shows And it shows it in descriptions and points, or does it just describe it specifically? Yesterday it was like this, today it was like that. No, it works in bulk. I'm talking about creating a system that would directly report that today your brine was better, but your foot placement was incorrect. But that's just a guess. I don't know how useful that would be. We...
+
+### [00:08:55] — Full-stack Developer
+The system works by displaying points, and the points are assigned using four criteria, and the criteria are also displayed. So, in my opinion, it's throw, foot position, arm position, and so on. And they're also displayed there, and I can see how it's divided up.
+
+### [00:09:20] — Customer
+Okay, then it probably won't be a very useful feature.
+
+### [00:09:24] — ML Engineer
+Well, it's hard to classify them as such. Well, I guess we'll stick with uploading the entire video but dividing it into segments. Okay.
+
+### [00:09:35] — Customer
+Yeah, I guess that's it...
+
+### [00:09:37] — ML Engineer
+Okay, then let's move on to the user testы. We've already discussed the filming decision. While I'm giving you a little time to log into the site, we'll be testing our new friends window. Tell me, how will you be ready? You already have an account, right?
+
+### [00:10:07] — Customer
+Yes, I did.
+
+### [00:10:09] — ML Engineer
+Then for the first test recipe, we'll be testing the ability to send a friend request. So, you need to go to the friends page. Then, in the field where you need to enter your nickname, enter the nickname I'll send you now on Telegram. After that, you can click "Search." A notification should appear indicating that the request was successfully sent.
+
+### [00:10:56] — Customer
+Yes, yes, good, it worked.
+
+### [00:11:00] — ML Engineer
+Okay, then the next test is to ensure you can accept a friend request. I'll send you a request now. You'll also need to go to the "Friends" window. And mine will appear in the "Pending requests" section. Are you ready? I'll send you a request then. You can refresh the page, and my request should appear. After that, I'll try clicking "accept." The record should be accepted, and I should appear in the "My Friends" section.
+
+### [00:11:49] — Customer
+Yes, it worked.
+
+### [00:11:51] — ML Engineer
+Everything's great. Then both User Acceptance tests have passed. Any comments on them?
+
+### [00:11:58] — Customer
+No, everything's great.
+
+### [00:12:00] — ML Engineer
+Okay, fine. That's all for today. We discussed how we managed to complete this sprint, planned the next sprint, and passed the User Acceptance Test. Are there any final questions or suggestions?
+
+### [00:12:18] — Customer
+No, basically, everything's fine. See you at the end of the next sprint.
+
+### [00:12:24] — ML Engineer
+Okay. See you there, too.
