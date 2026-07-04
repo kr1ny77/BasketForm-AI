@@ -167,6 +167,7 @@ BasketForm-AI/
 ## Documentation
 
 ### Reports
+- [Week 5 Report](reports/week5/README.md)
 - [Week 4 Report](reports/week4/README.md)
 - [Customer Review Summary](reports/week4/customer-review-summary.md)
 - [Reflection](reports/week4/reflection.md)
@@ -181,6 +182,8 @@ BasketForm-AI/
 - [Quality Requirements](docs/quality-requirements.md)
 - [Quality Requirement Tests](docs/quality-requirement-tests.md)
 - [Testing Strategy](docs/testing.md)
+- [Development Process](docs/development-process.md)
+- [Architecture Documentation](docs/architecture/)
 - [Changelog](CHANGELOG.md)
 
 ## License
