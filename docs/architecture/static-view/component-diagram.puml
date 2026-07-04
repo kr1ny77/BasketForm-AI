@@ -1,9 +1,21 @@
+<<<<<<< HEAD
 @startuml
 !theme plain
 skinparam componentStyle rectangle
 skinparam backgroundColor white
 title BasketForm-AI — Static Component View
 actor "User\n(Browser)" as User
+=======
+@startuml component-diagram
+!theme plain
+skinparam componentStyle rectangle
+skinparam backgroundColor white
+
+title BasketForm-AI — Static Component View
+
+actor "User\n(Browser)" as User
+
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
 package "Frontend" {
     [Upload Page] as Upload
     [Results Page] as Results
@@ -11,12 +23,20 @@ package "Frontend" {
     [Friends Page] as Friends
     [Shared Page] as Shared
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
 package "Go Server (port 8080)" {
     [Auth Middleware] as Auth
     [Handlers\n(api, auth, friends, share)] as Handlers
     [Services\n(storage, auth, processor)] as Services
     [Models] as Models
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
 package "ML Pipeline" {
     [main.py] as MLMain
     [ball_tracker.py\n(YOLO)] as BallTrack
@@ -24,12 +44,17 @@ package "ML Pipeline" {
     [shot_analyzer.py\n(State Machine)] as ShotAnalyze
     [feedback_generator.py\n(OpenRouter LLM)] as Feedback
 }
+<<<<<<< HEAD
+=======
+
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
 package "External Services" {
     database "JSON Files\n(data/)" as JSONFiles
     database "Uploads\n(uploads/)" as Uploads
     database "Results\n(results/)" as ResultsDir
     cloud "OpenRouter API\n(GPT-4o-mini)" as LLM
 }
+<<<<<<< HEAD
 User --> Upload : HTTP POST
 User --> Results : HTTP GET
 User --> Profile : HTTP GET/POST
@@ -43,11 +68,45 @@ Services --> JSONFiles : read/write
 Services --> Uploads : save video
 Services --> ResultsDir : save/load results
 Services --> MLMain : exec.Command
+=======
+
+' Frontend connections
+User --> Upload : HTTP POST\n(upload video)
+User --> Results : HTTP GET\n(view results)
+User --> Profile : HTTP GET/POST\n manage account)
+User --> Friends : HTTP GET/POST\n manage friends)
+User --> Shared : HTTP GET\n(view shared)
+
+Upload --> Auth : cookie token
+Results --> Auth : cookie token
+Profile --> Auth : cookie token
+Friends --> Auth : cookie token
+Shared --> Auth : cookie token
+
+' Auth to handlers
+Auth --> Handlers : authenticated\nrequest
+
+' Handlers to services
+Handlers --> Services : business logic
+
+' Services to data
+Services --> JSONFiles : read/write\nuser/video data
+Services --> Uploads : save uploaded\nvideo files
+Services --> ResultsDir : save/load\nresult JSON
+
+' ML integration
+Services --> MLMain : exec.Command\n(process video)
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
 MLMain --> BallTrack : detect ball
 MLMain --> PoseTrack : detect pose
 MLMain --> ShotAnalyze : analyze phases
 MLMain --> Feedback : score + feedback
 BallTrack --> Uploads : read video
 PoseTrack --> Uploads : read video
+<<<<<<< HEAD
 Feedback --> LLM : HTTP API
+=======
+Feedback --> LLM : HTTP API\n(frames + metrics)
+
+>>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
 @enduml
