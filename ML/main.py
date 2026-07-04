@@ -4,10 +4,11 @@ import sys
 import os
 from collections import deque
 import json
-from feedback_generator import FeedbackGenerator
 from ball_tracker import BallTracker
 from pose_tracker import PoseTracker
 from shot_analyzer import ShotPhaseStateMachine
+from custom_feedback import CustomFeedbackGenerator
+from llm_scorer import score_with_llm
 import mediapipe as mp
 
 mp_drawing = mp.solutions.drawing_utils
@@ -183,65 +184,37 @@ def process_video(input_path, output_path):
     print(f"Processing complete! Processed {frame_count} frames")
     print(f"Output saved to: {output_path}")
 
-    # --- GENERATE AI REPORT ---
-    # --- GENERATE AI REPORT ---
-    print("Generating AI feedback via OpenRouter API...")
-    try:
-        # 1. Инициализируем генератор (читает .env)
-        generator = FeedbackGenerator()
+    final_metrics = {
+        "min_knee_dip": phase_machine.min_knee_dip,
+        "torso_ascent": phase_machine.torso_ascent,
+        "elbow_release": phase_machine.elbow_release,
+        "forearm_release": phase_machine.forearm_release,
+        "frames_in_follow_through": phase_machine.frames_in_follow_through,
+        "elbow_snap": phase_machine.elbow_snap,
+        "arm_stability_std": phase_machine.arm_stability_std
+    }
 
-        # 2. Собираем метрики
-        final_scores = phase_machine.scores
-        final_metrics = {
-            "min_knee_dip": phase_machine.min_knee_dip,
-            "torso_ascent": phase_machine.torso_ascent,
-            "elbow_release": phase_machine.elbow_release,
-            "forearm_release": phase_machine.forearm_release
-        }
+    # Try LLM scoring first
+    ai_feedback = ""
+    final_scores = None
 
-        # 3. Запрашиваем фидбек у API
-        ai_feedback = generator.generate_feedback(final_scores, final_metrics, language="English")
-
-        # 4. Формируем и сохраняем JSON
-        report = {
-            "scores": final_scores,
-            "metrics": {k: float(v) for k, v in final_metrics.items()},
-            "ai_feedback": ai_feedback
-        }
-
-        report_path = os.path.splitext(output_path)[0] + ".json"
-        with open(report_path, 'w', encoding='utf-8') as f:
-            json.dump(report, f, ensure_ascii=False, indent=2)
-
-        print(f"Report saved to {report_path}")
-        print("\n--- AI COACH FEEDBACK ---")
+    llm_scores, llm_feedback = score_with_llm(final_metrics, lang)
+    if llm_scores is not None:
+        final_scores = llm_scores
+        ai_feedback = llm_feedback
+        print("--- LLM COACH FEEDBACK ---")
         print(ai_feedback)
-        print("--------------------------\n")
-
-    except ValueError as e:
-        # Специальная обработка для отсутствия ключа
-        print("-" * 50)
-        print("WARNING: AI Feedback generation skipped.")
-        print("Reason: OpenRouter API key not found.")
-        print("To enable AI coaching, create a .env file in the root directory")
-        print("and add: OPENROUTER_API_KEY=your_key_here")
-        print("-" * 50)
-
-        # Сохраняем JSON без AI фидбека, чтобы не терять результаты трекинга
-        report = {
-            "scores": phase_machine.scores,
-            "metrics": {k: float(v) for k, v in {
-                "min_knee_dip": phase_machine.min_knee_dip,
-                "torso_ascent": phase_machine.torso_ascent,
-                "elbow_release": phase_machine.elbow_release,
-                "forearm_release": phase_machine.forearm_release
-            }.items()},
-            "ai_feedback": "Skipped (API key not configured)"
-        }
-        report_path = os.path.splitext(output_path)[0] + ".json"
-        with open(report_path, 'w', encoding='utf-8') as f:
-            json.dump(report, f, ensure_ascii=False, indent=2)
-        print(f"Report saved to {report_path} (without AI feedback)")
+        print("--------------------------")
+    else:
+        print("LLM scoring failed, falling back to local scoring...")
+        # Fallback: use local scoring
+        phase_machine._calculate_scores()
+        final_scores = phase_machine.scores
+        generator = CustomFeedbackGenerator()
+        ai_feedback = generator.generate(final_scores, final_metrics, lang)
+        print("--- LOCAL COACH FEEDBACK ---")
+        print(ai_feedback)
+        print("---------------------------")
 
     except Exception as e:
         # Обработка всех остальных ошибок (сеть, парсинг и т.д.)

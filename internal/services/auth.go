@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -36,7 +37,7 @@ func NewAuthService(storage *Storage) *AuthService {
 }
 
 func (a *AuthService) Register(email, nickname, password string) (*models.User, error) {
-	if _, ok := a.storage.GetUserByEmail(email); ok {
+	if _, ok := a.storage.GetUserByEmail(strings.ToLower(email)); ok {
 		return nil, ErrEmailTaken
 	}
 	if _, ok := a.storage.GetUserByNickname(nickname); ok {
@@ -62,9 +63,22 @@ func (a *AuthService) Register(email, nickname, password string) (*models.User, 
 	return user, nil
 }
 
-func (a *AuthService) Login(email, password string) (string, *models.User, error) {
-	user, ok := a.storage.GetUserByEmail(email)
-	if !ok {
+func (a *AuthService) Login(emailOrNickname, password string) (string, *models.User, error) {
+	input := strings.TrimSpace(emailOrNickname)
+	var user *models.User
+
+	// Try email first (case-insensitive)
+	if u, ok := a.storage.GetUserByEmail(strings.ToLower(input)); ok {
+		user = u
+	}
+	// If not found by email, try nickname (case-insensitive)
+	if user == nil {
+		if u, ok := a.storage.GetUserByNicknameCaseInsensitive(input); ok {
+			user = u
+		}
+	}
+
+	if user == nil {
 		return "", nil, ErrInvalidCredentials
 	}
 
