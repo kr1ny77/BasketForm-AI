@@ -7,8 +7,8 @@ import json
 from ball_tracker import BallTracker
 from pose_tracker import PoseTracker
 from shot_analyzer import ShotPhaseStateMachine
+from feedback_generator import FeedbackGenerator
 from custom_feedback import CustomFeedbackGenerator
-from llm_scorer import score_with_llm
 import mediapipe as mp
 
 mp_drawing = mp.solutions.drawing_utils
@@ -140,7 +140,11 @@ def process_video(input_path, output_path, lang="en"):
     ai_feedback = ""
     final_scores = None
 
-    llm_scores, llm_feedback = score_with_llm(final_metrics, lang, video_path=input_path)
+    lang_name = "Russian" if lang == "ru" else "English"
+    generator = FeedbackGenerator()
+    llm_scores, llm_feedback = generator.generate_feedback(
+        phase_machine.scores, final_metrics, language=lang_name, video_path=input_path
+    )
     if llm_scores is not None:
         final_scores = llm_scores
         ai_feedback = llm_feedback
@@ -149,11 +153,10 @@ def process_video(input_path, output_path, lang="en"):
         print("--------------------------")
     else:
         print("LLM scoring failed, falling back to local scoring...")
-        # Fallback: use local scoring
         phase_machine._calculate_scores()
         final_scores = phase_machine.scores
-        generator = CustomFeedbackGenerator()
-        ai_feedback = generator.generate(final_scores, final_metrics, lang)
+        fallback = CustomFeedbackGenerator()
+        ai_feedback = fallback.generate(final_scores, final_metrics, lang)
         print("--- LOCAL COACH FEEDBACK ---")
         print(ai_feedback)
         print("---------------------------")
