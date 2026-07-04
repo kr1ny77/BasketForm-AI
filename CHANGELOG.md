@@ -6,6 +6,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [v0.3.0] — 2026-07-04
+
+Sprint 3 — Assignment 5: Architecture documentation, ADRs, LLM-based scoring, UI/UX improvements.
+
+### Added
+- **LLM-based scoring**: integrated OpenRouter API (GPT-4o-mini) for video analysis — LLM receives 8 key frames + biomechanical metrics and generates scores + detailed feedback
+- **Vision analysis**: LLM analyzes actual video frames, not just numerical metrics
+- **Follow-through scoring**: 4th phase now fully scored with duration, elbow snap, and arm stability metrics
+- **Nickname change**: POST /api/profile/nickname endpoint with password verification and uniqueness check
+- **Profile page modals**: Change Nickname and Change Password as popup modals with large action buttons
+- **Shared results — sent view**: users can now see results they shared with friends (not just received)
+- **Architecture documentation** (Part 4): component diagram, sequence diagram, deployment diagram (PlantUML)
+- **Architecture Decision Records** (Part 5): ADR-001 (JSON storage), ADR-002 (exec ML), ADR-003 (JWT auth)
+- **Case-insensitive login**: email comparison uses `strings.EqualFold`; login accepts both email and nickname
+- **Avatar display**: avatars now visible on Friends and Shared pages (fixed missing `onload` handler)
+- **Quality requirements updated**: linked ADRs to QR-001, QR-002
+
+### Fixed
+- **Data race in GetVideo**: `RLock` while writing to map caused panic with 3+ concurrent users — changed to `Lock`
+- **Delete results**: recompiled Go binary; removed duplicate `handlers/storage.go` with wrong package declaration
+- **Friends page**: fixed `t is not defined` error in `loadMyResults()` — Share button now works
+- **Avatar upload**: `ProfileHandler` now returns `avatar` field in JSON response
+- **Login field**: i18n updated to "Email or Nickname" / "Эл. почта или никнейм"
+- **Checkbox styling**: enlarged to 20px, centered checkmark, rounded corners
+- **Score display**: gradient matches other pages, `/100` repositioned with proper spacing
+- **Delete bar**: correctly stays visible in selection mode
+
+### Changed
+- ML pipeline: `feedback_generator.py` rewritten to use OpenRouter API instead of local Qwen model
+- ML pipeline: removed `llm_scorer.py` — scoring now handled by existing `feedback_generator.py`
+- Profile page: nickname/password buttons moved to modal popups below profile card
+- Server: removed duplicate `internal/handlers/storage.go` that blocked Go compilation
+- `shot_analyzer.py`: `FOLLOW_THROUGH` included in initial scores dict; added `elbow_snap` and `arm_stability_std` metrics
+
+### Security
+- API key stored in environment variable (`OPENROUTER_API_KEY`), not in source code
+- Data race fix prevents server crashes under concurrent load
+
 ## [v0.2.0] — 2026-06-28
 
 Sprint 2 — Assignment 4: Authentication, social features, enhanced ML, quality automation.

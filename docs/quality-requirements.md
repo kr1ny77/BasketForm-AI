@@ -14,6 +14,8 @@ Quality requirements for BasketForm-AI, structured by ISO/IEC 25010 quality sub-
 
 **Linked quality requirement tests:** [QRT-001](quality-requirement-tests.md#qrt-001-api-response-time)
 
+**Linked ADRs:** [ADR-001](architecture/adr/ADR-001-use-json-storage.md) (JSON storage limits query performance), [ADR-002](architecture/adr/ADR-002-exec-ml-script.md) (async processing prevents blocking)
+
 ## QR-002: Authentication Security
 
 **ISO/IEC 25010 sub-characteristic:** Confidentiality
@@ -25,6 +27,8 @@ Quality requirements for BasketForm-AI, structured by ISO/IEC 25010 quality sub-
 **Related PBI:** [#66](https://github.com/kr1ny77/BasketForm-AI/issues/66) (PBI-018: Authentication and data persistence)
 
 **Linked quality requirement tests:** [QRT-002](quality-requirement-tests.md#qrt-002-authentication-security)
+
+**Linked ADRs:** [ADR-003](architecture/adr/ADR-003-jwt-auth.md) (JWT implementation details)
 
 ## QR-003: Critical Module Testability
 

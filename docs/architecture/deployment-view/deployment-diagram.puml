@@ -1,0 +1,67 @@
+@startuml deployment-diagram
+!theme plain
+skinparam backgroundColor white
+
+title BasketForm-AI — Deployment View
+
+node "VM (80.74.30.14)" as VM {
+    node "Nginx\n(port 80)" as Nginx {
+        artifact "Reverse Proxy\n(config)" as NginxConf
+    }
+
+    node "Go Server\n(port 8080)" as GoServer {
+        artifact "bin/server" as Binary
+        artifact "JWT Secret\n(env var)" as JWT
+    }
+
+    node "Python ML Pipeline" as Python {
+        artifact "ML/main.py" as MLMain
+        artifact "venv/\n(Python 3.12)" as Venv
+        artifact "best.pt\n(YOLO weights)" as YOLO
+    }
+
+    node "File System" as FS {
+        folder "data/" as DataDir {
+            artifact "users/*.json" as Users
+            artifact "videos/*.json" as Videos
+            artifact "friends/*.json" as Friends
+            artifact "shared/*.json" as Shared
+            artifact "avatars/*" as Avatars
+        }
+        folder "uploads/" as UploadsDir
+        folder "results/" as ResultsDir
+        folder "web/" as WebDir {
+            artifact "templates/*.html" as Templates
+            artifact "static/css/*.css" as CSS
+            artifact "static/js/*.js" as JS
+        }
+    }
+}
+
+cloud "OpenRouter API" as OpenRouter {
+    artifact "GPT-4o-mini\n(Vision Model)" as GPT
+}
+
+actor "User\n(Browser)" as User
+
+' Network flow
+User --> Nginx : HTTPS (port 443)\nor HTTP (port 80)
+Nginx --> GoServer : proxy_pass\nlocalhost:8080
+
+' Server to files
+GoServer --> DataDir : read/write\nuser/video data
+GoServer --> UploadsDir : save uploaded\nvideo files
+GoServer --> ResultsDir : save/load\nresult JSON
+GoServer --> WebDir : serve static\nfiles
+
+' Server to ML
+GoServer --> Python : exec.Command\n(via goroutine)
+
+' ML to files
+Python --> UploadsDir : read uploaded\nvideo
+Python --> ResultsDir : write result\nJSON
+
+' ML to LLM
+Python --> OpenRouter : HTTP API\n(frames + metrics)
+
+@enduml

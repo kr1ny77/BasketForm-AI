@@ -1,0 +1,61 @@
+@startuml sequence-diagram
+!theme plain
+skinparam backgroundColor white
+
+title BasketForm-AI — Video Upload & Analysis Sequence
+
+actor User
+participant Browser
+participant "Go Server" as Server
+participant "ML Pipeline" as ML
+database "File System" as FS
+participant "OpenRouter\n(GPT-4o-mini)" as LLM
+
+== Upload Phase ==
+
+User -> Browser : Select video file
+Browser -> Server : POST /api/upload\n(multipart form)
+Server -> Server : Validate JWT token\n(extract user_id)
+Server -> Server : Generate unique ID\n(genID())
+Server -> FS : Save video file\n(uploads/{id}.mp4)
+Server -> FS : Create video JSON\n(data/videos/{id}.json)
+Server -> Server : Start goroutine:\ngo processor.ProcessVideo(id)
+Server --> Browser : 201 Created\n{id, filename, status}
+
+== Processing Phase (async) ==
+
+Server -> ML : exec.Command(python,\nML/main.py, input, output)
+ML -> FS : Read video file\n(uploads/{id}.mp4)
+
+loop For each frame
+    ML -> ML : BallTracker.detect()\n(YOLO inference)
+    ML -> ML : PoseTracker.process()\n(MediaPipe inference)
+    ML -> ML : ShotPhaseStateMachine.update()\n(track phases)
+end
+
+ML -> ML : phase_machine.finalize()\ncalculate local scores
+
+ML -> LLM : POST /chat/completions\n(8 frames + metrics)
+LLM -> LLM : Analyze visual frames\n+ biomechanical data
+LLM --> ML : {scores, feedback}\nJSON response
+
+ML -> FS : Save result JSON\n(results/{id}.json)
+ML -> FS : Delete uploaded video\n(save disk space)
+ML --> Server : Process complete\n(score=XX)
+
+Server -> FS : Update video status\n(data/videos/{id}.json)
+
+== Result Retrieval ==
+
+Browser -> Server : GET /api/videos
+Server -> FS : Read all video JSONs\n(data/videos/*.json)
+Server --> Browser : [{id, filename,\nscore, status, ...}]
+
+User -> Browser : Click on result
+Browser -> Server : GET /api/result/{id}
+Server -> FS : Read result JSON\n(results/{id}.json)
+Server --> Browser : {score, phases,\nfeedback, scores[]}
+
+Browser -> Browser : Render phases,\nradar chart, feedback
+
+@enduml
