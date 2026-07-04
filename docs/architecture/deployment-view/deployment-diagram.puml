@@ -1,0 +1,38 @@
+@startuml
+!theme plain
+skinparam backgroundColor white
+title BasketForm-AI — Deployment View
+node "VM (80.74.30.14)" as VM {
+    node "Nginx\n(port 80)" as Nginx {
+        artifact "Reverse Proxy" as NginxConf
+    }
+    node "Go Server\n(port 8080)" as GoServer {
+        artifact "bin/server" as Binary
+    }
+    node "Python ML Pipeline" as Python {
+        artifact "ML/main.py" as MLMain
+        artifact "venv/\n(Python 3.12)" as Venv
+        artifact "best.pt\n(YOLO weights)" as YOLO
+    }
+    node "File System" as FS {
+        folder "data/" as DataDir
+        folder "uploads/" as UploadsDir
+        folder "results/" as ResultsDir
+        folder "web/" as WebDir
+    }
+}
+cloud "OpenRouter API" as OpenRouter {
+    artifact "GPT-4o-mini\n(Vision Model)" as GPT
+}
+actor "User\n(Browser)" as User
+User --> Nginx : HTTP (port 80)
+Nginx --> GoServer : proxy_pass\nlocalhost:8080
+GoServer --> DataDir : read/write
+GoServer --> UploadsDir : save video
+GoServer --> ResultsDir : save/load results
+GoServer --> WebDir : serve static files
+GoServer --> Python : exec.Command
+Python --> UploadsDir : read video
+Python --> ResultsDir : write result
+Python --> OpenRouter : HTTP API
+@enduml

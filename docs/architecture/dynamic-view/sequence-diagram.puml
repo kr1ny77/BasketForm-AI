@@ -1,0 +1,42 @@
+@startuml
+!theme plain
+skinparam backgroundColor white
+title BasketForm-AI — Video Upload & Analysis Sequence
+actor User
+participant Browser
+participant "Go Server" as Server
+participant "ML Pipeline" as ML
+database "File System" as FS
+participant "OpenRouter\n(GPT-4o-mini)" as LLM
+User -> Browser : Select video file
+Browser -> Server : POST /api/upload\n(multipart form)
+Server -> Server : Validate JWT token
+Server -> Server : Generate unique ID
+Server -> FS : Save video file\n(uploads/{id}.mp4)
+Server -> FS : Create video JSON\n(data/videos/{id}.json)
+Server -> Server : Start goroutine:\ngo processor.ProcessVideo(id)
+Server --> Browser : 201 Created
+Server -> ML : exec.Command(python,\nML/main.py, input, output)
+ML -> FS : Read video file
+loop For each frame
+    ML -> ML : BallTracker.detect()\n(YOLO inference)
+    ML -> ML : PoseTracker.process()\n(MediaPipe inference)
+    ML -> ML : ShotPhaseStateMachine.update()
+end
+ML -> ML : phase_machine.finalize()
+ML -> LLM : POST /chat/completions\n(8 frames + metrics)
+LLM -> LLM : Analyze visual frames
+LLM --> ML : {scores, feedback}
+ML -> FS : Save result JSON
+ML -> FS : Delete uploaded video
+ML --> Server : Process complete
+Server -> FS : Update video status
+Browser -> Server : GET /api/videos
+Server -> FS : Read all video JSONs
+Server --> Browser : [{id, filename, score, ...}]
+User -> Browser : Click on result
+Browser -> Server : GET /api/result/{id}
+Server -> FS : Read result JSON
+Server --> Browser : {score, phases, feedback}
+Browser -> Browser : Render phases, chart, feedback
+@enduml

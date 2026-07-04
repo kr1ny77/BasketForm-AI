@@ -4,6 +4,8 @@ Quality requirements for BasketForm-AI, structured by ISO/IEC 25010 quality sub-
 
 ## QR-001: API Response Time
 
+**Linked ADRs:** [ADR-001](architecture/adr/ADR-001-use-json-storage.md) (JSON storage limits query performance), [ADR-002](architecture/adr/ADR-002-exec-ml-script.md) (async processing prevents blocking)
+
 **ISO/IEC 25010 sub-characteristic:** Time Behaviour
 
 **Scenario:** When an authenticated user submits a request to load the results list or a single result under normal load, the API shall return a response within 2 seconds for 95% of requests.
@@ -15,6 +17,8 @@ Quality requirements for BasketForm-AI, structured by ISO/IEC 25010 quality sub-
 **Linked quality requirement tests:** [QRT-001](quality-requirement-tests.md#qrt-001-api-response-time)
 
 ## QR-002: Authentication Security
+
+**Linked ADRs:** [ADR-003](architecture/adr/ADR-003-jwt-auth.md) (JWT implementation details)
 
 **ISO/IEC 25010 sub-characteristic:** Confidentiality
 
