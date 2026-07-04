@@ -1,0 +1,41 @@
+@startuml
+!theme plain
+skinparam packageStyle rectangle
+skinparam componentStyle rectangle
+
+package "BasketForm-AI" {
+  [cmd/server/main.go] as entrypoint
+  
+  package "internal/" {
+    [handlers/] as handlers
+    [services/] as services
+    [models/] as models
+    [qrt/] as qrt
+  }
+  
+  package "web/" {
+    [templates/] as templates
+    [static/] as static
+  }
+  
+  package "scripts/" {
+    [Python ML scripts] as mlscripts
+  }
+  
+  package "data/" as data
+  
+  package "uploads/" as uploads
+  package "results/" as results
+}
+
+entrypoint --> handlers
+handlers --> services
+handlers --> templates
+handlers --> static
+services --> models
+services --> data
+services --> uploads
+services --> results
+services --> mlscripts
+qrt --> services
+@enduml
