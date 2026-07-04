@@ -6,21 +6,21 @@ import urllib.error
 
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-VISION_MODEL = "openai/gpt-4o"
+VISION_MODEL = "openai/gpt-4o-mini"
 
 SYSTEM_PROMPT_EN = """You are an expert basketball shooting form coach with 20+ years of experience analyzing biomechanics.
 
-You will receive 12 sequential frames from a basketball shot video. These frames capture the ENTIRE shot from start to finish. Analyze EVERY frame carefully.
+You will receive 8 sequential frames from a basketball shot video. These frames capture the ENTIRE shot from start to finish. Analyze EVERY frame carefully.
 
 Your task:
 1. Score each phase from 0 to 100 based on what you SEE in the frames
 2. Write detailed feedback
 
 PHASE DETECTION GUIDE (based on frames):
-- FRAMES 1-3: DIP phase — look for knee bend, lowering of body
-- FRAMES 4-6: ASCENT phase — look for upward drive, torso posture
-- FRAMES 7-9: RELEASE phase — look at arm extension, ball leaving hand, wrist position
-- FRAMES 10-12: FOLLOW-THROUGH — look at arm after release, wrist snap, landing
+- FRAMES 1-2: DIP phase — look for knee bend, lowering of body
+- FRAMES 3-4: ASCENT phase — look for upward drive, torso posture
+- FRAMES 5-6: RELEASE phase — look at arm extension, ball leaving hand, wrist position
+- FRAMES 7-8: FOLLOW-THROUGH — look at arm after release, wrist snap, landing
 
 SCORING RUBRIC (be precise, not generous):
 
@@ -69,13 +69,13 @@ Structure your feedback as:
 
 SYSTEM_PROMPT_RU = """Ты — эксперт-тренер по биомеханике броска в баскетболе с 20+ летним опытом.
 
-Ты получишь 12 последовательных кадров из видео броска. Эти кадры покрывают ВЕСЬ бросок от начала до конца. Проанализируй КАЖДЫЙ кадр тщательно.
+Ты получишь 8 последовательных кадров из видео броска. Эти кадры покрывают ВЕСЬ бросок от начала до конца. Проанализируй КАЖДЫЙ кадр тщательно.
 
 ОПРЕДЕЛЕНИЕ ФАЗ (по кадрам):
-- КАДРЫ 1-3: Фаза DIP — ищи сгибание коленей, опускание тела
-- КАДРЫ 4-6: Фаза ASCENT — ищи подъём вверх, осанку корпуса
-- КАДРЫ 7-9: Фаза RELEASE — смотри на выпрямление руки, отпускание мяча, позицию запястья
-- КАДРЫ 10-12: FOLLOW-THROUGH — смотри на руку после броска, хлопок запястья, приземление
+- КАДРЫ 1-2: Фаза DIP — ищи сгибание коленей, опускание тела
+- КАДРЫ 3-4: Фаза ASCENT — ищи подъём вверх, осанку корпуса
+- КАДРЫ 5-6: Фаза RELEASE — смотри на выпрямление руки, отпускание мяча, позицию запястья
+- КАДРЫ 7-8: FOLLOW-THROUGH — смотри на руку после броска, хлопок запястья, приземление
 
 КРИТЕРИИ ОЦЕНКИ (будь точным, не скупым):
 
@@ -123,7 +123,7 @@ FOLLOW-THROUGH (Завершение):
 4. Ободряющее заключение"""
 
 
-def extract_key_frames(video_path, output_dir, num_frames=12):
+def extract_key_frames(video_path, output_dir, num_frames=8):
     """Extract evenly spaced frames from video."""
     try:
         import cv2
@@ -147,13 +147,13 @@ def extract_key_frames(video_path, output_dir, num_frames=12):
         cap.set(cv2.CAP_PROP_POS_FRAMES, frame_num)
         ret, frame = cap.read()
         if ret:
-            # Resize for faster upload (max 720p)
+            # Resize for faster upload (max 480p)
             h, w = frame.shape[:2]
-            if h > 720:
-                scale = 720 / h
-                frame = cv2.resize(frame, (int(w * scale), 720))
+            if h > 480:
+                scale = 480 / h
+                frame = cv2.resize(frame, (int(w * scale), 480))
             path = os.path.join(output_dir, f"frame_{i:02d}.jpg")
-            cv2.imwrite(path, frame, [cv2.IMWRITE_JPEG_QUALITY, 80])
+            cv2.imwrite(path, frame, [cv2.IMWRITE_JPEG_QUALITY, 75])
             frames.append(path)
 
     cap.release()
@@ -173,7 +173,7 @@ def score_with_llm(metrics, lang="en", video_path=None, frames_dir=None):
     if video_path and os.path.exists(video_path):
         if frames_dir is None:
             frames_dir = os.path.join(os.path.dirname(video_path), "frames")
-        frame_paths = extract_key_frames(video_path, frames_dir, num_frames=12)
+        frame_paths = extract_key_frames(video_path, frames_dir, num_frames=8)
         print(f"Extracted {len(frame_paths)} frames")
 
     # Build metrics summary
@@ -193,13 +193,13 @@ def score_with_llm(metrics, lang="en", video_path=None, frames_dir=None):
 - Follow-through: {metrics.get('frames_in_follow_through', 0)} frames (~{round(metrics.get('frames_in_follow_through', 0) / 30, 1)}s)"""
 
     if lang == "ru":
-        text_content = f"""Проанализируй этот бросок в баскетболе. 12 кадров показывают весь бросок от начала до конца.
+        text_content = f"""Проанализируй этот бросок в баскетболе. 8 кадров показывают весь бросок от начала до конца.
 
 {metrics_text}
 
 Оцени каждую фазу 0-100 и дай подробную обратную связь."""
     else:
-        text_content = f"""Analyze this basketball shot. 12 frames show the entire shot from start to finish.
+        text_content = f"""Analyze this basketball shot. 8 frames show the entire shot from start to finish.
 
 {metrics_text}
 
