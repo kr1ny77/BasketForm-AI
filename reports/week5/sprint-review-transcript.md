@@ -66,7 +66,7 @@ Well, it's hard to classify them as such. Well, I guess we'll stick with uploadi
 Yeah, I guess that's it...
 
 ### [00:09:37] — ML Engineer
-Okay, then let's move on to the user testы. We've already discussed the filming decision. While I'm giving you a little time to log into the site, we'll be testing our new friends window. Tell me, how will you be ready? You already have an account, right?
+Okay, then let's move on to the user tests. We've already discussed the filming decision. While I'm giving you a little time to log into the site, we'll be testing our new friends window. Tell me, how will you be ready? You already have an account, right?
 
 ### [00:10:07] — Customer
 Yes, I did.
