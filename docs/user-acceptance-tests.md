@@ -75,3 +75,42 @@ End-user-facing scenarios for BasketForm-AI. These are executed by the customer 
 7. Verify redirect to `/upload` page with navigation links visible.
 
 **Expected outcome:** User is registered and can log in. Protected pages are accessible after login.
+
+## UAT-005: Send Friend Request
+
+**Status:** Active
+
+**User goal:** Navigate to the "Friends" page and send a friend request to another user using their username.
+
+**Preconditions:** User is logged in. The target user has an existing account with a known username.
+
+**Step-by-step instructions:**
+1. Navigate to the "Friends" page using the main navigation menu.
+2. Locate the "Add Friend" or "Send Request" input field.
+3. Enter the exact username of the target user.
+4. Click the "Send Request" button.
+5. Verify the success message or UI update indicating the request was sent.
+
+**Expected outcome:** The friend request is successfully sent. The UI displays a confirmation message (e.g., "Friend request sent"), and the target user's username appears in the "Pending" or "Sent Requests" section.
+
+**Execution result (Sprint 3 UAT):** Passed — customer confirmed they could successfully search for a username and send a friend request, with appropriate success feedback displayed.
+
+## UAT-006: Accept Friend Request
+
+**Status:** Active
+
+**User goal:** Navigate to the "Friends" page and accept an incoming friend request from another user.
+
+**Preconditions:** User is logged in. Another user has already sent a friend request to this user (as tested in UAT-005).
+
+**Step-by-step instructions:**
+1. Log in to the application as the user who received the friend request.
+2. Navigate to the "Friends" page using the main navigation menu.
+3. Locate the "Incoming Requests" or "Pending" section.
+4. Find the friend request from the target user.
+5. Click the "Accept" button next to the request.
+6. Verify the UI updates to show the user is now in the active "Friends" list.
+
+**Expected outcome:** The friend request is successfully accepted. The requesting user is removed from the "Incoming Requests" list and added to the active "Friends" list. A success notification or UI update confirms the new connection.
+
+**Execution result (Sprint 3 UAT):** Passed — customer confirmed they could view incoming requests and successfully accept a friend request, correctly moving the user to the active friends list.
