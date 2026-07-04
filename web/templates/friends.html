@@ -75,11 +75,7 @@
     function getAvatarHTML(nickname, userId) {
         var initial = nickname ? nickname.charAt(0).toUpperCase() : '?';
         return '<div class="user-avatar" onclick="event.stopPropagation()">' +
-<<<<<<< HEAD
-            '<img src="/api/avatar/' + userId + '" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'" class="avatar-mini-img" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:none;">' +
-=======
             '<img src="/api/avatar/' + userId + '" onload="this.style.display=\'block\';this.nextElementSibling.style.display=\'none\'" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'" class="avatar-mini-img" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:none;">' +
->>>>>>> a0ea7bf844a20294cb3ee0403c4363ceca8235c0
             '<span class="avatar-mini-initial" style="display:flex;width:100%;height:100%;align-items:center;justify-content:center;">' + initial + '</span>' +
         '</div>';
     }

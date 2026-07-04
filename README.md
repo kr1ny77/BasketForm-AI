@@ -2,23 +2,6 @@
 
 Web service for analyzing basketball shooting form via video upload, biomechanical keypoint extraction, technique scoring, and personalized AI feedback.
 
-**Live:** http://80.74.30.14/ · [v0.3.0 Release](https://github.com/kr1ny77/BasketForm-AI/releases/tag/v0.2.0)
-
-## Project Overview
-
-BasketForm-AI is an AI-powered platform that helps basketball players improve their shooting technique through video analysis and personalized feedback. Users upload shooting videos, the system extracts biomechanical keypoints, evaluates stance, arm angle, release point, and follow-through, then generates actionable recommendations.
-
-## Key Features
-
-- **User Accounts:** Registration with email/nickname/password, JWT-based login
-- **Video Upload:** Drag-and-drop or file picker for basketball shot videos (MP4, MOV, AVI)
-- **Biomechanical Analysis:** Automatic extraction of key body points using MediaPipe
-- **Technique Evaluation:** Scoring of stance, arm angle, release point, and follow-through (0–100)
-- **Annotated Video:** Output video with pose overlay, keypoints, skeleton, and HUD
-- **Phase Analysis:** Detailed per-phase scoring and personalized feedback
-- **Social Features:** Search users, friend requests, share results with friends
-- **PDF Export:** Download analysis reports with full score breakdown and feedback
-
 **Live:** http://80.74.30.14/ · [v0.3.0 Release](https://github.com/kr1ny77/BasketForm-AI/releases/tag/v0.3.0)
 
 ## Project Overview
@@ -42,14 +25,12 @@ BasketForm-AI is an AI-powered platform that helps basketball players improve th
 
 - **Backend:** Go 1.22+ (standard library `net/http`)
 - **Frontend:** HTML + CSS + JavaScript, Canvas animations, Chart.js, jsPDF
-- **ML:** MediaPipe Holistic + OpenCV (Python scripts via `exec`)
 - **ML:** MediaPipe Holistic + OpenCV + YOLO (Python scripts via `exec`)
 - **LLM:** OpenRouter API — GPT-4o-mini (vision model for frame analysis)
 - **Auth:** bcrypt password hashing, JWT tokens (HMAC-SHA256), HttpOnly cookies
 - **Storage:** Local JSON files in `data/` directory
 - **Testing:** Go `testing`, `httptest` (unit + integration + QRT tests)
 - **CI:** GitHub Actions — golangci-lint, test, coverage, QRT, govulncheck, Lychee
-- **Deployment:** Binary or Docker
 - **Deployment:** Binary on VM with Nginx reverse proxy
 - **License:** MIT
 
@@ -67,7 +48,6 @@ go run ./cmd/server/
 ### Prerequisites
 
 - Go 1.22 or later
-- Python 3 with MediaPipe, OpenCV (for ML analysis)
 - Python 3.12+ with MediaPipe, OpenCV, YOLO (for ML analysis)
 - `golangci-lint` (for linting, optional)
 
@@ -84,7 +64,6 @@ go run ./cmd/server/
    pip install -r requirements.txt
    ```
 
-3. **Run the server:**
 3. **Set environment variables:**
    ```bash
    export OPENROUTER_API_KEY="your-api-key"
@@ -96,7 +75,6 @@ go run ./cmd/server/
    go run ./cmd/server/
    ```
 
-4. **Open in browser:**
 5. **Open in browser:**
    ```
    http://localhost:8080
@@ -142,12 +120,6 @@ golangci-lint run
 
 ```bash
 # Build
-go build -o /usr/local/bin/basketform-ai ./cmd/server/
-
-# Run
-PORT=80 /usr/local/bin/basketform-ai
-```
-
 go build -o bin/server ./cmd/server/
 
 # Run with env vars
@@ -161,7 +133,6 @@ Nginx reverse proxy configured on port 80 → 8080.
 
 ```bash
 docker build -t basketform-ai .
-docker run -p 8080:8080 basketform-ai
 docker run -p 8080:8080 -e OPENROUTER_API_KEY=your-key basketform-ai
 ```
 
@@ -172,11 +143,6 @@ BasketForm-AI/
 ├── cmd/server/main.go              # Application entry point
 ├── internal/
 │   ├── handlers/                   # HTTP handlers
-│   │   ├── handlers.go             # Page handlers
-│   │   ├── api.go                  # API handlers
-│   │   ├── auth.go                 # Auth handlers
-│   │   ├── friends.go              # Friends handlers
-│   │   ├── share.go                # Share handlers
 │   │   ├── handlers.go             # Page handlers + AvatarHandler
 │   │   ├── api.go                  # API handlers (upload, status, result, videos, delete)
 │   │   ├── auth.go                 # Auth handlers (register, login, profile, nickname, avatar)
@@ -205,13 +171,6 @@ BasketForm-AI/
 │   │   ├── results.html            # Analysis results
 │   │   ├── friends.html            # Friend management
 │   │   ├── shared.html             # Shared results
-│   │   └── profile.html            # User profile
-│   └── static/                     # CSS, JS, images
-├── scripts/                        # Python ML scripts
-├── data/                           # JSON user/video/friend storage
-├── uploads/                        # Uploaded video files
-├── results/                        # Analysis result files + output videos
-├── docs/                           # Project documentation
 │   │   └── profile.html            # User profile (with modals)
 │   └── static/                     # CSS, JS, images
 ├── data/                           # JSON user/video/friend storage
@@ -262,16 +221,6 @@ BasketForm-AI/
 - [Development Process](docs/development-process.md)
 - [Architecture Documentation](docs/architecture/)
 - [Changelog](CHANGELOG.md)
-
-
-## Architecture
-- [Architecture Overview](docs/architecture/README.md)
-- [Component Diagram](docs/architecture/static-view/component-diagram.puml)
-- [Sequence Diagram](docs/architecture/dynamic-view/sequence-diagram.puml)
-- [Deployment Diagram](docs/architecture/deployment-view/deployment-diagram.puml)
-- [ADR-001: JSON Storage](docs/architecture/adr/ADR-001-use-json-storage.md)
-- [ADR-002: exec ML Integration](docs/architecture/adr/ADR-002-exec-ml-script.md)
-- [ADR-003: JWT Authentication](docs/architecture/adr/ADR-003-jwt-auth.md)
 
 ## License
 
