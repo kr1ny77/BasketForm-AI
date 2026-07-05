@@ -157,10 +157,10 @@ The automated tests, CI checks, quality requirement tests, and Definition of Don
 
 > Sanitized evidence screenshots to be added after Sprint Review.
 
-- Sprint milestone: _to be added_
-- Project workflow view: _to be added_
-- Latest protected-default-branch CI run: _to be added_
-- SemVer release: _to be added_
+- Sprint milestone: ![Sprint milestone](./images/sprint3-milestone.png)
+-   Project workflow view: ![Project workflow view](./images/sprint3-project-board.png)
+- Latest protected-default-branch CI run: ![Latest CI run on main](./images/ci-run-latest-main.png)
+- SemVer release: ![SemVer release v0.3.0](./images/release-v0.3.0.png)
 - Example reviewed issue-linked PR: ![PR](./images/pr.png)
 - Hosted docs site: ![Hosted docs site](./images/site1.png)
 
