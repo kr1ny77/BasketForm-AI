@@ -1,5 +1,4 @@
 @startuml component-diagram
-!theme plain
 skinparam componentStyle rectangle
 skinparam backgroundColor white
 
@@ -40,8 +39,8 @@ package "External Services" {
 ' Frontend connections
 User --> Upload : HTTP POST\n(upload video)
 User --> Results : HTTP GET\n(view results)
-User --> Profile : HTTP GET/POST\n manage account)
-User --> Friends : HTTP GET/POST\n manage friends)
+User --> Profile : HTTP GET/POST\n(manage account)
+User --> Friends : HTTP GET/POST\n(manage friends)
 User --> Shared : HTTP GET\n(view shared)
 
 Upload --> Auth : cookie token

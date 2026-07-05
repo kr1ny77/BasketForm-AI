@@ -1,5 +1,4 @@
 @startuml deployment-diagram
-!theme plain
 skinparam backgroundColor white
 
 title BasketForm-AI — Deployment View

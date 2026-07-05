@@ -1,0 +1,64 @@
+site_name: BasketForm-AI Documentation
+site_description: Maintained product, process, architecture, quality, and testing documentation for BasketForm-AI.
+site_url: https://kr1ny77.github.io/BasketForm-AI/
+repo_url: https://github.com/kr1ny77/BasketForm-AI
+repo_name: kr1ny77/BasketForm-AI
+edit_uri: edit/main/docs/
+
+docs_dir: docs
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: orange
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: orange
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.top
+    - navigation.instant
+    - content.code.copy
+    - toc.integrate
+
+markdown_extensions:
+  - tables
+  - toc:
+      permalink: true
+  - admonition
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight
+  - pymdownx.details
+
+nav:
+  - Home: index.md
+  - Product:
+      - Roadmap: roadmap.md
+      - User Stories: user-stories.md
+      - Interface: interface.md
+      - Release Notes (v0.3.0): release-notes-v0.3.0.md
+  - Process:
+      - Development Process & Configuration Management: development-process.md
+      - Definition of Done: definition-of-done.md
+  - Quality & Testing:
+      - Quality Requirements: quality-requirements.md
+      - Quality Requirement Tests: quality-requirement-tests.md
+      - Testing Strategy: testing.md
+      - User Acceptance Tests: user-acceptance-tests.md
+  - Architecture:
+      - Overview (Static / Dynamic / Deployment views): architecture/README.md
+      - ADR-001 — JSON File Storage: architecture/adr/ADR-001-use-json-storage.md
+      - ADR-002 — exec-based ML Integration: architecture/adr/ADR-002-exec-ml-script.md
+      - ADR-003 — JWT Authentication: architecture/adr/ADR-003-jwt-auth.md
