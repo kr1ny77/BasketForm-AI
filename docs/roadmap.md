@@ -10,7 +10,7 @@ Deliver a trustworthy, production-ready basketball shooting-form coach: real bio
 
 ## Current Status (as of 2026-07-06)
 
-Deployment: http://80.74.30.14/ Latest release: v0.2.0 (Sprint 2 — Assignment 4). Sprint 3 is now active.
+Deployment: http://80.74.30.14/ Latest release: v0.3.0 (Sprint 2 — Assignment 4). Sprint 3 is now active.
 
 MVP v0 (v0.0.1) provided basic video upload. MVP v1 (v0.1.0) delivered core analysis with Go backend, Canvas frontend, and a mock ML pipeline. v0.2.0 (Sprint 2) adds authentication, social features, real ML pipeline with phase analysis, annotated output video, PDF export, and automated quality gates. Sprint 3 is building MVP v2 (v0.3.0): LLM-powered personalized feedback, Friends + report sharing, progress tracking, pro comparison, RU translation, architecture documentation, and ADRs.
 
