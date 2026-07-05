@@ -193,6 +193,8 @@ BasketForm-AI/
 
 ## Documentation
 
+**[📖 Hosted Documentation Site](https://kr1ny77.github.io/BasketForm-AI/)** — browsable, navigable version of all product, process, architecture, quality, and testing documentation below.
+
 ### Architecture
 - [Architecture Overview](docs/architecture/README.md)
 - [Component Diagram](docs/architecture/static-view/component-diagram.puml)

@@ -12,15 +12,17 @@ BasketForm-AI is a monolithic web application with three main layers:
 
 ## Architecture Views
 
-| View | Description | Source File |
-|------|-------------|-------------|
-| Static (Component) | System components and their relationships | [component-diagram.puml](static-view/component-diagram.puml) |
-| Dynamic (Sequence) | Video upload → analysis → result flow | [sequence-diagram.puml](dynamic-view/sequence-diagram.puml) |
-| Deployment | How the system is deployed on VM | [deployment-diagram.puml](deployment-view/deployment-diagram.puml) |
+| View | Description | Source File | Rendered Diagram |
+|------|-------------|-------------|-------------------|
+| Static (Component) | System components and their relationships | [component-diagram.puml](static-view/component-diagram.puml) | [component-diagram.svg](static-view/component-diagram.svg) |
+| Dynamic (Sequence) | Video upload → analysis → result flow | [sequence-diagram.puml](dynamic-view/sequence-diagram.puml) | [sequence-diagram.svg](dynamic-view/sequence-diagram.svg) |
+| Deployment | How the system is deployed on VM | [deployment-diagram.puml](deployment-view/deployment-diagram.puml) | [deployment-diagram.svg](deployment-view/deployment-diagram.svg) |
 
 ---
 
 ## Static View — Component Diagram
+
+![Static Component Diagram](static-view/component-diagram.svg)
 
 The component diagram shows the main internal components of the system, their relationships, external systems, and communication protocols.
 
@@ -75,6 +77,8 @@ External dependencies include:
 
 ## Dynamic View — Sequence Diagram
 
+![Video Upload and Analysis Sequence Diagram](dynamic-view/sequence-diagram.svg)
+
 The sequence diagram shows the most important workflow in the system: video upload, ML analysis, and result retrieval. This is the core value-creation flow.
 
 ### What the Diagram Shows
@@ -106,6 +110,8 @@ Quality requirements exercised:
 ---
 
 ## Deployment View — Deployment Diagram
+
+![Deployment Diagram](deployment-view/deployment-diagram.svg)
 
 The deployment diagram shows how the system is deployed and operated in production.
 

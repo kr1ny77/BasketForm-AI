@@ -53,6 +53,7 @@ Deployment: http://80.74.30.14/
 
 ## Project Documentation Links
 
+- [Hosted Documentation Site](https://kr1ny77.github.io/BasketForm-AI/)
 - [Roadmap](../../docs/roadmap.md)
 - [Definition of Done](../../docs/definition-of-done.md)
 - [Quality Requirements](../../docs/quality-requirements.md)
@@ -63,7 +64,7 @@ Deployment: http://80.74.30.14/
 - [Architecture Documentation](../../docs/architecture/)
 - [CHANGELOG](../../CHANGELOG.md)
 
-The [Development Process](../../docs/development-process.md) document is also linked from the root README and from the hosted documentation site.
+The [Development Process](../../docs/development-process.md) document is also linked from the root README and from the [hosted documentation site](https://kr1ny77.github.io/BasketForm-AI/development-process/).
 
 ## Week 5 Report Documents
 
@@ -163,6 +164,7 @@ The automated tests, CI checks, quality requirement tests, and Definition of Don
 - Additional QA check result: _to be added_
 - SemVer release: _to be added_
 - Example reviewed issue-linked PR: _to be added_
+- Hosted docs site ([kr1ny77.github.io/BasketForm-AI](https://kr1ny77.github.io/BasketForm-AI/)): _to be added_
 
 ## Current Product Status
 
