@@ -58,15 +58,16 @@ class CustomFeedbackGenerator:
             lines.append(f"Significant rise issues. Torso at {torso:.0f}\u00b0. This reduces accuracy and power. Start with close-range form shooting.")
 
         lines.append("")
+        forearm_dev = max(0, 180 - forearm)
         lines.append(f"PHASE 3 — RELEASE: {int(release)}/100")
         if release >= 80:
-            lines.append(f"Great release! Elbow at {elbow:.0f}\u00b0, forearm at {forearm:.0f}\u00b0 from vertical. Wrist and fingers work in sync for a clean release.")
+            lines.append(f"Great release! Elbow at {elbow:.0f}\u00b0, forearm {forearm_dev:.0f}\u00b0 from vertical. Wrist and fingers work in sync for a clean release.")
         elif release >= 60:
-            lines.append(f"Good release. Elbow angle {elbow:.0f}\u00b0, forearm {forearm:.0f}\u00b0 from vertical. For a perfect release, keep the wrist flexed and let the ball roll off your fingertips.")
+            lines.append(f"Good release. Elbow angle {elbow:.0f}\u00b0, forearm {forearm_dev:.0f}\u00b0 from vertical. For a perfect release, keep the wrist flexed and let the ball roll off your fingertips.")
         elif release >= 40:
-            lines.append(f"Release needs correction. Elbow {elbow:.0f}\u00b0, forearm {forearm:.0f}\u00b0. Keep your elbow under your wrist and direct the ball to the rim with the highest arc. Practice wall shooting.")
+            lines.append(f"Release needs correction. Elbow {elbow:.0f}\u00b0, forearm {forearm_dev:.0f}\u00b0 from vertical. Keep your elbow under your wrist and direct the ball to the rim with the highest arc. Practice wall shooting.")
         else:
-            lines.append(f"Critical release issues. Elbow {elbow:.0f}\u00b0 is too open/closed, forearm {forearm:.0f}\u00b0. This is the main cause of inaccurate shots. Work on basics: elbow under wrist, ball above head, wrist flexed.")
+            lines.append(f"Critical release issues. Elbow {elbow:.0f}\u00b0 is too bent, forearm {forearm_dev:.0f}\u00b0 from vertical. This is the main cause of inaccurate shots. Work on basics: elbow under wrist, ball above head, wrist flexed.")
 
         lines.append("")
         lines.append(f"PHASE 4 — FOLLOW-THROUGH: {int(follow_through)}/100")
@@ -132,13 +133,13 @@ class CustomFeedbackGenerator:
         lines.append("")
         lines.append(f"\u0424\u0410\u0417\u0410 3 \u2014 RELEASE (\u0420\u0435\u043b\u0438\u0437): {int(release)}/100")
         if release >= 80:
-            lines.append(f"\u041e\u0442\u043b\u0438\u0447\u043d\u044b\u0439 \u0440\u0435\u043b\u0438\u0437! \u041b\u043e\u043a\u043e\u0442\u044c {elbow:.0f}\u00b0, \u043f\u0440\u0435\u0434\u043f\u043b\u0435\u0447\u044c\u0435 {forearm:.0f}\u00b0 \u043e\u0442 \u0432\u0435\u0440\u0442\u0438\u043a\u0430\u043b\u0438. \u0417\u0430\u043f\u044f\u0441\u0442\u044c\u0435 \u0438 \u043f\u0430\u043b\u044c\u0446\u044b \u0440\u0430\u0431\u043e\u0442\u0430\u044e\u0442 \u0441\u0438\u043d\u0445\u0440\u043e\u043d\u043d\u043e.")
+            lines.append(f"\u041e\u0442\u043b\u0438\u0447\u043d\u044b\u0439 \u0440\u0435\u043b\u0438\u0437! \u041b\u043e\u043a\u043e\u0442\u044c {elbow:.0f}\u00b0, \u043f\u0440\u0435\u0434\u043f\u043b\u0435\u0447\u044c\u0435 {forearm_dev:.0f}\u00b0 \u043e\u0442 \u0432\u0435\u0440\u0442\u0438\u043a\u0430\u043b\u0438. \u0417\u0430\u043f\u044f\u0441\u0442\u044c\u0435 \u0438 \u043f\u0430\u043b\u044c\u0446\u044b \u0440\u0430\u0431\u043e\u0442\u0430\u044e\u0442 \u0441\u0438\u043d\u0445\u0440\u043e\u043d\u043d\u043e.")
         elif release >= 60:
-            lines.append(f"\u0425\u043e\u0440\u043e\u0448\u0438\u0439 \u0440\u0435\u043b\u0438\u0437. \u0423\u0433\u043e\u043b \u043b\u043e\u043a\u0442\u044f {elbow:.0f}\u00b0, \u043f\u0440\u0435\u0434\u043f\u043b\u0435\u0447\u044c\u0435 {forearm:.0f}\u00b0. \u0414\u043b\u044f \u0438\u0434\u0435\u0430\u043b\u044c\u043d\u043e\u0433\u043e \u0440\u0435\u043b\u0438\u0437\u0430 \u0441\u043b\u0435\u0434\u0438\u0442\u0435 \u0437\u0430 \u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435\u043c \u0437\u0430\u043f\u044f\u0441\u0442\u044c\u044f.")
+            lines.append(f"\u0425\u043e\u0440\u043e\u0448\u0438\u0439 \u0440\u0435\u043b\u0438\u0437. \u0423\u0433\u043e\u043b \u043b\u043e\u043a\u0442\u044f {elbow:.0f}\u00b0, \u043f\u0440\u0435\u0434\u043f\u043b\u0435\u0447\u044c\u0435 {forearm_dev:.0f}\u00b0 \u043e\u0442 \u0432\u0435\u0440\u0442\u0438\u043a\u0430\u043b\u0438. \u0414\u043b\u044f \u0438\u0434\u0435\u0430\u043b\u044c\u043d\u043e\u0433\u043e \u0440\u0435\u043b\u0438\u0437\u0430 \u0441\u043b\u0435\u0434\u0438\u0442\u0435 \u0437\u0430 \u043f\u043e\u043b\u043e\u0436\u0435\u043d\u0438\u0435\u043c \u0437\u0430\u043f\u044f\u0441\u0442\u044c\u044f.")
         elif release >= 40:
-            lines.append(f"\u0420\u0435\u043b\u0438\u0437 \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043a\u043e\u0440\u0440\u0435\u043a\u0442\u0438\u0440\u043e\u0432\u043a\u0438. \u041b\u043e\u043a\u043e\u0442\u044c {elbow:.0f}\u00b0, \u043f\u0440\u0435\u0434\u043f\u043b\u0435\u0447\u044c\u0435 {forearm:.0f}\u00b0. \u0423\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0439\u0442\u0435 \u043b\u043e\u043a\u043e\u0442\u044c \u043f\u043e\u0434 \u0437\u0430\u043f\u044f\u0441\u0442\u044c\u0435\u043c.")
+            lines.append(f"\u0420\u0435\u043b\u0438\u0437 \u0442\u0440\u0435\u0431\u0443\u0435\u0442 \u043a\u043e\u0440\u0440\u0435\u043a\u0442\u0438\u0440\u043e\u0432\u043a\u0438. \u041b\u043e\u043a\u043e\u0442\u044c {elbow:.0f}\u00b0, \u043f\u0440\u0435\u0434\u043f\u043b\u0435\u0447\u044c\u0435 {forearm_dev:.0f}\u00b0 \u043e\u0442 \u0432\u0435\u0440\u0442\u0438\u043a\u0430\u043b\u0438. \u0423\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0439\u0442\u0435 \u043b\u043e\u043a\u043e\u0442\u044c \u043f\u043e\u0434 \u0437\u0430\u043f\u044f\u0441\u0442\u044c\u0435\u043c.")
         else:
-            lines.append(f"\u041a\u0440\u0438\u0442\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u043f\u0440\u043e\u0431\u043b\u0435\u043c\u044b \u0441 \u0440\u0435\u043b\u0438\u0437\u043e\u043c. \u041b\u043e\u043a\u043e\u0442\u044c {elbow:.0f}\u00b0, \u043f\u0440\u0435\u0434\u043f\u043b\u0435\u0447\u044c\u0435 {forearm:.0f}\u00b0. \u042d\u0442\u043e \u0433\u043b\u0430\u0432\u043d\u0430\u044f \u043f\u0440\u0438\u0447\u0438\u043d\u0430 \u043d\u0435\u0442\u043e\u0447\u043d\u044b\u0445 \u0431\u0440\u043e\u0441\u043a\u043e\u0432.")
+            lines.append(f"\u041a\u0440\u0438\u0442\u0438\u0447\u0435\u0441\u043a\u0438\u0435 \u043f\u0440\u043e\u0431\u043b\u0435\u043c\u044b \u0441 \u0440\u0435\u043b\u0438\u0437\u043e\u043c. \u041b\u043e\u043a\u043e\u0442\u044c {elbow:.0f}\u00b0 \u0441\u043b\u0438\u0448\u043a\u043e\u043c \u0441\u043e\u0433\u043d\u0443\u0442, \u043f\u0440\u0435\u0434\u043f\u043b\u0435\u0447\u044c\u0435 {forearm_dev:.0f}\u00b0 \u043e\u0442 \u0432\u0435\u0440\u0442\u0438\u043a\u0430\u043b\u0438. \u042d\u0442\u043e \u0433\u043b\u0430\u0432\u043d\u0430\u044f \u043f\u0440\u0438\u0447\u0438\u043d\u0430 \u043d\u0435\u0442\u043e\u0447\u043d\u044b\u0445 \u0431\u0440\u043e\u0441\u043a\u043e\u0432.")
 
         lines.append("")
         lines.append(f"\u0424\u0410\u0417\u0410 4 \u2014 FOLLOW-THROUGH (\u0417\u0430\u0432\u0435\u0440\u0448\u0435\u043d\u0438\u0435): {int(follow_through)}/100")

@@ -70,7 +70,7 @@ class ShotPhaseStateMachine:
         elif self.state == "RELEASE":
             self.elbow_release = max(self.elbow_release, elbow)
             self.peak_elbow_release = max(self.peak_elbow_release, elbow)
-            self.forearm_release = forearm_angle
+            self.forearm_release = max(self.forearm_release, forearm_angle)
             if elbow < self.peak_elbow_release - 5:
                 self.elbow_dropping = True
         elif self.state == "FOLLOW_THROUGH":
@@ -174,7 +174,10 @@ class ShotPhaseStateMachine:
             base = 25
         self.scores["ASCENT"] = max(0, min(100, base + random.randint(-5, 5)))
 
-        # RELEASE: Ideal elbow > 160, forearm < 20
+        # RELEASE: Ideal elbow > 160, forearm_vertical > 160
+        # forearm_vertical: angle at elbow between wrist and vertical-down
+        # 180° = wrist above elbow (forearm straight up = ideal)
+        # 90° = horizontal, 0° = wrist below elbow
         elbow = self.elbow_release
         forearm = self.forearm_release
         score_rel = 0
@@ -187,13 +190,13 @@ class ShotPhaseStateMachine:
         elif elbow > 120:
             score_rel += 15
 
-        if forearm < 15:
+        if forearm > 165:
             score_rel += 50
-        elif forearm < 25:
+        elif forearm > 150:
             score_rel += 40
-        elif forearm < 35:
+        elif forearm > 130:
             score_rel += 25
-        elif forearm < 50:
+        elif forearm > 110:
             score_rel += 15
 
         self.scores["RELEASE"] = max(0, min(100, score_rel + random.randint(-3, 3)))
