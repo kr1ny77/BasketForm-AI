@@ -30,7 +30,7 @@ Deployment: http://80.74.30.14/
 
 - **URL:** http://80.74.30.14/
 - **Run instructions:** See [README.md](../../README.md)
-- **Public sanitized demo video:** [Demo Video](https://github.com/kr1ny77/BasketForm-AI/releases/tag/v0.3.0)
+- **Public sanitized demo video:** [Demo Video](https://youtu.be/Q1etWr0ue_4)
 
 ## Customer Feedback Response Table
 
