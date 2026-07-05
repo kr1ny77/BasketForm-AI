@@ -64,6 +64,8 @@ Quality requirements for BasketForm-AI, structured by ISO/IEC 25010 quality sub-
 
 **Linked quality requirement tests:** [QRT-003](quality-requirement-tests.md#qrt-003-critical-module-unit-coverage)
 
+**Linked ADRs:** [ADR-002](architecture/adr/ADR-002-exec-ml-script.md) (ML pipeline is a critical module requiring automated test coverage)
+
 ## QR-004: Usability — Form Guidance
 
 **ISO/IEC 25010 sub-characteristic:** Usability
@@ -75,3 +77,5 @@ Quality requirements for BasketForm-AI, structured by ISO/IEC 25010 quality sub-
 **Related PBI:** [#67](https://github.com/kr1ny77/BasketForm-AI/issues/67) (PBI-019: Social features — friend system and sharing require clear form guidance)
 
 **Linked quality requirement tests:** [QRT-004](quality-requirement-tests.md#qrt-004-usability-form-guidance)
+
+**Linked ADRs:** [ADR-003](architecture/adr/ADR-003-jwt-auth.md) (authentication forms are part of the usability-critical user-facing interface)
