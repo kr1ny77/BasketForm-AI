@@ -2,6 +2,14 @@
 
 Automated tests that verify quality requirements for BasketForm-AI.
 
+## Table of Contents
+
+- [QRT-001: API Response Time](#qrt-001-api-response-time)
+- [QRT-002: Authentication Security](#qrt-002-authentication-security)
+- [QRT-003: Critical Module Unit Coverage](#qrt-003-critical-module-unit-coverage)
+- [QRT-004: Usability — Form Guidance](#qrt-004-usability--form-guidance)
+- [QRT-005: Data Isolation](#qrt-005-data-isolation)
+
 ## QRT-001: API Response Time
 
 **Linked quality requirement:** QR-001
@@ -57,3 +65,17 @@ Automated tests that verify quality requirements for BasketForm-AI.
 **Expected measurable result:** All form pages (login.html, signup.html, profile.html, upload.html) contain `<input>` elements with `placeholder` or associated `<label>` attributes.
 
 **Evidence link:** CI run showing QRT test pass.
+
+## QRT-005: Data Isolation
+
+**Linked quality requirement:** QR-005
+
+**Verification method:** Automated integration test.
+
+**Test data, setup, or environment:** Standard CI build environment. Two registered users with authenticated sessions.
+
+**Automated command or CI check:** `go test -run TestIntegration ./internal/handlers/...`
+
+**Expected measurable result:** Authenticated user A cannot access user B's videos, results, or profile data. Sharing is only possible through explicit share API calls. Friend requests and accept/reject flows correctly isolate data per user.
+
+**Evidence link:** CI run showing integration test pass.

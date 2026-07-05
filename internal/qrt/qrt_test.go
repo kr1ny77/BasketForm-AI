@@ -215,3 +215,51 @@ func TestQRT_FormGuidance(t *testing.T) {
 		}
 	}
 }
+
+func TestQRT_DataIsolation(t *testing.T) {
+	ts := setupTestServer(t)
+	defer ts.Close()
+
+	registerAndLogin := func(email, nick, pass string) string {
+		resp, _ := http.Post(ts.URL+"/api/register", "application/json",
+			strings.NewReader(`{"email":"`+email+`","nickname":"`+nick+`","password":"`+pass+`"}`))
+		resp.Body.Close()
+		resp, _ = http.Post(ts.URL+"/api/login", "application/json",
+			strings.NewReader(`{"email":"`+email+`","password":"`+pass+`"}`))
+		defer resp.Body.Close()
+		for _, c := range resp.Cookies() {
+			if c.Name == "token" {
+				return c.Value
+			}
+		}
+		return ""
+	}
+
+	tokenA := registerAndLogin("iso_a@test.com", "isolation_a", "testpass123")
+	tokenB := registerAndLogin("iso_b@test.com", "isolation_b", "testpass123")
+
+	if tokenA == "" || tokenB == "" {
+		t.Fatal("failed to get auth tokens")
+	}
+
+	reqA, _ := http.NewRequest("GET", ts.URL+"/api/profile", nil)
+	reqA.AddCookie(&http.Cookie{Name: "token", Value: tokenA})
+	respA, _ := http.DefaultClient.Do(reqA)
+	respA.Body.Close()
+
+	reqB, _ := http.NewRequest("GET", ts.URL+"/api/profile", nil)
+	reqB.AddCookie(&http.Cookie{Name: "token", Value: tokenB})
+	respB, _ := http.DefaultClient.Do(reqB)
+	respB.Body.Close()
+
+	if respA.StatusCode != http.StatusOK || respB.StatusCode != http.StatusOK {
+		t.Fatalf("both users should be able to access own profile: A=%d, B=%d", respA.StatusCode, respB.StatusCode)
+	}
+
+	reqNoAuth, _ := http.NewRequest("GET", ts.URL+"/api/profile", nil)
+	respNoAuth, _ := http.DefaultClient.Do(reqNoAuth)
+	respNoAuth.Body.Close()
+	if respNoAuth.StatusCode != http.StatusUnauthorized {
+		t.Fatalf("unauthenticated request should get 401, got %d", respNoAuth.StatusCode)
+	}
+}

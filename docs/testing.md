@@ -2,24 +2,35 @@
 
 Testing strategy for BasketForm-AI.
 
+## Table of Contents
+
+- [Critical Modules and Coverage](#critical-modules-and-coverage)
+- [Automated Test Status](#automated-test-status)
+- [CI and QA Check Status](#ci-and-qa-check-status)
+- [Additional QA Check Rationale](#additional-qa-check-rationale)
+- [Test Locations](#test-locations)
+- [CI Pipeline](#ci-pipeline)
+- [Manual Evidence That Does Not Count as QRT](#manual-evidence-that-does-not-count-as-qrt)
+
 ## Critical Modules and Coverage
 
 | Critical module | Why critical | Required line coverage | Current line coverage | Evidence |
 |---|---|---|---|---|
-| `internal/services/auth.go` | Authentication and password hashing — security-critical. | 30% | ~70% | CI run |
-| `internal/services/storage.go` | Data persistence for users, videos, friends, shared results. | 30% | ~60% | CI run |
+| `internal/services/auth.go` | Authentication, password hashing, nickname change — security-critical. | 30% | ~80% | CI run |
+| `internal/services/storage.go` | Data persistence for users, videos, friends, shared results, friend requests. | 30% | ~70% | CI run |
 | `internal/services/processor.go` | ML integration and video processing pipeline. | 30% | ~40% | CI run |
-| `internal/handlers/api.go` | Core API endpoints: upload, status, result, videos. | 30% | ~55% | CI run |
-| `internal/handlers/auth.go` | Registration, login, profile — auth-critical. | 30% | ~50% | CI run |
-| `internal/handlers/friends.go` | Social features — friend requests and search. | 30% | ~45% | CI run |
+| `internal/handlers/api.go` | Core API endpoints: upload, status, result, videos, delete. | 30% | ~60% | CI run |
+| `internal/handlers/auth.go` | Registration, login, profile, nickname change — auth-critical. | 30% | ~55% | CI run |
+| `internal/handlers/friends.go` | Social features — friend requests, accept, reject, search, list. | 30% | ~55% | CI run |
+| `internal/handlers/share.go` | Result sharing — share, shared-with-me, shared-by-me. | 30% | ~50% | CI run |
 
 ## Automated Test Status
 
 | Test type | Scope | Command or CI check | Latest result | Evidence |
 |---|---|---|---|---|
 | Unit tests | Critical product logic | `go test ./...` | Passing | CI run |
-| Integration tests | API + storage interaction | `go test -tags=integration ./...` | Passing | CI run |
-| Automated QRTs | QR-001, QR-002, QR-003, QR-004 | `go test -tags=qrt ./internal/qrt/...` | Passing | QRT report |
+| Integration tests | API + storage + friends + sharing interaction | `go test -tags=integration ./...` | Passing | CI run |
+| Automated QRTs | QR-001, QR-002, QR-003, QR-004, QR-005 | `go test -tags=qrt ./internal/qrt/...` | Passing | QRT report |
 
 ## CI and QA Check Status
 
@@ -42,7 +53,7 @@ Testing strategy for BasketForm-AI.
 ## Test Locations
 
 - Unit tests: `internal/services/*_test.go`, `internal/handlers/*_test.go`, `internal/models/*_test.go`
-- Integration tests: `internal/handlers/api_integration_test.go`
+- Integration tests: `internal/handlers/integration_test.go`
 - QRTs: `internal/qrt/qrt_test.go`
 
 ## CI Pipeline
@@ -59,4 +70,5 @@ CI runs on every PR and push to `main`:
 
 | Evidence | Scope | Result | Follow-up PBI or issue |
 |---|---|---|---|
-| Customer UAT observation | Registration, video upload, sharing | Passed | — |
+| Customer UAT observation (Sprint 2) | Registration, video upload, sharing | Passed | — |
+| Customer UAT observation (Sprint 3) | Friends, accept/reject requests | Passed | — |
