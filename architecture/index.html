@@ -1,0 +1,1652 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Maintained product, process, architecture, quality, and testing documentation for BasketForm-AI.">
+      
+      
+      
+        <link rel="canonical" href="https://kr1ny77.github.io/BasketForm-AI/architecture/">
+      
+      
+        <link rel="prev" href="../user-acceptance-tests/">
+      
+      
+        <link rel="next" href="adr/ADR-001-use-json-storage/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Overview (Static / Dynamic / Deployment views) - BasketForm-AI Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="orange">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#basketform-ai-architecture" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="BasketForm-AI Documentation" class="md-header__button md-logo" aria-label="BasketForm-AI Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            BasketForm-AI Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Overview (Static / Dynamic / Deployment views)
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="orange"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/kr1ny77/BasketForm-AI" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kr1ny77/BasketForm-AI
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../roadmap/" class="md-tabs__link">
+          
+  
+  
+  Product
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../development-process/" class="md-tabs__link">
+          
+  
+  
+  Process
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../quality-requirements/" class="md-tabs__link">
+          
+  
+  
+  Quality & Testing
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+  Architecture
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="BasketForm-AI Documentation" class="md-nav__button md-logo" aria-label="BasketForm-AI Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    BasketForm-AI Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/kr1ny77/BasketForm-AI" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    kr1ny77/BasketForm-AI
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Product
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Product
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../roadmap/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Roadmap
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-stories/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Stories
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../interface/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Interface
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../release-notes-v0.3.0/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Release Notes (v0.3.0)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Process
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Process
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../development-process/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Development Process & Configuration Management
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../definition-of-done/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Definition of Done
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quality & Testing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Quality & Testing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quality-requirements/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quality Requirements
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../quality-requirement-tests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Quality Requirement Tests
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Testing Strategy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../user-acceptance-tests/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    User Acceptance Tests
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Architecture
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview (Static / Dynamic / Deployment views)
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview (Static / Dynamic / Deployment views)
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overview
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture-views" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture Views
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#static-view-component-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Static View — Component Diagram
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Static View — Component Diagram">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-the-diagram-shows" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the Diagram Shows
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#coupling-and-cohesion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coupling and Cohesion
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#maintainability-implications" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Maintainability Implications
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quality-requirements-supported-or-constrained" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quality Requirements Supported or Constrained
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#dynamic-view-sequence-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dynamic View — Sequence Diagram
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Dynamic View — Sequence Diagram">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-the-diagram-shows_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the Diagram Shows
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-scenario-is-important" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Scenario Is Important
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#architecture-decisions-and-quality-requirements" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture Decisions and Quality Requirements
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-view-deployment-diagram" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deployment View — Deployment Diagram
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Deployment View — Deployment Diagram">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#what-the-diagram-shows_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        What the Diagram Shows
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#why-this-deployment-model-was-chosen" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Deployment Model Was Chosen
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#how-the-deployment-supports-or-constrains-the-product" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the Deployment Supports or Constrains the Product
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deployment-considerations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Deployment Considerations
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architectural-quality-summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architectural Quality Summary
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Architectural Quality Summary">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#coupling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Coupling
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cohesion" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cohesion
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#maintainability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Maintainability
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#architecture-decision-records" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Architecture Decision Records
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="adr/ADR-001-use-json-storage/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR-001 — JSON File Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="adr/ADR-002-exec-ml-script/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR-002 — exec-based ML Integration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="adr/ADR-003-jwt-auth/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ADR-003 — JWT Authentication
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="basketform-ai-architecture">BasketForm-AI Architecture<a class="headerlink" href="#basketform-ai-architecture" title="Permanent link">&para;</a></h1>
+<p>This document describes the architecture of BasketForm-AI — a web application for analyzing basketball shooting form from video. It serves as the canonical maintained architecture index artifact.</p>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>BasketForm-AI is a monolithic web application with three main layers:</p>
+<ol>
+<li><strong>Frontend</strong> — HTML/CSS/JS pages served as static files</li>
+<li><strong>Backend</strong> — Go HTTP server handling API, auth, and orchestration</li>
+<li><strong>ML Pipeline</strong> — Python scripts for video analysis (MediaPipe, OpenCV, YOLO, LLM)</li>
+</ol>
+<h2 id="architecture-views">Architecture Views<a class="headerlink" href="#architecture-views" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>View</th>
+<th>Description</th>
+<th>Source File</th>
+<th>Rendered Diagram</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Static (Component)</td>
+<td>System components and their relationships</td>
+<td><a href="static-view/component-diagram.puml">component-diagram.puml</a></td>
+<td><a href="static-view/component-diagram.svg">component-diagram.svg</a></td>
+</tr>
+<tr>
+<td>Dynamic (Sequence)</td>
+<td>Video upload → analysis → result flow</td>
+<td><a href="dynamic-view/sequence-diagram.puml">sequence-diagram.puml</a></td>
+<td><a href="dynamic-view/sequence-diagram.svg">sequence-diagram.svg</a></td>
+</tr>
+<tr>
+<td>Deployment</td>
+<td>How the system is deployed on VM</td>
+<td><a href="deployment-view/deployment-diagram.puml">deployment-diagram.puml</a></td>
+<td><a href="deployment-view/deployment-diagram.svg">deployment-diagram.svg</a></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="static-view-component-diagram">Static View — Component Diagram<a class="headerlink" href="#static-view-component-diagram" title="Permanent link">&para;</a></h2>
+<p><img alt="Static Component Diagram" src="static-view/component-diagram.svg" /></p>
+<p>The component diagram shows the main internal components of the system, their relationships, external systems, and communication protocols.</p>
+<h3 id="what-the-diagram-shows">What the Diagram Shows<a class="headerlink" href="#what-the-diagram-shows" title="Permanent link">&para;</a></h3>
+<p>The system has four major component groups:</p>
+<ol>
+<li><strong>User (Browser)</strong> — the external actor interacting with the application via HTTP.</li>
+<li><strong>Frontend</strong> — five HTML pages (Upload, Results, Profile, Friends, Shared) served as static files. All API calls use fetch() with JWT cookie authentication.</li>
+<li><strong>Go Server</strong> — the central orchestration layer with:</li>
+<li><strong>Auth Middleware</strong> — validates JWT tokens on every protected request</li>
+<li><strong>Handlers</strong> — five handler modules (api, auth, friends, share, page handlers) each responsible for one domain</li>
+<li><strong>Services</strong> — business logic (storage, auth, processor)</li>
+<li><strong>Models</strong> — data structures shared between layers</li>
+<li><strong>ML Pipeline</strong> — five Python modules:</li>
+<li><code>main.py</code> — entry point and coordinator</li>
+<li><code>ball_tracker.py</code> — YOLO-based ball detection</li>
+<li><code>pose_tracker.py</code> — MediaPipe pose estimation</li>
+<li><code>shot_analyzer.py</code> — state machine tracking shot phases</li>
+<li><code>feedback_generator.py</code> — LLM-based scoring via OpenRouter API (GPT-4o-mini)</li>
+</ol>
+<p>External dependencies include:
+- <strong>JSON Files</strong> (data/) — persistent storage for users, videos, friends, shared results
+- <strong>File System</strong> (uploads/, results/) — video files and analysis results
+- <strong>OpenRouter API</strong> — external LLM service for vision-based scoring</p>
+<h3 id="coupling-and-cohesion">Coupling and Cohesion<a class="headerlink" href="#coupling-and-cohesion" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Low coupling</strong> between frontend and backend — separated by HTTP API boundary; frontend has no knowledge of internal server structure.</li>
+<li><strong>Moderate coupling</strong> between Go server and ML pipeline — connected via <code>exec.Command</code> call and file I/O (video path in, JSON report out). This is intentional for simplicity.</li>
+<li><strong>Low coupling</strong> between ML modules — each Python module has a single responsibility and clear interfaces.</li>
+<li><strong>High cohesion</strong> within each handler — auth.go handles only authentication, friends.go handles only friend relationships, etc.</li>
+<li><strong>High cohesion</strong> within ML modules — each does one thing (ball tracking, pose estimation, phase analysis, feedback generation).</li>
+</ul>
+<h3 id="maintainability-implications">Maintainability Implications<a class="headerlink" href="#maintainability-implications" title="Permanent link">&para;</a></h3>
+<ul>
+<li>JSON file storage is simple to understand and debug, but limits scalability beyond ~10 concurrent users due to file-level locking.</li>
+<li>exec-based ML integration means Python changes require no Go recompilation, but prevent hot-reloading during development.</li>
+<li>Frontend uses vanilla JavaScript with no build step — easy to modify but limits code reuse across pages.</li>
+</ul>
+<h3 id="quality-requirements-supported-or-constrained">Quality Requirements Supported or Constrained<a class="headerlink" href="#quality-requirements-supported-or-constrained" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>QR</th>
+<th>Status</th>
+<th>Explanation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>QR-001 (API &lt; 2s)</td>
+<td>Supported</td>
+<td>Go server handles requests fast; ML processing runs async in goroutines</td>
+</tr>
+<tr>
+<td>QR-002 (Auth security)</td>
+<td>Supported</td>
+<td>JWT + bcrypt; middleware enforces auth on all protected routes</td>
+</tr>
+<tr>
+<td>QR-003 (UI hints)</td>
+<td>Supported</td>
+<td>i18n system provides tooltips and labels on all pages</td>
+</tr>
+<tr>
+<td>QR-004 (ML accuracy)</td>
+<td>Partially supported</td>
+<td>Depends on pose tracker quality; LLM vision analysis adds intelligence</td>
+</tr>
+<tr>
+<td>QR-005 (Concurrency)</td>
+<td>Constrained</td>
+<td>JSON file storage + mutex limits to ~10 concurrent users</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="dynamic-view-sequence-diagram">Dynamic View — Sequence Diagram<a class="headerlink" href="#dynamic-view-sequence-diagram" title="Permanent link">&para;</a></h2>
+<p><img alt="Video Upload and Analysis Sequence Diagram" src="dynamic-view/sequence-diagram.svg" /></p>
+<p>The sequence diagram shows the most important workflow in the system: video upload, ML analysis, and result retrieval. This is the core value-creation flow.</p>
+<h3 id="what-the-diagram-shows_1">What the Diagram Shows<a class="headerlink" href="#what-the-diagram-shows_1" title="Permanent link">&para;</a></h3>
+<p>The sequence covers three phases:</p>
+<ol>
+<li>
+<p><strong>Upload Phase</strong>: User selects a video → Browser sends multipart POST to Go server → Server validates JWT, generates unique ID, saves video file and metadata JSON → Server spawns goroutine for async processing → Returns 201 to browser.</p>
+</li>
+<li>
+<p><strong>Processing Phase</strong> (async): Go server calls Python ML script via <code>exec.Command</code> → ML reads video, runs ball detection (YOLO) and pose estimation (MediaPipe) frame by frame → Shot phase state machine tracks DIP → ASCENT → RELEASE → FOLLOW-THROUGH transitions → ML sends 8 key frames + metrics to OpenRouter LLM (GPT-4o-mini) → LLM returns phase scores and detailed feedback → Results saved as JSON → Uploaded video deleted to save disk space.</p>
+</li>
+<li>
+<p><strong>Result Retrieval</strong>: Browser polls GET /api/videos for list → User clicks result → Browser requests GET /api/result/{id} → Server reads result JSON → Returns score, phases, feedback, radar chart data → Browser renders phases, chart, and feedback.</p>
+</li>
+</ol>
+<h3 id="why-this-scenario-is-important">Why This Scenario Is Important<a class="headerlink" href="#why-this-scenario-is-important" title="Permanent link">&para;</a></h3>
+<p>This flow is the primary value-creation pipeline of the product. Every user interaction — uploading a video, waiting for analysis, reviewing results — depends on this sequence working correctly. It touches every major component: frontend, auth, storage, ML pipeline, and external LLM API.</p>
+<h3 id="architecture-decisions-and-quality-requirements">Architecture Decisions and Quality Requirements<a class="headerlink" href="#architecture-decisions-and-quality-requirements" title="Permanent link">&para;</a></h3>
+<p>This flow validates several architectural decisions:
+- <strong>ADR-001 (JSON Storage)</strong>: Results are stored as JSON files, read on demand. Works well for single-user access patterns.
+- <strong>ADR-002 (exec ML Integration)</strong>: The async goroutine pattern prevents blocking the HTTP server during 10-30 second ML processing.
+- <strong>ADR-003 (JWT Auth)</strong>: Every API call in this flow passes through JWT validation.</p>
+<p>Quality requirements exercised:
+- <strong>QR-001</strong>: The upload endpoint returns quickly (201) while processing runs in background
+- <strong>QR-004</strong>: ML accuracy depends on pose tracker + LLM vision analysis quality
+- <strong>QR-005</strong>: Concurrent uploads are handled by separate goroutines, limited by CPU</p>
+<hr />
+<h2 id="deployment-view-deployment-diagram">Deployment View — Deployment Diagram<a class="headerlink" href="#deployment-view-deployment-diagram" title="Permanent link">&para;</a></h2>
+<p><img alt="Deployment Diagram" src="deployment-view/deployment-diagram.svg" /></p>
+<p>The deployment diagram shows how the system is deployed and operated in production.</p>
+<h3 id="what-the-diagram-shows_2">What the Diagram Shows<a class="headerlink" href="#what-the-diagram-shows_2" title="Permanent link">&para;</a></h3>
+<p>The system runs on a single VM (80.74.30.14) with the following components:</p>
+<ol>
+<li>
+<p><strong>Nginx</strong> (port 80) — reverse proxy that forwards HTTP traffic to the Go server. Handles SSL termination and caching headers.</p>
+</li>
+<li>
+<p><strong>Go Server</strong> (port 8080) — the application binary running as a systemd service. Handles all API requests, serves static frontend files, and orchestrates ML processing.</p>
+</li>
+<li>
+<p><strong>Python ML Pipeline</strong> — invoked as subprocess by the Go server. Uses MediaPipe, OpenCV, YOLO model (<code>best.pt</code>), and OpenRouter LLM API.</p>
+</li>
+<li>
+<p><strong>File System</strong> — all persistent state stored locally:</p>
+</li>
+<li><code>data/</code> — JSON files for users, videos, friends, shared results, avatars</li>
+<li><code>uploads/</code> — uploaded video files (deleted after processing)</li>
+<li><code>results/</code> — analysis result JSON files</li>
+<li>
+<p><code>web/</code> — static frontend files (HTML, CSS, JS)</p>
+</li>
+<li>
+<p><strong>OpenRouter API</strong> — external cloud service for LLM vision scoring (GPT-4o-mini).</p>
+</li>
+</ol>
+<p>User access path: Browser → HTTPS/HTTP (port 80) → Nginx → Go Server (port 8080).</p>
+<h3 id="why-this-deployment-model-was-chosen">Why This Deployment Model Was Chosen<a class="headerlink" href="#why-this-deployment-model-was-chosen" title="Permanent link">&para;</a></h3>
+<p>A single-VM monolithic deployment was chosen for:
+- <strong>Simplicity</strong>: One server to manage, one deployment process, one set of logs
+- <strong>Cost</strong>: Single VM is the cheapest hosting option for an MVP
+- <strong>Speed</strong>: No container orchestration overhead; direct file access for ML processing
+- <strong>Demo-friendly</strong>: Easy for customers and TAs to access via single URL</p>
+<h3 id="how-the-deployment-supports-or-constrains-the-product">How the Deployment Supports or Constrains the Product<a class="headerlink" href="#how-the-deployment-supports-or-constrains-the-product" title="Permanent link">&para;</a></h3>
+<p><strong>Supports:</strong>
+- Fast iteration — code changes require only binary recompilation and restart
+- Direct file access — ML pipeline reads/writes files without network overhead
+- Simple debugging — all logs in one place, direct SSH access</p>
+<p><strong>Constrains:</strong>
+- Single point of failure — VM crash takes down entire service
+- CPU-limited — ML processing for multiple concurrent videos competes for CPU
+- No horizontal scaling — cannot add more servers without refactoring
+- Disk-bound — video storage limited by VM disk size</p>
+<h3 id="deployment-considerations">Deployment Considerations<a class="headerlink" href="#deployment-considerations" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The <code>OPENROUTER_API_KEY</code> environment variable must be set for LLM scoring</li>
+<li>ML model weights (<code>best.pt</code>) must be present in the ML directory</li>
+<li>Python virtual environment with MediaPipe, OpenCV, and dependencies must be active</li>
+<li>Nginx must be configured to proxy all traffic to port 8080</li>
+<li>The Go binary must be rebuilt after any Go code changes</li>
+<li>The server process should be managed by systemd for automatic restart</li>
+</ul>
+<hr />
+<h2 id="architectural-quality-summary">Architectural Quality Summary<a class="headerlink" href="#architectural-quality-summary" title="Permanent link">&para;</a></h2>
+<h3 id="coupling">Coupling<a class="headerlink" href="#coupling" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Low</strong> between frontend and backend (HTTP boundary)</li>
+<li><strong>Moderate</strong> between Go server and ML (exec + file I/O) — intentional tradeoff for simplicity</li>
+<li><strong>Low</strong> between ML modules (clear single responsibilities)</li>
+</ul>
+<h3 id="cohesion">Cohesion<a class="headerlink" href="#cohesion" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>High</strong> within each handler domain (auth, friends, share)</li>
+<li><strong>High</strong> within ML modules (each does one thing)</li>
+</ul>
+<h3 id="maintainability">Maintainability<a class="headerlink" href="#maintainability" title="Permanent link">&para;</a></h3>
+<ul>
+<li>JSON storage: simple but not scalable</li>
+<li>exec ML integration: easy to understand, no hot-reload</li>
+<li>Vanilla JS frontend: no build step, easy to modify</li>
+</ul>
+<hr />
+<h2 id="architecture-decision-records">Architecture Decision Records<a class="headerlink" href="#architecture-decision-records" title="Permanent link">&para;</a></h2>
+<p>The following ADRs document key architectural decisions:</p>
+<table>
+<thead>
+<tr>
+<th>ADR</th>
+<th>Decision</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="adr/ADR-001-use-json-storage/">ADR-001</a></td>
+<td>Use JSON file storage instead of relational database</td>
+<td>Accepted</td>
+</tr>
+<tr>
+<td><a href="adr/ADR-002-exec-ml-script/">ADR-002</a></td>
+<td>Use exec-based ML integration instead of microservice</td>
+<td>Accepted</td>
+</tr>
+<tr>
+<td><a href="adr/ADR-003-jwt-auth/">ADR-003</a></td>
+<td>Use JWT authentication instead of server sessions</td>
+<td>Accepted</td>
+</tr>
+</tbody>
+</table>
+<p>These ADRs are linked to quality requirements in <a href="../quality-requirements/">docs/quality-requirements.md</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.top", "navigation.instant", "content.code.copy", "toc.integrate"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
