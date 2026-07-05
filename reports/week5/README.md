@@ -158,13 +158,11 @@ The automated tests, CI checks, quality requirement tests, and Definition of Don
 > Sanitized evidence screenshots to be added after Sprint Review.
 
 - Sprint milestone: _to be added_
+- Project workflow view: _to be added_
 - Latest protected-default-branch CI run: _to be added_
-- Branch protection / rules evidence: _to be added_
-- Coverage / test report: _to be added_
-- Additional QA check result: _to be added_
 - SemVer release: _to be added_
-- Example reviewed issue-linked PR: _to be added_
-- Hosted docs site ([kr1ny77.github.io/BasketForm-AI](https://kr1ny77.github.io/BasketForm-AI/)): _to be added_
+- Example reviewed issue-linked PR: ![PR](./images/pr.png)
+- Hosted docs site: ![Hosted docs site](./images/site1.png)
 
 ## Current Product Status
 
