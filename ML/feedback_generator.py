@@ -97,13 +97,21 @@ class FeedbackGenerator:
             return None, None
 
     def _system_prompt_en(self):
-        return """You are an expert basketball shooting form coach. Analyze the video frames and metrics to score and give feedback. Score each phase 0-100: DIP (knee bend, ideal 90-110), ASCENT (torso posture, ideal 165-180), RELEASE (arm extension, ideal elbow>160 forearm<20), FOLLOW-THROUGH (wrist snap, arm extension). A good shot scores 75-95. Respond in JSON: {"scores": {"DIP": int, "ASCENT": int, "RELEASE": int, "FOLLOW_THROUGH": int}, "feedback": "150-250 words"}"""
+        return """You are an expert basketball shooting form coach. Analyze the VIDEO FRAMES primarily, using metrics as secondary reference. Score each phase 0-100: DIP (knee bend, ideal 90-110), ASCENT (torso posture, ideal 165-180), RELEASE (arm extension, ideal elbow>160 forearm<20), FOLLOW-THROUGH (wrist snap/flick, arm staying up after release). For FOLLOW-THROUGH: watch the last frames of the video — if the arm extends forward and the wrist snaps downward after the ball leaves the hand, give 50-80+. Even a brief follow-through deserves 40+. Only give below 30 if the arm clearly drops immediately with no wrist snap at all. A good shot scores 75-95. Minimum floor for any phase that occurred is 25. Respond in JSON: {"scores": {"DIP": int, "ASCENT": int, "RELEASE": int, "FOLLOW_THROUGH": int}, "feedback": "150-250 words"}"""
 
     def _system_prompt_ru(self):
-        return """Ты — эксперт-тренер по биомеханике броска. Проанализируй кадры и метрики. Оцени каждую фазу 0-100: DIP (сгиб коленей, идеал 90-110), ASCENT (осанка, идеал 165-180), RELEASE (выпрямление руки, идеал локоть>160), FOLLOW-THROUGH (хлопок запястья). Хороший бросок 75-95. ОТВЕТЬ В JSON: {"scores": {"DIP": число, "ASCENT": число, "RELEASE": число, "FOLLOW_THROUGH": число}, "feedback": "150-250 слов"}"""
+        return """Ты — эксперт-тренер по биомеханике броска. Анализируй ПРЕЖДЕ ВСЕГО КАДРЫ ВИДЕО, метрики — вторичны. Оцени каждую фазу 0-100: DIP (сгиб коленей, идеал 90-110), ASCENT (осанка, идеал 165-180), RELEASE (выпрямление руки, идеал локоть>160), FOLLOW-THROUGH (хлопок запястья, рука остаётся вверх после броска). По FOLLOW-THROUGH: смотри на последние кадры — если рука вытягивается вперёд и запястье сгибается вниз после броска, ставь 50-80+. Даже короткий follow-through заслуживает 40+. Ставь ниже 30 только если рука явно падает вниз без хлопка. Хороший бросок 75-95. Минимум 25 для любой фазы, которая присутствовала. ОТВЕТЬ В JSON: {"scores": {"DIP": число, "ASCENT": число, "RELEASE": число, "FOLLOW_THROUGH": число}, "feedback": "150-250 слов"}"""
 
     def _user_prompt_en(self, scores, metrics, num_frames):
-        return f"""Analyze this basketball shot. {num_frames} frames show the entire shot. Metrics: knee={metrics.get('min_knee_dip','?')} deg, torso={metrics.get('torso_ascent','?')} deg, elbow={metrics.get('elbow_release','?')} deg, forearm={metrics.get('forearm_release','?')} deg, follow-through={metrics.get('frames_in_follow_through',0)} frames. Score each phase and give detailed feedback."""
+        ft_frames = metrics.get('frames_in_follow_through', 0)
+        ft_hint = ""
+        if ft_frames > 0:
+            ft_hint = f" Follow-through was detected for {ft_frames} frames."
+        return f"""Analyze this basketball shot. {num_frames} frames capture the entire shot motion.{ft_hint} Focus on the VIDEO FRAMES to judge the form. Metrics: knee={metrics.get('min_knee_dip','?')} deg, torso={metrics.get('torso_ascent','?')} deg, elbow={metrics.get('elbow_release','?')} deg, forearm={metrics.get('forearm_release','?')} deg. Score each phase based on what you SEE in the frames."""
 
     def _user_prompt_ru(self, scores, metrics, num_frames):
-        return f"""Проанализируй бросок. {num_frames} кадров показывают весь бросок. Метрики: колено={metrics.get('min_knee_dip','?')} deg, корпус={metrics.get('torso_ascent','?')} deg, локоть={metrics.get('elbow_release','?')} deg, предплечье={metrics.get('forearm_release','?')} deg, завершение={metrics.get('frames_in_follow_through',0)} кадров. Оцени каждую фазу и дай обратную связь."""
+        ft_frames = metrics.get('frames_in_follow_through', 0)
+        ft_hint = ""
+        if ft_frames > 0:
+            ft_hint = f" Завершение обнаружено на {ft_frames} кадрах."
+        return f"""Проанализируй бросок. {num_frames} кадров показывают весь бросок.{ft_hint} Суди по КАДРАМ ВИДЕО. Метрики: колено={metrics.get('min_knee_dip','?')} deg, корпус={metrics.get('torso_ascent','?')} deg, локоть={metrics.get('elbow_release','?')} deg, предплечье={metrics.get('forearm_release','?')} deg. Оцени каждую фазу по тому, ЧТО ТЫ ВИДИШЬ на кадрах."""

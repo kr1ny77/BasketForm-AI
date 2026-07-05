@@ -49,6 +49,10 @@ class ShotPhaseStateMachine:
         self.elbow_snap = 0
         self.arm_stability_std = 0
 
+        # Peak elbow during release phase (to detect bending afterwards)
+        self.peak_elbow_release = 0
+        self.elbow_dropping = False
+
     def update(self, knee_angle, elbow_angle, ball_center, wrist_center, torso_angle, forearm_angle):
         knee = self.smooth_knee.update(knee_angle)
         elbow = self.smooth_elbow.update(elbow_angle)
@@ -65,7 +69,10 @@ class ShotPhaseStateMachine:
             self.torso_ascent = torso_angle
         elif self.state == "RELEASE":
             self.elbow_release = max(self.elbow_release, elbow)
+            self.peak_elbow_release = max(self.peak_elbow_release, elbow)
             self.forearm_release = forearm_angle
+            if elbow < self.peak_elbow_release - 5:
+                self.elbow_dropping = True
         elif self.state == "FOLLOW_THROUGH":
             self.ft_elbow_stability.append(elbow)
             self.ft_arm_extension.append(forearm_angle)
@@ -78,6 +85,8 @@ class ShotPhaseStateMachine:
                 self.state = "DIP"
                 self.frames_since_release = 0
                 self.min_knee_dip = 180
+                self.peak_elbow_release = 0
+                self.elbow_dropping = False
                 self.ft_wrist_angles = []
                 self.ft_elbow_stability = []
                 self.ft_arm_extension = []
@@ -100,10 +109,17 @@ class ShotPhaseStateMachine:
                 self.state = "RELEASE"
                 self.frames_since_release = 0
                 self.elbow_release = 0
+                self.peak_elbow_release = 0
+                self.elbow_dropping = False
 
         elif self.state == "RELEASE":
             self.frames_since_release += 1
-            if self.frames_since_release > 10 and elbow < 140:
+            enters_follow = (
+                (elbow < 160 and self.elbow_dropping) or
+                (self.frames_since_release > 15) or
+                (elbow < 150)
+            )
+            if enters_follow:
                 self.state = "FOLLOW_THROUGH"
                 self.frames_in_follow_through = 0
                 self.ft_entry_elbow = elbow
