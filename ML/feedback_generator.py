@@ -7,7 +7,7 @@ import cv2
 
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-VISION_MODEL = "openai/gpt-4o-mini"
+VISION_MODEL = "poolside/laguna-xs-2.1:free"
 
 
 class FeedbackGenerator:
