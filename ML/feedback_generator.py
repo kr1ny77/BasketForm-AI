@@ -5,7 +5,7 @@ import urllib.request
 import urllib.error
 import cv2
 
-OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "")
+OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY", "sk-or-v1-e779b3eb136689dc3fc40f41d4c367c2069eb7ea4616f1af49c9b468cc11db5")
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 VISION_MODEL = "poolside/laguna-xs-2.1:free"
 
