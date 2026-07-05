@@ -68,11 +68,11 @@ The [Development Process](../../docs/development-process.md) document is also li
 
 ## Week 5 Report Documents
 
-- Customer Review Summary — _to be added after Sprint Review_
-- Customer Review Transcript — _to be added after Sprint Review_
-- Reflection — _to be added after Sprint Review_
-- Retrospective — _to be added after Sprint Review_
-- LLM Usage Report — _to be added after Sprint Review_
+- [Customer Review Summary](./customer-review-summary.md)
+- [Customer Review Transcript](./customer-review-transcript.md)
+- [Reflection](./reflection.md)
+- [Retrospective](./retrospective.md)
+- [LLM Usage Report](./llm-report.md)
 
 ## Architecture Documentation
 
