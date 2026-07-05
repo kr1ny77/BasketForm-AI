@@ -3,6 +3,7 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -244,5 +245,159 @@ func TestIntegration_SearchAndFriendRequest(t *testing.T) {
 	json.Unmarshal(w.Body.Bytes(), &friends)
 	if len(friends) != 1 {
 		t.Fatalf("expected 1 friend, got %d", len(friends))
+	}
+}
+
+func TestIntegration_RejectFriendRequest(t *testing.T) {
+	ts, _, _ := setupIntegrationTest(t)
+
+	integrationDo(t, ts, "POST", "/api/register", `{"email":"reject1@test.com","nickname":"reject_user1","password":"testpass123"}`, nil)
+	integrationDo(t, ts, "POST", "/api/register", `{"email":"reject2@test.com","nickname":"reject_user2","password":"testpass123"}`, nil)
+
+	cookies1 := integrationLogin(t, ts, "reject1@test.com", "testpass123")
+	cookies2 := integrationLogin(t, ts, "reject2@test.com", "testpass123")
+
+	w := integrationDo(t, ts, "GET", "/api/friends/search?q=reject_user", "", cookies1)
+	var users []map[string]string
+	json.Unmarshal(w.Body.Bytes(), &users)
+	targetID := users[0]["id"]
+
+	w = integrationDo(t, ts, "POST", "/api/friends/request", `{"to_user_id":"`+targetID+`"}`, cookies1)
+	if w.Code != http.StatusCreated {
+		t.Fatalf("send request: expected 201, got %d: %s", w.Code, w.Body.String())
+	}
+
+	w = integrationDo(t, ts, "GET", "/api/friends/requests", "", cookies2)
+	var reqs []map[string]interface{}
+	json.Unmarshal(w.Body.Bytes(), &reqs)
+	reqID := reqs[0]["id"].(string)
+
+	w = integrationDo(t, ts, "POST", "/api/friends/reject", `{"request_id":"`+reqID+`"}`, cookies2)
+	if w.Code != http.StatusOK {
+		t.Fatalf("reject: expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+
+	w = integrationDo(t, ts, "GET", "/api/friends", "", cookies1)
+	var friends []map[string]string
+	json.Unmarshal(w.Body.Bytes(), &friends)
+	if len(friends) != 0 {
+		t.Fatalf("expected 0 friends after reject, got %d", len(friends))
+	}
+}
+
+func TestIntegration_ChangeNickname(t *testing.T) {
+	ts, _, _ := setupIntegrationTest(t)
+
+	integrationDo(t, ts, "POST", "/api/register", `{"email":"nick@test.com","nickname":"oldnick","password":"testpass123"}`, nil)
+	cookies := integrationLogin(t, ts, "nick@test.com", "testpass123")
+
+	w := integrationDo(t, ts, "POST", "/api/profile/nickname", `{"password":"testpass123","new_nickname":"newnick"}`, cookies)
+	if w.Code != http.StatusOK {
+		t.Fatalf("change nickname: expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+
+	w = integrationDo(t, ts, "GET", "/api/profile", "", cookies)
+	var profile map[string]string
+	json.Unmarshal(w.Body.Bytes(), &profile)
+	if profile["nickname"] != "newnick" {
+		t.Fatalf("expected nickname newnick, got %s", profile["nickname"])
+	}
+}
+
+func TestIntegration_SharedByMeEndpoint(t *testing.T) {
+	ts, resultsDir, _ := setupIntegrationTest(t)
+
+	integrationDo(t, ts, "POST", "/api/register", `{"email":"byme1@test.com","nickname":"byme1","password":"testpass123"}`, nil)
+	integrationDo(t, ts, "POST", "/api/register", `{"email":"byme2@test.com","nickname":"byme2","password":"testpass123"}`, nil)
+
+	cookies1 := integrationLogin(t, ts, "byme1@test.com", "testpass123")
+	cookies2 := integrationLogin(t, ts, "byme2@test.com", "testpass123")
+
+	w := integrationDo(t, ts, "GET", "/api/profile", "", cookies1)
+	var p1 map[string]string
+	json.Unmarshal(w.Body.Bytes(), &p1)
+
+	w = integrationDo(t, ts, "GET", "/api/profile", "", cookies2)
+	var p2 map[string]string
+	json.Unmarshal(w.Body.Bytes(), &p2)
+
+	result := &models.Result{
+		ID:       "byme_r1",
+		UserID:   p1["id"],
+		VideoID:  "byme_v1",
+		Filename: "test.mp4",
+		Score:    70,
+		Feedback: "OK",
+	}
+	resultData, _ := json.Marshal(result)
+	os.WriteFile(filepath.Join(resultsDir, "byme_v1.json"), resultData, 0o644)
+
+	w = integrationDo(t, ts, "POST", "/api/share/result", `{"result_id":"byme_r1","friend_id":"`+p2["id"]+`"}`, cookies1)
+	if w.Code != http.StatusCreated {
+		t.Fatalf("share: expected 201, got %d: %s", w.Code, w.Body.String())
+	}
+
+	w = integrationDo(t, ts, "GET", "/api/results/shared-by-me", "", cookies1)
+	if w.Code != http.StatusOK {
+		t.Fatalf("shared-by-me: expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+
+	var shared []map[string]interface{}
+	json.Unmarshal(w.Body.Bytes(), &shared)
+	if len(shared) != 1 {
+		t.Fatalf("expected 1 shared-by-me, got %d", len(shared))
+	}
+}
+
+func TestIntegration_DeleteVideo(t *testing.T) {
+	ts, _, _ := setupIntegrationTest(t)
+
+	integrationDo(t, ts, "POST", "/api/register", `{"email":"del@test.com","nickname":"deluser","password":"testpass123"}`, nil)
+	cookies := integrationLogin(t, ts, "del@test.com", "testpass123")
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	part, _ := writer.CreateFormFile("video", "del_test.mp4")
+	part.Write([]byte("fake content"))
+	writer.Close()
+
+	req, _ := http.NewRequest("POST", ts.URL+"/api/upload", body)
+	req.Header.Set("Content-Type", writer.FormDataContentType())
+	for _, c := range cookies {
+		req.AddCookie(c)
+	}
+	w := httptest.NewRecorder()
+	ts.Config.Handler.ServeHTTP(w, req)
+
+	var uploadResp map[string]string
+	json.Unmarshal(w.Body.Bytes(), &uploadResp)
+	videoID := uploadResp["id"]
+
+	w = integrationDo(t, ts, "POST", "/api/video/delete", `{"ids":["`+videoID+`"]}`, cookies)
+	if w.Code != http.StatusOK {
+		t.Fatalf("delete: expected 200, got %d: %s", w.Code, w.Body.String())
+	}
+
+	w = integrationDo(t, ts, "GET", "/api/status/"+videoID, "", cookies)
+	if w.Code != http.StatusNotFound {
+		t.Fatalf("expected 404 after delete, got %d", w.Code)
+	}
+}
+
+func TestIntegration_FriendsSearchEmpty(t *testing.T) {
+	ts, _, _ := setupIntegrationTest(t)
+
+	integrationDo(t, ts, "POST", "/api/register", `{"email":"empty@test.com","nickname":"emptyuser","password":"testpass123"}`, nil)
+	cookies := integrationLogin(t, ts, "empty@test.com", "testpass123")
+
+	w := integrationDo(t, ts, "GET", "/api/friends/search?q=", "", cookies)
+	if w.Code != http.StatusOK {
+		t.Fatalf("search empty: expected 200, got %d", w.Code)
+	}
+
+	var users []map[string]string
+	json.Unmarshal(w.Body.Bytes(), &users)
+	if len(users) != 0 {
+		t.Fatalf("expected 0 results for empty query, got %d", len(users))
 	}
 }
