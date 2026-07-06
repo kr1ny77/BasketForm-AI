@@ -68,8 +68,8 @@ The [Development Process](../../docs/development-process.md) document is also li
 
 ## Week 5 Report Documents
 
-- [Customer Review Summary](./customer-review-summary.md)
-- [Customer Review Transcript](./customer-review-transcript.md)
+- [Sprint Review Summary](./sprint-review-summary.md)
+- [Sprint Review Transcript](./sprint-review-transcript.md)
 - [Reflection](./reflection.md)
 - [Retrospective](./retrospective.md)
 - [LLM Usage Report](./llm-report.md)
@@ -78,9 +78,9 @@ The [Development Process](../../docs/development-process.md) document is also li
 
 Architecture documentation is maintained in `docs/architecture/` with diagrams-as-code (PlantUML):
 
-- **Static View:** Component and package structure
-- **Dynamic View:** Request flow and ML pipeline
-- **Deployment View:** VM deployment and CI/CD
+- **Static View (Component Diagram):** [component-diagram.puml](../../docs/architecture/static-view/component-diagram.puml) · [Rendered SVG](../../docs/architecture/static-view/component-diagram.svg)
+- **Dynamic View (Sequence Diagram):** [sequence-diagram.puml](../../docs/architecture/dynamic-view/sequence-diagram.puml) · [Rendered SVG](../../docs/architecture/dynamic-view/sequence-diagram.svg)
+- **Deployment View:** [deployment-diagram.puml](../../docs/architecture/deployment-view/deployment-diagram.puml) · [Rendered SVG](../../docs/architecture/deployment-view/deployment-diagram.svg)
 
 See [Architecture Documentation](../../docs/architecture/) for details.
 
@@ -91,6 +91,7 @@ ISO/IEC 25010 sub-characteristics addressed:
 - **QR-002:** Confidentiality (auth security, no cross-user access)
 - **QR-003:** Testability (30% coverage for critical modules)
 - **QR-004:** Usability (form guidance via placeholders/labels)
+- **QR-005:** Confidentiality — Data Isolation (friends, sharing, profile features)
 
 ## Testing Status
 
@@ -98,7 +99,7 @@ ISO/IEC 25010 sub-characteristics addressed:
 |---|---|---|
 | Unit tests | Passing locally | [internal/handlers](https://github.com/kr1ny77/BasketForm-AI/tree/main/internal/handlers), [internal/services](https://github.com/kr1ny77/BasketForm-AI/tree/main/internal/services) |
 | Integration tests | Passing locally | [internal/handlers](https://github.com/kr1ny77/BasketForm-AI/tree/main/internal/handlers) |
-| QRTs (QRT-001 to QRT-004) | Passing locally | [internal/qrt](https://github.com/kr1ny77/BasketForm-AI/tree/main/internal/qrt) |
+| QRTs (QRT-001 to QRT-005) | Passing locally | [internal/qrt](https://github.com/kr1ny77/BasketForm-AI/tree/main/internal/qrt) |
 | Coverage (services, handlers) | ≥30% target | See CI Coverage Check job |
 
 ### Test Locations
@@ -110,7 +111,7 @@ ISO/IEC 25010 sub-characteristics addressed:
 ## CI Pipeline
 
 - **Workflow:** [CI workflow runs (main)](https://github.com/kr1ny77/BasketForm-AI/actions?query=branch%3Amain)
-- **Latest protected-default-branch CI run:** [Link to latest CI run]
+- **Latest protected-default-branch CI run:** [Latest CI run on main](https://github.com/kr1ny77/BasketForm-AI/actions/workflows/ci.yml)
 - Lint: golangci-lint
 - Test: go test -race -coverprofile
 - Coverage: 30% threshold for critical modules
@@ -155,14 +156,23 @@ The automated tests, CI checks, quality requirement tests, and Definition of Don
 
 ## Screenshots
 
-> Sanitized evidence screenshots to be added after Sprint Review.
+### Sprint 3 Milestone
+![Sprint 3 Milestone](./images/sprint3-milestone.png)
 
-- Sprint milestone: _to be added_
-- Project workflow view: _to be added_
-- Latest protected-default-branch CI run: _to be added_
-- SemVer release: _to be added_
-- Example reviewed issue-linked PR: ![PR](./images/pr.png)
-- Hosted docs site: ![Hosted docs site](./images/site1.png)
+### Sprint 3 Project Board
+![Sprint 3 Project Board](./images/sprint3-project-board.png)
+
+### Latest Protected-Default-Branch CI Run
+![CI Run — Latest Main](./images/ci-run-latest-main.png)
+
+### SemVer Release v0.3.0
+![Release v0.3.0](./images/release-v0.3.0.png)
+
+### Example Reviewed Issue-Linked PR
+![PR](./images/pr.png)
+
+### Hosted Documentation Site
+![Hosted docs site](./images/site1.png)
 
 ## Current Product Status
 
