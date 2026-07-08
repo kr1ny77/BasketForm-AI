@@ -1187,12 +1187,14 @@
 <p><strong>Why this matters:</strong> Core business logic (authentication, storage, video processing) must be directly verifiable so defects can be detected before merge. Low coverage leads to undetected regressions in critical user workflows.</p>
 <p><strong>Related PBI:</strong> <a href="https://github.com/kr1ny77/BasketForm-AI/issues/68">#68</a> (PBI-019: Automated tests for ML integration, validation, and persistence)</p>
 <p><strong>Linked quality requirement tests:</strong> <a href="../quality-requirement-tests/#qrt-003-critical-module-unit-coverage">QRT-003</a></p>
+<p><strong>Linked ADRs:</strong> <a href="../architecture/adr/ADR-002-exec-ml-script/">ADR-002</a> (ML pipeline is a critical module requiring automated test coverage)</p>
 <h2 id="qr-004-usability-form-guidance">QR-004: Usability — Form Guidance<a class="headerlink" href="#qr-004-usability-form-guidance" title="Permanent link">&para;</a></h2>
 <p><strong>ISO/IEC 25010 sub-characteristic:</strong> Usability</p>
 <p><strong>Scenario:</strong> When a user opens any form page (login, register, upload, profile), all input fields shall contain placeholder text or visible labels that explain what data is expected, within the initial page render.</p>
 <p><strong>Why this matters:</strong> Clear guidance reduces user errors, lowers support needs, and makes the application accessible to new users without external documentation.</p>
 <p><strong>Related PBI:</strong> <a href="https://github.com/kr1ny77/BasketForm-AI/issues/67">#67</a> (PBI-019: Social features — friend system and sharing require clear form guidance)</p>
 <p><strong>Linked quality requirement tests:</strong> <a href="../quality-requirement-tests/#qrt-004-usability-form-guidance">QRT-004</a></p>
+<p><strong>Linked ADRs:</strong> <a href="../architecture/adr/ADR-003-jwt-auth/">ADR-003</a> (authentication forms are part of the usability-critical user-facing interface)</p>
 
 
 
