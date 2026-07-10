@@ -1,10 +1,10 @@
-import cv2_headless_patch
 import cv2
 import argparse
 import sys
 import os
 from collections import deque
 import json
+from ultralytics import YOLO  # Added for robust person detection
 from ball_tracker import BallTracker
 from pose_tracker import PoseTracker
 from shot_analyzer import ShotPhaseStateMachine
@@ -75,9 +75,18 @@ def process_video(input_path, report_path, lang="en"):
     pose_tracker = PoseTracker()
     phase_machine = ShotPhaseStateMachine()
 
+    # --- NEW: Initialize a lightweight YOLO model specifically for person detection ---
+    # yolov8n is tiny, fast, and will auto-download if not present.
+    print("Loading person detector (yolov8n)...")
+    person_detector = YOLO('yolov8n.pt')
+    # ----------------------------------------------------------------------------------
+
     ball_trajectory = deque(maxlen=30)
 
     frame_count = 0
+    human_detected = False
+    frames_without_human = 0
+    EARLY_ABORT_THRESHOLD = 60  # Abort if no human is found in the first ~2 seconds
 
     try:
         print("Processing video...")
@@ -91,11 +100,35 @@ def process_video(input_path, report_path, lang="en"):
                 progress = (frame_count / total_frames) * 100
                 print(f"Progress: {progress:.1f}% ({frame_count}/{total_frames} frames)")
 
+            # --- ROBUST HUMAN PRESENCE CHECK USING YOLO ---
+            # classes=[0] restricts detection to the 'person' class only (COCO dataset)
+            # conf=0.3 is a good threshold to catch people without false positives
+            person_results = person_detector(image, classes=[0], conf=0.3, verbose=False, imgsz=640)
+            has_person = len(person_results[0].boxes) > 0
+
+            if not has_person:
+                if not human_detected:
+                    frames_without_human += 1
+                    # Early abort to save processing time on completely empty clips
+                    if frames_without_human > EARLY_ABORT_THRESHOLD:
+                        print("ERROR: No human detected in the first frames. Aborting analysis early.", file=sys.stderr)
+                        cap.release()
+                        return False
+                continue  # Skip heavy pose/ball analysis if no person is detected
+
+            human_detected = True
+            # ------------------------------------------------
+
             ball_center, ball_bbox = ball_tracker.detect(image)
             if ball_center:
                 ball_trajectory.append(ball_center)
 
             results = pose_tracker.process(image)
+
+            # Secondary safeguard: if YOLO saw a person but MediaPipe failed to track the pose
+            if results.pose_landmarks is None:
+                continue
+
             angles, wrist_center = pose_tracker.analyze_shooting_form(
                 results.pose_landmarks, frame_width, frame_height
             )
@@ -125,6 +158,13 @@ def process_video(input_path, report_path, lang="en"):
         phase_machine.finalize()
         cap.release()
 
+    # --- FINAL SAFEGUARD CHECK ---
+    if not human_detected:
+        print("ERROR: No human detected in the video. Cannot analyze a clip without a shooting person.",
+              file=sys.stderr)
+        return False
+    # -----------------------------
+
     print(f"Processing complete! Processed {frame_count} frames")
 
     final_metrics = {
@@ -133,8 +173,8 @@ def process_video(input_path, report_path, lang="en"):
         "elbow_release": phase_machine.elbow_release,
         "forearm_release": phase_machine.forearm_release,
         "frames_in_follow_through": phase_machine.frames_in_follow_through,
-        "elbow_snap": phase_machine.elbow_snap,
-        "arm_stability_std": phase_machine.arm_stability_std
+        "elbow_snap": getattr(phase_machine, 'elbow_snap', 0),
+        "arm_stability_std": getattr(phase_machine, 'arm_stability_std', 0)
     }
 
     ai_feedback = ""
@@ -143,24 +183,24 @@ def process_video(input_path, report_path, lang="en"):
     try:
         lang_name = "Russian" if lang == "ru" else "English"
         generator = FeedbackGenerator()
-        llm_scores, llm_feedback = generator.generate_feedback(
-            phase_machine.scores, final_metrics, language=lang_name, video_path=input_path
+
+        # Fixed LLM call: it returns a single string, not a tuple
+        llm_feedback = generator.generate_feedback(
+            phase_machine.scores, final_metrics, language=lang_name
         )
-        if llm_scores is not None:
-            final_scores = llm_scores
+
+        # Calculate local scores so they can be saved in the JSON report
+        phase_machine._calculate_scores()
+        final_scores = phase_machine.scores
+
+        if llm_feedback and not llm_feedback.startswith("Failed"):
             ai_feedback = llm_feedback
             print("--- LLM COACH FEEDBACK ---")
             print(ai_feedback)
             print("--------------------------")
         else:
-            print("LLM scoring failed, falling back to local scoring...")
-            phase_machine._calculate_scores()
-            final_scores = phase_machine.scores
-            generator = CustomFeedbackGenerator()
-            ai_feedback = generator.generate(final_scores, final_metrics, lang)
-            print("--- LOCAL COACH FEEDBACK ---")
-            print(ai_feedback)
-            print("---------------------------")
+            raise Exception("LLM returned an error or empty response.")
+
     except Exception as e:
         print(f"WARNING: Could not generate AI feedback. Error: {e}", file=sys.stderr)
         phase_machine._calculate_scores()
@@ -168,6 +208,9 @@ def process_video(input_path, report_path, lang="en"):
         try:
             generator = CustomFeedbackGenerator()
             ai_feedback = generator.generate(final_scores, final_metrics, lang)
+            print("--- LOCAL COACH FEEDBACK ---")
+            print(ai_feedback)
+            print("---------------------------")
         except Exception:
             ai_feedback = "Analysis completed. Scores are estimated."
 
