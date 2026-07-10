@@ -181,3 +181,62 @@ func TestAuthService_ChangePassword_WrongOldPassword(t *testing.T) {
 		t.Fatalf("expected ErrInvalidCredentials, got %v", err)
 	}
 }
+
+func TestAuthService_ChangeNickname_Success(t *testing.T) {
+	upload, results := tempDirs(t)
+	s := NewStorage(upload, results)
+	auth := NewAuthService(s)
+
+	user, _ := auth.Register("test@example.com", "testuser", "password123")
+
+	err := auth.ChangeNickname(user.ID, "password123", "newnick")
+	if err != nil {
+		t.Fatalf("ChangeNickname error: %v", err)
+	}
+
+	u, ok := s.GetUserByID(user.ID)
+	if !ok {
+		t.Fatal("user not found after nickname change")
+	}
+	if u.Nickname != "newnick" {
+		t.Fatalf("expected nickname newnick, got %s", u.Nickname)
+	}
+}
+
+func TestAuthService_ChangeNickname_WrongPassword(t *testing.T) {
+	upload, results := tempDirs(t)
+	s := NewStorage(upload, results)
+	auth := NewAuthService(s)
+
+	user, _ := auth.Register("test@example.com", "testuser", "password123")
+
+	err := auth.ChangeNickname(user.ID, "wrongpassword", "newnick")
+	if err != ErrInvalidCredentials {
+		t.Fatalf("expected ErrInvalidCredentials, got %v", err)
+	}
+}
+
+func TestAuthService_ChangeNickname_DuplicateNickname(t *testing.T) {
+	upload, results := tempDirs(t)
+	s := NewStorage(upload, results)
+	auth := NewAuthService(s)
+
+	user1, _ := auth.Register("test1@example.com", "user1", "password123")
+	_, _ = auth.Register("test2@example.com", "user2", "password123")
+
+	err := auth.ChangeNickname(user1.ID, "password123", "user2")
+	if err != ErrNicknameTaken {
+		t.Fatalf("expected ErrNicknameTaken, got %v", err)
+	}
+}
+
+func TestAuthService_ChangeNickname_UserNotFound(t *testing.T) {
+	upload, results := tempDirs(t)
+	s := NewStorage(upload, results)
+	auth := NewAuthService(s)
+
+	err := auth.ChangeNickname("nonexistent", "password123", "newnick")
+	if err != ErrUserNotFound {
+		t.Fatalf("expected ErrUserNotFound, got %v", err)
+	}
+}

@@ -2,6 +2,14 @@
 
 Quality requirements for BasketForm-AI, structured by ISO/IEC 25010 quality sub-characteristics.
 
+## Table of Contents
+
+- [QR-001: API Response Time](#qr-001-api-response-time)
+- [QR-002: Authentication Security](#qr-002-authentication-security)
+- [QR-003: Critical Module Testability](#qr-003-critical-module-testability)
+- [QR-004: Usability — Form Guidance](#qr-004-usability--form-guidance)
+- [QR-005: Data Isolation](#qr-005-data-isolation)
+
 ## QR-001: API Response Time
 
 **ISO/IEC 25010 sub-characteristic:** Time Behaviour
@@ -13,6 +21,8 @@ Quality requirements for BasketForm-AI, structured by ISO/IEC 25010 quality sub-
 **Related PBI:** [#64](https://github.com/kr1ny77/BasketForm-AI/issues/64) (PBI-016: ML integration — API response time matters for real processing pipeline)
 
 **Linked quality requirement tests:** [QRT-001](quality-requirement-tests.md#qrt-001-api-response-time)
+
+**Linked ADRs:** [ADR-001](architecture/adr/ADR-001-use-json-storage.md) (JSON storage limits query performance), [ADR-002](architecture/adr/ADR-002-exec-ml-script.md) (async processing prevents blocking)
 
 ## QR-002: Authentication Security
 
@@ -26,6 +36,22 @@ Quality requirements for BasketForm-AI, structured by ISO/IEC 25010 quality sub-
 
 **Linked quality requirement tests:** [QRT-002](quality-requirement-tests.md#qrt-002-authentication-security)
 
+**Linked ADRs:** [ADR-003](architecture/adr/ADR-003-jwt-auth.md) (JWT implementation details)
+
+## QR-005: Data Isolation
+
+**ISO/IEC 25010 sub-characteristic:** Confidentiality
+
+**Scenario:** When a user interacts with the friends, sharing, or profile features, the system shall ensure that only data belonging to the authenticated user or explicitly shared data is accessible. A user shall not be able to view, modify, or delete another user's videos, results, friend lists, or profile data through direct API calls or URL manipulation.
+
+**Why this matters:** Sprint 3 introduced social features (friends, report sharing, nickname changes). Each feature operates on user-specific data. Cross-user data leakage would violate privacy and trust. Data isolation must be verifiable through automated tests.
+
+**Related PBI:** [#90](https://github.com/kr1ny77/BasketForm-AI/issues/90) (PBI-027: Storage hardening), [#95](https://github.com/kr1ny77/BasketForm-AI/issues/95) (PBI-032: Friends section)
+
+**Linked quality requirement tests:** [QRT-005](quality-requirement-tests.md#qrt-005-data-isolation)
+
+**Linked ADRs:** [ADR-001](architecture/adr/ADR-001-use-json-storage.md) (JSON storage per-user directory structure)
+
 ## QR-003: Critical Module Testability
 
 **ISO/IEC 25010 sub-characteristic:** Testability
@@ -38,6 +64,8 @@ Quality requirements for BasketForm-AI, structured by ISO/IEC 25010 quality sub-
 
 **Linked quality requirement tests:** [QRT-003](quality-requirement-tests.md#qrt-003-critical-module-unit-coverage)
 
+**Linked ADRs:** [ADR-002](architecture/adr/ADR-002-exec-ml-script.md) (ML pipeline is a critical module requiring automated test coverage)
+
 ## QR-004: Usability — Form Guidance
 
 **ISO/IEC 25010 sub-characteristic:** Usability
@@ -49,3 +77,5 @@ Quality requirements for BasketForm-AI, structured by ISO/IEC 25010 quality sub-
 **Related PBI:** [#67](https://github.com/kr1ny77/BasketForm-AI/issues/67) (PBI-019: Social features — friend system and sharing require clear form guidance)
 
 **Linked quality requirement tests:** [QRT-004](quality-requirement-tests.md#qrt-004-usability-form-guidance)
+
+**Linked ADRs:** [ADR-003](architecture/adr/ADR-003-jwt-auth.md) (authentication forms are part of the usability-critical user-facing interface)

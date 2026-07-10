@@ -6,6 +6,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [v0.3.0] — 2026-07-04
+
+Sprint 3 — Assignment 5: Architecture documentation, ADRs, LLM-based scoring, UI/UX improvements.
+
+### Added
+- LLM-based scoring via OpenRouter API (GPT-4o-mini) with 8-frame vision analysis
+- Follow-through scoring (4th phase with duration, elbow snap, arm stability)
+- Nickname change endpoint with password verification
+- Profile page modals for nickname/password changes
+- Shared results: sent view for users
+- Architecture documentation (component, sequence, deployment diagrams in PlantUML)
+- ADR-001 (JSON storage), ADR-002 (exec ML), ADR-003 (JWT auth)
+- Case-insensitive login, login by nickname
+- Avatar display on Friends and Shared pages
+
+### Fixed
+- Data race in GetVideo (RLock while writing to map)
+- Delete results (recompiled Go binary, removed duplicate storage.go)
+- Friends page: t is not defined error in loadMyResults()
+- Avatar upload: ProfileHandler returns avatar field
+
+### Changed
+- feedback_generator.py rewritten for OpenRouter API
+- shot_analyzer.py: FOLLOW_THROUGH in initial scores, elbow_snap and arm_stability_std metrics
+- Profile page: nickname/password buttons as modal popups
+
+### Security
+- API key in environment variable, not source code
+- Data race fix prevents server crashes
+
 ## [v0.2.0] — 2026-06-28
 
 Sprint 2 — Assignment 4: Authentication, social features, enhanced ML, quality automation.

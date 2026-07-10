@@ -17,15 +17,17 @@ This document defines the team's shared minimum completion standard for all Prod
 - [ ] Error handling is implemented where appropriate
 - [ ] Security best practices are followed
 - [ ] No sensitive data or credentials are committed
+- [ ] Data isolation between users is maintained (no cross-user data leakage)
 
 ## Testing
 
 - [ ] Unit tests are written and passing for critical modules
-- [ ] Integration tests are written and passing
+- [ ] Integration tests cover new API endpoints and data flows
 - [ ] Each critical module achieves at least 30% line coverage
 - [ ] Automated quality requirement tests (QRTs) pass
 - [ ] Manual testing is performed for user-facing features
 - [ ] Edge cases are considered and tested
+- [ ] Social features (friends, sharing) are covered by integration tests
 
 ## Quality Requirements
 
@@ -33,6 +35,7 @@ This document defines the team's shared minimum completion standard for all Prod
 - [ ] Quality requirement tests (QRTs) pass in CI
 - [ ] `docs/quality-requirements.md` is current
 - [ ] `docs/quality-requirement-tests.md` is current
+- [ ] QR-005 (data isolation) is satisfied for new features
 
 ## CI and Automation
 
@@ -50,6 +53,8 @@ This document defines the team's shared minimum completion standard for all Prod
 - [ ] API documentation is updated (if applicable)
 - [ ] `docs/testing.md` reflects current test status
 - [ ] `docs/user-acceptance-tests.md` is current
+- [ ] `docs/architecture/README.md` reflects current architecture
+- [ ] `docs/development-process.md` is current
 - [ ] CHANGELOG.md is updated with user-visible changes
 
 ## Deployment
@@ -57,6 +62,7 @@ This document defines the team's shared minimum completion standard for all Prod
 - [ ] Feature is deployable to staging/production
 - [ ] Environment variables are configured
 - [ ] Feature works in the deployed environment
+- [ ] LLM API key is configured for external scoring (if applicable)
 
 ## User Story Specific
 
@@ -64,6 +70,7 @@ This document defines the team's shared minimum completion standard for all Prod
 - [ ] Feedback is clear and actionable
 - [ ] UI/UX follows design guidelines
 - [ ] Accessibility requirements are met
+- [ ] i18n/localization is complete for supported languages
 
 ## PBI Types
 
@@ -101,3 +108,5 @@ This document defines the team's shared minimum completion standard for all Prod
 - [ ] Release notes are comprehensive
 - [ ] Deployment is verified in production
 - [ ] Video demonstration is recorded and uploaded
+- [ ] Architecture documentation (views, ADRs) is current
+- [ ] Development process documentation is current
