@@ -2,7 +2,7 @@
 
 Web service for analyzing basketball shooting form via video upload, biomechanical keypoint extraction, technique scoring, and personalized AI feedback.
 
-**Live:** http://80.74.30.14/ · [v0.3.0 Release](https://github.com/kr1ny77/BasketForm-AI/releases/tag/v0.3.0)
+**Live:** http://80.74.30.14/ · [v0.3.0 Release](https://github.com/kr1ny77/BasketForm-AI/releases/tag/v0.3.0) · [Documentation Site](https://kr1ny77.github.io/BasketForm-AI/) · [Customer Handover Guide](docs/customer-handover.md)
 
 ## Project Overview
 
@@ -193,7 +193,9 @@ BasketForm-AI/
 
 ## Documentation
 
-**[📖 Hosted Documentation Site](https://kr1ny77.github.io/BasketForm-AI/)** — browsable, navigable version of all product, process, architecture, quality, and testing documentation below.
+**[Hosted Documentation Site](https://kr1ny77.github.io/BasketForm-AI/)** — browsable version of all product, process, architecture, quality, and testing documentation.
+
+**[Customer Handover Guide](docs/customer-handover.md)** — setup, deployment, configuration, and transition details for handover.
 
 ### Architecture
 - [Architecture Overview](docs/architecture/README.md)
@@ -205,6 +207,7 @@ BasketForm-AI/
 - [ADR-003: JWT Authentication](docs/architecture/adr/ADR-003-jwt-auth.md)
 
 ### Reports
+- [Week 6 Report](reports/week6/README.md)
 - [Week 5 Report](reports/week5/README.md)
 - [Week 4 Report](reports/week4/README.md)
 - [Customer Review Summary](reports/week4/customer-review-summary.md)
@@ -223,6 +226,16 @@ BasketForm-AI/
 - [Development Process](docs/development-process.md)
 - [Architecture Documentation](docs/architecture/)
 - [Changelog](CHANGELOG.md)
+- [Contributing Guide](CONTRIBUTING.md)
+- [Agent Guidance](AGENTS.md)
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for development workflow and code review process.
+
+## Agent Guidance
+
+See [AGENTS.md](AGENTS.md) for AI agent and automated tool guidance.
 
 ## License
 

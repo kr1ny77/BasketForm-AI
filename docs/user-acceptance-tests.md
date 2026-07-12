@@ -133,6 +133,8 @@ End-user-facing scenarios for BasketForm-AI. These are executed by the customer 
 
 **Execution result (Sprint 3 UAT):** Passed — customer confirmed the system correctly identified the absence of a human in the video and displayed the expected error message without crashing.
 
+**Execution result (Sprint 4 UAT):** Passed — customer confirmed the person-detection validation works correctly. Videos without a human are rejected with a clear error message. Customer tested with pre-provided test videos and confirmed the behavior.
+
 ## UAT-008: Share Analysis Progress with a Friend
 
 **Status:** Active
@@ -152,3 +154,5 @@ End-user-facing scenarios for BasketForm-AI. These are executed by the customer 
 **Expected outcome:** The analysis result is successfully shared. The current user sees a success confirmation. The selected friend can view the shared analysis report and progress in their own dashboard or notifications.
 
 **Execution result (Sprint 3 UAT):** Passed — customer confirmed they could successfully select a friend and share their progress, and the friend correctly received and viewed the shared analysis report.
+
+**Execution result (Sprint 4 UAT):** Passed — customer confirmed the hover-to-share functionality works correctly via the Friends tab. The "Share" button appears when hovering over a friend's name and sharing works as expected.
