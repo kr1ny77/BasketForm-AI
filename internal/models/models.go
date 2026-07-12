@@ -19,6 +19,7 @@ type Video struct {
 	Status    string    `json:"status"`
 	Progress  int       `json:"progress"`
 	Score     *int      `json:"score,omitempty"`
+	Error     string    `json:"error,omitempty"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }

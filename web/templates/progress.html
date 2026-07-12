@@ -126,7 +126,7 @@
                     document.getElementById('processingDone').style.display = 'block';
                     loadHistory();
                 } else if (data.status === 'error') {
-                    document.getElementById('processingStatus').textContent = t.processing_failed || 'Processing failed.';
+                    document.getElementById('processingStatus').textContent = data.error || t.processing_failed || 'Processing failed.';
                 } else {
                     document.getElementById('processingStatus').textContent = t.progress_proc || 'Processing video...';
                     setTimeout(pollStatus, 1000);
