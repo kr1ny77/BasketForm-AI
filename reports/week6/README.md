@@ -149,7 +149,8 @@ The product is stable and ready for the final Week 7 stabilization pass. The cor
 | ML Engineer | #71, #128-#133 | PRs linked to issues | Reviewed team PRs | UAT execution | CONTRIBUTING.md, AGENTS.md, customer-handover.md | Deployment verification |
 | Customer | — | — | — | UAT execution | Documentation review | Feedback provision |
 
-## Evidence
+## Screenshots
 
-![Sprint 4 Milestone](Will be added soon)
-![Week 6 Release](Will be added soon)
+![Sprint 4 Milestone](./images/mil.png)
+![Week 6 Release](./images/rel.png)
+![Issue-linked PR](./images/pr.png)
