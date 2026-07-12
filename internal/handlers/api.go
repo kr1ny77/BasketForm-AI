@@ -163,6 +163,7 @@ func (a *APIHandler) Status(w http.ResponseWriter, r *http.Request) {
 		"id":       videoID,
 		"status":   videoStatus,
 		"progress": videoProgress,
+		"error":   video.Error,
 	})
 }
 

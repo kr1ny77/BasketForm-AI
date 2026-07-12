@@ -590,3 +590,15 @@ func (s *Storage) GetSharedByMe(userID string) []*models.SharedResult {
 	}
 	return results
 }
+
+func (s *Storage) UpdateStatusWithError(id, status string, progress int, errMsg string) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if v, ok := s.videos[id]; ok {
+		v.Status = status
+		v.Progress = progress
+		v.Error = errMsg
+		v.UpdatedAt = time.Now()
+		s.saveVideoJSON(v)
+	}
+}

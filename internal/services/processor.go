@@ -2,6 +2,7 @@ package services
 
 import (
 	"encoding/json"
+	"strings"
 	"log"
 	"os"
 	"os/exec"
@@ -59,10 +60,14 @@ func (p *Processor) ProcessVideo(id string) {
 
 	p.storage.UpdateStatus(id, "processing", 10)
 
-	err := runML(videoPath, reportPath, video.Lang)
+	output, err := runML(videoPath, reportPath, video.Lang)
 	if err != nil {
+		errMsg := "Processing failed."
+		if strings.Contains(output, "No human detected") {
+			errMsg = "No person detected in the video. Please upload a video showing a person shooting a basketball."
+		}
 		log.Printf("[PROCESS] ML script failed for %s: %v", id, err)
-		p.storage.UpdateStatus(id, "error", 0)
+		p.storage.UpdateStatusWithError(id, "error", 0, errMsg)
 		return
 	}
 
@@ -149,7 +154,7 @@ func findPython() string {
 	return "python3"
 }
 
-func runML(inputPath, reportPath, lang string) error {
+func runML(inputPath, reportPath, lang string) (string, error) {
 	python := findPython()
 	script := filepath.Join("ML", "main.py")
 
@@ -165,10 +170,10 @@ func runML(inputPath, reportPath, lang string) error {
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Printf("ML FAILED: %v\nOUTPUT: %s", err, string(output))
-		return err
+		return string(output), err
 	}
 	log.Printf("ML OK: %s", string(output))
-	return nil
+	return string(output), nil
 }
 
 func loadMLReport(reportPath string) (*mlReport, error) {
