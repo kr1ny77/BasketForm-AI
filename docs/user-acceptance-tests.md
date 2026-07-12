@@ -114,3 +114,41 @@ End-user-facing scenarios for BasketForm-AI. These are executed by the customer 
 **Expected outcome:** The friend request is successfully accepted. The requesting user is removed from the "Incoming Requests" list and added to the active "Friends" list. A success notification or UI update confirms the new connection.
 
 **Execution result (Sprint 3 UAT):** Passed — customer confirmed they could view incoming requests and successfully accept a friend request, correctly moving the user to the active friends list.
+
+## UAT-007: Upload Video Without Human (No Person Detected)
+
+**Status:** Active
+
+**User goal:** Upload a video that does not contain a human and receive an appropriate error message indicating no person was found in the clip.
+
+**Preconditions:** Application is running and accessible in a browser. User is logged in. User has a supported video file (MP4, MOV, or AVI) that contains no humans (e.g., an empty basketball court, a pet, or inanimate objects).
+
+**Step-by-step instructions:**
+1. Navigate to the main upload page.
+2. Upload the video file that does not contain a human.
+3. Wait for the video to process (processing progress bar should display).
+4. Observe the application's response after the processing completes.
+
+**Expected outcome:** The application successfully finishes processing the video but does not generate fake analysis results. Instead, it displays a clear error message or notification stating that the video cannot be analyzed because no person was found in the clip.
+
+**Execution result (Sprint 3 UAT):** Passed — customer confirmed the system correctly identified the absence of a human in the video and displayed the expected error message without crashing.
+
+## UAT-008: Share Analysis Progress with a Friend
+
+**Status:** Active
+
+**User goal:** Share a completed basketball shooting analysis result with a connected friend.
+
+**Preconditions:** User is logged in. User has at least one completed analysis result. User has at least one accepted friend in their "Friends" list.
+
+**Step-by-step instructions:**
+1. Navigate to the analysis history or results page.
+2. Select a completed analysis result to view its details.
+3. Locate and click the "Share with Friend" or "Share Progress" button.
+4. Select a friend from the provided list of connected friends.
+5. Confirm the sharing action.
+6. Log in as the selected friend and verify they received the shared progress.
+
+**Expected outcome:** The analysis result is successfully shared. The current user sees a success confirmation. The selected friend can view the shared analysis report and progress in their own dashboard or notifications.
+
+**Execution result (Sprint 3 UAT):** Passed — customer confirmed they could successfully select a friend and share their progress, and the friend correctly received and viewed the shared analysis report.
