@@ -117,6 +117,9 @@ The customer reviewed the updated documentation set during the Week 6 meeting. T
 
 **Link:** [llm-report.md](llm-report.md)
 
+## Sanitized demo video
+**Link:** https://youtu.be/hMGA_vBBImw
+
 ## Quality, Testing, Architecture, and Process Documentation
 
 - [Quality Requirements](../../docs/quality-requirements.md)
