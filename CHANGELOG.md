@@ -6,6 +6,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [v0.4.0] — 2026-07-13
+
+Sprint 4 — Assignment 6: YOLO-based human presence detection, UI refinements, customer handover documentation, and sprint review materials.
+
+### Added
+- YOLO-based human presence check to skip empty video clips, improving processing reliability
+- Customer handover guide with setup, deployment, configuration, and transition details
+- Sprint review transcript and summary documents
+- Week 6 report with full sprint deliverables
+- LinkedIn ADRs sections to QR-003 and QR-004 for improved traceability
+- `web_upd` UI enhancements (centered navigation, redesigned friend cards, profile modals)
+- Updated user acceptance tests with new scenarios
+
+### Fixed
+- All broken links, screenshots, and report references in Week 5 documentation
+- Demo video link in Week 5 README
+- UI issues on Friends and Shared pages
+
+### Changed
+- LLM update for improved vision analysis accuracy
+- Updated latest release version to v0.3.0 in documentation
+- Reflection.md updated with Sprint 4 insights
+- User acceptance tests refined based on Sprint 4 feedback
+
+### Documentation
+- Customer-facing documentation finalized (handover guide, Week 6 report)
+- Sprint review materials (transcript and summary) added
+- Architecture documentation maintained and updated
+- All Week 5 report links and references validated
+
 ## [v0.3.0] — 2026-07-04
 
 Sprint 3 — Assignment 5: Architecture documentation, ADRs, LLM-based scoring, UI/UX improvements.
