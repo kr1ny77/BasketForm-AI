@@ -144,10 +144,10 @@ End-user-facing scenarios for BasketForm-AI. These are executed by the customer 
 **Preconditions:** User is logged in. User has at least one completed analysis result. User has at least one accepted friend in their "Friends" list.
 
 **Step-by-step instructions:**
-1. Navigate to the analysis history or results page.
-2. Select a completed analysis result to view its details.
-3. Locate and click the "Share with Friend" or "Share Progress" button.
-4. Select a friend from the provided list of connected friends.
+1. Navigate to Friends
+2. Pick a friend and hover the coursor
+3. Locate and click the "Share" button.
+4. Choose a result that you want to share and share it
 5. Confirm the sharing action.
 6. Log in as the selected friend and verify they received the shared progress.
 
