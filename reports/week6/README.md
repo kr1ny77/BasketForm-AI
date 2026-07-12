@@ -129,6 +129,7 @@ The customer reviewed the updated documentation set during the Week 6 meeting. T
 - [Architecture Overview](../../docs/architecture/README.md)
 - [Definition of Done](../../docs/definition-of-done.md)
 - [User Stories](../../docs/user-stories.md)
+- [Roadmap](../../docs/roadmap.md)
 
 ## Current Product Status and Week 7 Follow-Up
 
