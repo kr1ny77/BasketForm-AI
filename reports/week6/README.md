@@ -10,7 +10,7 @@
 
 ## Sprint 4 Summary
 
-**Sprint Goal:** Deliver a stable, customer-usable trial release (pre-release v0.4.0-rc.1) together with transition-readiness evidence: a completed customer-facing documentation set, and re-verified deployment/access steps so the product could be handed over on short notice.
+**Sprint Goal:** Deliver a stable, customer-usable trial release (tagged **v0.4.0**, the Week 6 trial / handover-candidate release) together with transition-readiness evidence: a completed customer-facing documentation set, and re-verified deployment/access steps so the product could be handed over on short notice.
 
 **Sprint Dates:** 2026-07-13 to 2026-07-19
 
@@ -91,7 +91,7 @@ The customer reviewed the updated documentation set during the Week 6 meeting. T
 
 ## Week 6 Release
 
-**Release:** [Sprint 4 Trial Release](https://github.com/kr1ny77/BasketForm-AI/releases) (pre-release v0.4.0-rc.1)
+**Release:** [Sprint 4 — Week 6 Trial Release](https://github.com/kr1ny77/BasketForm-AI/releases) (tag **v0.4.0**)
 
 **CHANGELOG:** [CHANGELOG.md](../../CHANGELOG.md)
 
@@ -146,8 +146,12 @@ The product is stable and ready for the final Week 7 stabilization pass. The cor
 
 | Team Member | Issues | PRs | Review | Testing | Documentation | Transition |
 |-------------|--------|-----|--------|---------|---------------|------------|
-| ML Engineer | #71, #128-#133 | PRs linked to issues | Reviewed team PRs | UAT execution | CONTRIBUTING.md, AGENTS.md, customer-handover.md | Deployment verification |
-| Customer | — | — | — | UAT execution | Documentation review | Feedback provision |
+| **kr1ny77** (Owner / Dev) | #133 (reconcile traceability); opened #129–#133 | #149 (web update); person-detection error-message commit | Reviewer of #128, #129 | Person-detection error message | US-005–US-008 traceability reconciliation (#133) | — |
+| **Koomaz** | #128 (regression testing), #132 (deployment) | #145 (customer-facing docs + handover + Week 6 report); merged #143 / #144 / #145 / #151 | Reviewer of #71, #130 | Mid-sprint regression testing (#128) | customer-handover.md, Week 6 report, customer-facing docs | Deployment & access re-verification (#132) |
+| **romasntlv** | #71 (multi-throw), #129 (CONTRIBUTING.md) | #140 (YOLO person-check); #142 / #148 (UAT); #143 / #144 (review docs); #154 | Reviewer of #131 | YOLO person-detection feature; UAT updates | CONTRIBUTING.md; UAT docs; sprint-review transcript & summary | — |
+| **gimacorp** | #131 (handover — assigned implementer); opened #71, #128 | Roadmap update (Sprint 4/5 scope) | Reviewer of #132 | — | Roadmap; customer-handover.md (assigned) | Deployment re-verification review (#132) |
+| **mentalafffection** | #130 (AGENTS.md) | #147 (reflection); #150 (user-stories fix); #151 (demo video) | Reviewer of #133 | — | AGENTS.md; reflection.md | — |
+| **Customer** | — | — | — | UAT execution (UAT-007, UAT-008) | Documentation review | Feedback provision |
 
 ## Screenshots
 
