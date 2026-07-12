@@ -147,5 +147,5 @@ The product is stable and ready for the final Week 7 stabilization pass. The cor
 
 ## Evidence
 
-![Sprint 4 Milestone](images/sprint4-milestone.png)
-![Week 6 Release](images/week6-release.png)
+![Sprint 4 Milestone](Will be added soon)
+![Week 6 Release](Will be added soon)
