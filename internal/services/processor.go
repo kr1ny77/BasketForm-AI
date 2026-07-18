@@ -157,7 +157,7 @@ func runML(inputPath, reportPath, lang string) (string, error) {
 	log.Printf("ML run: python=%s script=%s input=%s report=%s lang=%s", python, script, inputPath, reportPath, lang)
 
 	cmd := exec.Command(python, script, inputPath, reportPath, "--lang", lang)
-	if dir, err := os.Getwd(); err == nil {
+	if dir := findProjectRoot(); dir != "" {
 		cmd.Dir = dir
 	}
 
@@ -168,6 +168,23 @@ func runML(inputPath, reportPath, lang string) (string, error) {
 	}
 	log.Printf("ML OK: %s", string(output))
 	return string(output), nil
+}
+
+func findProjectRoot() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	for {
+		if _, err := os.Stat(filepath.Join(dir, "go.mod")); err == nil {
+			return dir
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			return dir
+		}
+		dir = parent
+	}
 }
 
 func loadMLReport(reportPath string) (*mlReport, error) {
