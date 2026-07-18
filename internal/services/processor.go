@@ -12,15 +12,7 @@ import (
 	"github.com/kr1ny77/BasketForm-AI/internal/models"
 )
 
-var debugLog *os.File
 
-func init() {
-	f, err := os.OpenFile("/home/basketfrom-ai/BasketForm-AI/processor.log", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
-	if err == nil {
-		debugLog = f
-		log.SetOutput(f)
-	}
-}
 
 type Processor struct {
 	storage *Storage
@@ -165,7 +157,9 @@ func runML(inputPath, reportPath, lang string) (string, error) {
 	log.Printf("ML run: python=%s script=%s input=%s report=%s lang=%s", python, script, inputPath, reportPath, lang)
 
 	cmd := exec.Command(python, script, inputPath, reportPath, "--lang", lang)
-	cmd.Dir = "/home/basketfrom-ai/BasketForm-AI"
+	if dir := findProjectRoot(); dir != "" {
+		cmd.Dir = dir
+	}
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -174,6 +168,23 @@ func runML(inputPath, reportPath, lang string) (string, error) {
 	}
 	log.Printf("ML OK: %s", string(output))
 	return string(output), nil
+}
+
+func findProjectRoot() string {
+	dir, err := os.Getwd()
+	if err != nil {
+		return ""
+	}
+	for {
+		if _, err := os.Stat(filepath.Join(dir, "go.mod")); err == nil {
+			return dir
+		}
+		parent := filepath.Dir(dir)
+		if parent == dir {
+			return dir
+		}
+		dir = parent
+	}
 }
 
 func loadMLReport(reportPath string) (*mlReport, error) {

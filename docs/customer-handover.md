@@ -95,6 +95,17 @@ PORT=8080 ./bin/server
 
 Nginx reverse proxy: port 80 → 8080.
 
+### Automated Deployment
+
+Use the provided deployment script for reliable, repeatable deployments:
+
+```bash
+# Deploy to the production VM
+REMOTE_USER=root REMOTE_HOST=80.74.30.14 ./scripts/deploy.sh
+```
+
+The script builds for Linux, uploads files, installs ML dependencies, restarts the service, and runs a smoke test. Set `SKIP_ML_DEPS=1` to skip dependency installation.
+
 ### Docker Deployment
 
 ```bash
