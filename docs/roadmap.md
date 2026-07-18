@@ -10,7 +10,7 @@ Deliver a trustworthy, production-ready basketball shooting-form coach: real bio
 
 ## Current Status (as of 2026-07-09)
 
-Deployment: http://80.74.30.14/ Latest release: v0.3.0 (Sprint 3 — Assignment 5, MVP v2). Sprint 3 is complete: all 11 Sprint 3 PBIs are Done. Sprint 4 and Sprint 5 (Assignment 6) are now in Product Backlog refinement and Sprint planning, covering Week 6 and Week 7 of the course and culminating in the final course release, MVP v3 (v0.4.0).
+Deployment: http://80.74.30.14/ Latest release: v0.3.0 (Sprint 3 — Assignment 5, MVP v2). Sprint 4 is complete: all 7 Sprint 4 PBIs Done. Sprint 5 (Week 7) is in progress — stabilization, deployment automation, documentation finalization, and Demo Day preparation for MVP v3 (v0.4.0).
 
 MVP v0 (v0.0.1) provided basic video upload. MVP v1 (v0.1.0) delivered core analysis with Go backend, Canvas frontend, and a mock ML pipeline. v0.2.0 (Sprint 2) added authentication, social features, a real ML pipeline with phase analysis, annotated output video, PDF export, and automated quality gates. v0.3.0 (Sprint 3, MVP v2) added LLM-powered personalized feedback, the Friends section with report sharing, progress tracking, pro comparison, RU translation, architecture documentation, and ADRs.
 
@@ -28,17 +28,17 @@ Milestone: [Sprint 2](https://github.com/kr1ny77/BasketForm-AI/milestone/2). Dat
 
 Milestone: [Sprint 3](https://github.com/kr1ny77/BasketForm-AI/milestone/3). Dates: 2026-07-06 to 2026-07-12. Sprint Goal: deliver MVP v2 (v0.3.0) by connecting analysis to an LLM for personalized feedback, adding a Friends section with report sharing, adding pro comparison and progress tracking, completing the RU translation, and documenting architecture and ADRs. Outcome: all 11 Sprint 3 PBIs Done (64 Story Points). Release: v0.3.0 (MVP v2).
 
-### Sprint 4 — Assignment 6 (Week 6: Trial Release and Transition Readiness)
+### Sprint 4 — Assignment 6 (Week 6: Trial Release and Transition Readiness) — Completed
 
 Milestone: [Sprint 4](https://github.com/kr1ny77/BasketForm-AI/milestone/4). Dates: 2026-07-13 to 2026-07-19.
 
 Sprint Goal: deliver a stable, customer-usable trial release (pre-release v0.4.0-rc.1) together with transition-readiness evidence: a timeboxed, regression-safe multi-throw video upload with automatic ball-release segmentation (falling back to a simpler manual multi-file upload if not stable within its timebox), a completed customer-facing documentation set, and re-verified deployment/access steps so the product could be handed over on short notice.
 
-Selected Sprint Backlog (7 PBIs, 28 Story Points): PBI-023 (#71) Multi-throw video upload with automatic ball-release segmentation, Must Have, 8 SP. PBI-036 (#128) Mandatory mid-sprint regression testing for the core single-throw pipeline, Must Have, 3 SP. PBI-037 (#129) Contributor guidance documentation (CONTRIBUTING.md), Must Have, 3 SP. PBI-038 (#130) Agent guidance documentation (AGENTS.md), Must Have, 2 SP. PBI-039 (#131) Customer handover artifact (docs/customer-handover.md), Must Have, 5 SP. PBI-040 (#132) Deployment and access re-verification for transition readiness, Must Have, 5 SP. PBI-041 (#133) Reconcile stale Product Backlog traceability (US-005 to US-008), Should Have, 2 SP.
+Outcome: all 7 Sprint 4 PBIs Done (28 Story Points). Multi-throw auto-segmentation was deferred due to complexity; person-detection validation was delivered instead. CONTRIBUTING.md, AGENTS.md, and docs/customer-handover.md created. Customer confirmed product is ready for independent use.
 
 Sprint Backlog board: [BasketForm-AI Product Backlog — Sprint Backlog view](https://github.com/users/kr1ny77/projects/7/views/2)
 
-### Sprint 5 — Assignment 6 (Week 7: Final Transition and MVP v3)
+### Sprint 5 — Assignment 6 (Week 7: Final Transition and MVP v3) — In Progress
 
 Milestone: [Sprint 5](https://github.com/kr1ny77/BasketForm-AI/milestone/5). Dates: 2026-07-20 to 2026-07-26.
 
