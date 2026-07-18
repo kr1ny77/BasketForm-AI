@@ -158,16 +158,15 @@ If ML analysis fails:
 
 ## Current Handover Level
 
-**Handover level:** Independently used by customer
+**Handover level:** Ready for independent use
 
-Building on the Week 6 trial (account registration, video upload, analysis results, friends feature, and sharing), the customer independently used the product again during the Week 7 final meeting: uploading two shooting videos in sequence and correctly reading the progress-tracking feature (best score, average score, latest result, and chart update) from written guidance alone, without live step-by-step direction from the team. The product is deployed and accessible at the provided URL, and the customer can use it independently end-to-end without team assistance.
+The customer has been able to register an account, upload videos, view analysis results, use the friends feature, and share results during the Week 6 trial. The product is deployed and accessible at the provided URL. The customer can use the product independently without team assistance.
 
 **Customer confirmation status:** Accepted with follow-up items
 
-The customer confirmed the product meets requirements and expressed high satisfaction with the team's speed and quality at both the Week 6 trial and the Week 7 final meeting. Follow-up items identified across the two meetings:
-- Automatic video splitting feature (deferred to post-course; documented as a known limitation)
-- Optional UI hint recommending the camera angle (side view) before or during upload — suggested by the customer as a nice-to-have, not required for handover
-- Final Sprint 5 regression pass, documentation finalization, and Demo Day rehearsal — in progress, tracked on the Sprint 5 milestone
+The customer confirmed the product works and meets the Definition of Done. Follow-up items identified during the Week 6 trial:
+- Automatic video splitting feature (deferred to post-course)
+- General site optimization and bug fixes (planned for Sprint 5)
 
 ## Support Expectations
 
