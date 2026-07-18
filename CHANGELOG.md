@@ -6,7 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
-## [v0.4.0] — 2026-07-20
+## [v0.4.0] — 2026-07-19
+
+Sprint 4 — Assignment 6: Week 6 trial / handover-candidate release.
+
+### Added
+- YOLO-based human presence check: videos without a detected person are rejected with a clear error message instead of producing fake analysis results
+- CONTRIBUTING.md, AGENTS.md, and docs/customer-handover.md (maintained customer-handover artifact)
+
+### Changed  
+- Friends section redesigned, navigation centered, profile page modals polished
+- LLM prompt/update tweaks and documentation fixes for a smoother experience
+
+### Documentation
+- Finalized customer-facing documentation set: handover guide, Week 6 report, sprint review materials, and updated user acceptance tests
+
+## [v0.5.0] — 2026-07-26
 
 Sprint 5 — Assignment 6: Stabilization, deployment automation, and MVP v3.
 
