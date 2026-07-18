@@ -10,7 +10,7 @@ Deliver a trustworthy, production-ready basketball shooting-form coach: real bio
 
 ## Current Status (as of 2026-07-09)
 
-Deployment: http://80.74.30.14/ Latest release: v0.3.0 (Sprint 3 — Assignment 5, MVP v2). Sprint 4 is complete: all 7 Sprint 4 PBIs Done. Sprint 5 (Week 7) is in progress — stabilization, deployment automation, documentation finalization, and Demo Day preparation for MVP v3 (v0.4.0).
+Deployment: http://80.74.30.14/ Latest release: v0.3.0 (Sprint 3 — Assignment 5, MVP v2). Sprint 4 is complete: all 7 Sprint 4 PBIs Done. Sprint 5 (Week 7) is in progress — stabilization, deployment automation, documentation finalization, and Demo Day preparation for MVP v3 (v0.5.0).
 
 MVP v0 (v0.0.1) provided basic video upload. MVP v1 (v0.1.0) delivered core analysis with Go backend, Canvas frontend, and a mock ML pipeline. v0.2.0 (Sprint 2) added authentication, social features, a real ML pipeline with phase analysis, annotated output video, PDF export, and automated quality gates. v0.3.0 (Sprint 3, MVP v2) added LLM-powered personalized feedback, the Friends section with report sharing, progress tracking, pro comparison, RU translation, architecture documentation, and ADRs.
 
@@ -42,13 +42,13 @@ Sprint Backlog board: [BasketForm-AI Product Backlog — Sprint Backlog view](ht
 
 Milestone: [Sprint 5](https://github.com/kr1ny77/BasketForm-AI/milestone/5). Dates: 2026-07-20 to 2026-07-26.
 
-Sprint Goal: use the Week 6 customer trial feedback, remaining fixes, and documentation updates to deliver the final course version of BasketForm-AI, MVP v3 (v0.4.0): triage and address customer feedback from the Week 6 trial, finish or roll back any unstable part of the multi-throw auto-segmentation feature, execute a concrete and inspectable product transition (access, deployment ownership, and a customer-handover artifact verified against the live deployment), keep contributor, agent, and customer-facing documentation current, and prepare and rehearse the Demo Day presentation.
+Sprint Goal: use the Week 6 customer trial feedback, remaining fixes, and documentation updates to deliver the final course version of BasketForm-AI, MVP v3 (v0.5.0): triage and address customer feedback from the Week 6 trial, finish or roll back any unstable part of the multi-throw auto-segmentation feature, execute a concrete and inspectable product transition (access, deployment ownership, and a customer-handover artifact verified against the live deployment), keep contributor, agent, and customer-facing documentation current, and prepare and rehearse the Demo Day presentation.
 
 Selected Sprint Backlog (6 PBIs, 28 Story Points): PBI-042 (#134) Triage and address Week 6 customer trial feedback — marked as expected follow-up scope, to be refined at Sprint 5 planning once Week 6 feedback exists, Must Have, 8 SP. PBI-043 (#135) Final MVP v3 stabilization and regression pass, Must Have, 5 SP. PBI-044 (#136) Final documentation and handover package finalization, Must Have, 5 SP. PBI-045 (#137) Final Demo Day preparation and walkthrough script, Must Have, 3 SP. PBI-046 (#138) Automate trial-release deployment pipeline for reliability, Should Have, 5 SP. PBI-047 (#139) Final course retrospective and lessons-learned report, Should Have, 2 SP.
 
 Sprint Backlog board: [BasketForm-AI Product Backlog — Sprint Backlog view](https://github.com/users/kr1ny77/projects/7/views/2)
 
-## MVP v3 (v0.4.0) — End-of-Course Scope
+## MVP v3 (v0.5.0) — End-of-Course Scope
 
 MVP v3 is the final release of the course engagement, delivered at the close of Sprint 5. The scope is justified by customer value, transition quality, and course closure. Customer value: the Week 6 trial release lets the customer try the product before final delivery, and Sprint 5 reacts to that real feedback (PBI-042) instead of assumptions; the multi-throw auto-segmentation feature (PBI-023) is delivered or safely rolled back to its manual-upload fallback within a fixed timebox to protect product stability. Transition and quality: complete customer-facing documentation (README, docs/customer-handover.md, CONTRIBUTING.md, AGENTS.md), re-verified deployment and access (PBI-040), an automated deployment pipeline (PBI-046), and a final stabilization/regression pass (PBI-043) so the product can be run, verified, and maintained without the team. Course closure: a rehearsed Demo Day walkthrough (PBI-045) and a final retrospective and lessons-learned report (PBI-047) close out the course engagement.
 
@@ -56,7 +56,7 @@ Evidence of completeness: all 13 Sprint 4 and Sprint 5 PBIs have expected outcom
 
 ## State Reached by the End of the Course
 
-By the end of Sprint 5 (2026-07-26), BasketForm-AI is expected to reach MVP v3 (v0.4.0): a stable, customer-usable product that has been trialed with the customer, transitioned with verified access and deployment, documented for independent operation, and demonstrated at the course Demo Day. This roadmap covers the scope of the course engagement only; product evolution beyond MVP v3 is outside the scope of Assignment 6 and is intentionally not planned here.
+By the end of Sprint 5 (2026-07-26), BasketForm-AI is expected to reach MVP v3 (v0.5.0): a stable, customer-usable product that has been trialed with the customer, transitioned with verified access and deployment, documented for independent operation, and demonstrated at the course Demo Day. This roadmap covers the scope of the course engagement only; product evolution beyond MVP v3 is outside the scope of Assignment 6 and is intentionally not planned here.
 
 ## Links
 
