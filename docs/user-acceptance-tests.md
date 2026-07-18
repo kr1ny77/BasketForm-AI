@@ -156,3 +156,23 @@ End-user-facing scenarios for BasketForm-AI. These are executed by the customer 
 **Execution result (Sprint 3 UAT):** Passed — customer confirmed they could successfully select a friend and share their progress, and the friend correctly received and viewed the shared analysis report.
 
 **Execution result (Sprint 4 UAT):** Passed — customer confirmed the hover-to-share functionality works correctly via the Friends tab. The "Share" button appears when hovering over a friend's name and sharing works as expected.
+
+## UAT-009: View Analysis History and Progress Tracking
+
+**Status:** Active
+
+**User goal:** Access past analysis results, view the detailed points breakdown for specific biomechanical criteria, and track overall progress over time.
+
+**Preconditions:** User is logged in. User has completed at least two video analyses.
+
+**Step-by-step instructions:**
+1. Navigate to the "Progress" page using the main navigation menu.
+2. Verify that a list or grid of all past analysis results is displayed, showing thumbnails and overall scores.
+3. Click on one of the past analyses to open its detailed report.
+4. Scroll down to the "Criteria Breakdown" or "Phase Analysis" section.
+5. Verify that the specific criteria (Stance, Arm Angle, Release, Follow-through) are displayed with their respective assigned points and descriptive feedback.
+6. Return to the main progress view and verify that the overall progress trend or cumulative points are visible and accurately reflect the completed analyses.
+
+**Expected outcome:** The user can seamlessly access past analyses. The detailed report correctly displays the points assigned to the four specific criteria alongside their descriptive feedback. The overall progress history is accurately reflected without missing data.
+
+**Execution result (Sprint 3 UAT):** Passed — customer confirmed they could view past analyses, and the points/criteria breakdown correctly matched the expected categories (Stance, Arm Angle, Release, Follow-through) with accurate, specific feedback for each.
