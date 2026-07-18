@@ -96,11 +96,17 @@ Summary: [sprint-review-summary.md](sprint-review-summary.md)
 
 ## Reflection, Retrospective, and LLM Usage
 
-[reflection.md](reflection.md) — Pending
+### Reflection
 
-[retrospective.md](retrospective.md) — Pending
+Link: [reflection.md](reflection.md)
 
-[llm-report.md](llm-report.md) — Pending
+### Retrospective
+
+Link: [retrospective.md](retrospective.md)
+
+### LLM Usage Report
+
+Link: [llm-report.md](llm-report.md)
 
 ## Current Product Status
 
