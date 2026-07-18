@@ -127,4 +127,16 @@ This table will be finalized with full detail once all Sprint 5 PRs are merged a
 
 ## Screenshots
 
-Pending. Screenshots for the Sprint 5 milestone, the final release, final product access and deployment evidence, and an example reviewed issue-linked PR will be added to reports/week7/images/ before final submission.
+![Sprint 5 milestone](images/sprint5-milestone.png)
+Sprint 5 milestone view showing PBI-042 through PBI-047 and overall completion percentage.
+
+![Example reviewed, issue-linked pull request](images/reviewed-pr-example.png)
+PR #161, linked to PBI-043/PBI-046, showing a recorded reviewer approval from a team member other than the author.
+
+![Live product access](images/live-product-access.png)
+The deployed product's login page at http://80.74.30.14/, confirming the final product access point is reachable.
+
+![Sprint 5 backlog audit example](images/pbi-046-backlog-audit.png)
+PBI-046 (#138) after the Sprint 5 backlog audit: Project Status updated to In Progress and the acceptance-criteria checkboxes that are genuinely met are checked.
+
+The final release screenshot and public demo video will be added once the v0.5.0 release is cut, per the "Release and Changelog" section above.
