@@ -175,4 +175,4 @@ End-user-facing scenarios for BasketForm-AI. These are executed by the customer 
 
 **Expected outcome:** The user can seamlessly access past analyses. The detailed report correctly displays the points assigned to the four specific criteria alongside their descriptive feedback. The overall progress history is accurately reflected without missing data.
 
-**Execution result (Sprint 3 UAT):** Passed — customer confirmed they could view past analyses, and the points/criteria breakdown correctly matched the expected categories (Stance, Arm Angle, Release, Follow-through) with accurate, specific feedback for each.
+**Execution result (Sprint 5 UAT):** Passed — customer confirmed they could view past analyses, and the points/criteria breakdown correctly matched the expected categories (Stance, Arm Angle, Release, Follow-through) with accurate, specific feedback for each.
