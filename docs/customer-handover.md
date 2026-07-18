@@ -8,7 +8,7 @@ BasketForm-AI is an AI-powered web platform for analyzing basketball shooting fo
 
 **Live product:** [http://80.74.30.14/](http://80.74.30.14/)
 **Source repository:** [github.com/kr1ny77/BasketForm-AI](https://github.com/kr1ny77/BasketForm-AI)
-**Latest release:** [v0.3.0 — MVP v2](https://github.com/kr1ny77/BasketForm-AI/releases/tag/v0.3.0)
+**Latest release:** [v0.4.0 — Week 6 Trial / Handover-Candidate Release](https://github.com/kr1ny77/BasketForm-AI/releases/tag/v0.4.0) (final MVP v3 release v0.5.0 is delivered at the close of Sprint 5 / Week 7)
 
 ## What Has Been Transferred
 
