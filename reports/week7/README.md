@@ -112,7 +112,7 @@ Link: https://youtu.be/s4hl46DU02k
 
 ## Current Product Status
 
-MVP v3 is in final stabilization. The Week 6 trial release (v0.4.0) remains live and stable at http://80.74.30.14/. Sprint 5 has resolved the hardcoded-path and data-race issues found during follow-up testing and rewritten the deployment script. The remaining Sprint 5 scope — a final regression report, documentation finalization, Demo Day rehearsal, and the final retrospective — must be completed to reach MVP v3 and cut the v0.5.0 release.
+MVP v3 (v1.0.0) is fully stabilized and released. Sprint 5 successfully resolved the hardcoded-path and data-race issues found during follow-up testing, rewrote the deployment script, and finalized all customer-facing documentation. The product is live at http://80.74.30.14/ and has been independently validated by the customer (UAT-009 Passed).
 
 ## Contribution Traceability
 
@@ -121,8 +121,8 @@ MVP v3 is in final stabilization. The Week 6 trial release (v0.4.0) remains live
 | Koomaz | PBI-043 (#135, implementer), PBI-046 (#138, implementer) | #160, #161, #168 | Reviewed and approved by romasntlv | Hardcoded ML path fix, data race fix, deploy script rewrite, plus the PBI-043 regression report and Should-Have bug triage |
 | romasntlv | PBI-043 (#135, reviewer), PBI-046 (#138, reviewer), PBI-047 (#139, implementer) | Reviewed/approved #160, #161, #168; merged #167 | Approved Koomaz's Sprint 5 fixes and regression/triage docs | Also merged PBI-044's final handover PR (#167); PBI-047 (final course retrospective) not yet started (To Do) |
 | gimacorp | PBI-044 (#136, implementer), PBI-042 (#134, reviewer) | #162, #163, #164, #165, #167 | #162 and #163 reviewed by kr1ny77; #167 reviewed and merged by romasntlv | Week 7 report, handover-level update, reflection/retrospective/LLM report, and evidence screenshots; also reviewer on the reopened PBI-042 |
-| kr1ny77 | PBI-042 (#134, implementer, reopened), PBI-044 (#136, reviewer), PBI-047 (#139, reviewer) | — | Approved #162, #163 | Reopened PBI-042 after it was found closed with no linked evidence and is documenting the actual (light) Week 6 feedback triage; reviewer assigned for PBI-047 (not yet started) |
-| mentalafffection | PBI-045 (#137, implementer) | — | — | Demo Day preparation — not yet started (To Do) |
+| kr1ny77 | PBI-042 (#134, implementer, reopened), PBI-044 (#136, reviewer), PBI-047 (#139, reviewer) | — | Approved #162, #163 | Reopened PBI-042 after it was found closed with no linked evidence and is documenting the actual (light) Week 6 feedback triage; reviewer assigned for PBI-047 |
+| mentalafffection | PBI-045 (#137, implementer) | — | — | Demo Day preparation is completed |
 | Customer | — | — | UAT-009 execution | Independent progress-tracking UAT (Passed), final feedback |
 
 This table reflects final Sprint 5 attribution, cross-checked against the current Implementer/Reviewer fields on issues #134–#139 and the merged PRs #160, #161, #162, #163, #164, #165, #167, and #168.
