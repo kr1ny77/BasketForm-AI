@@ -78,15 +78,13 @@ UAT-009: View Analysis History and Progress Tracking — Passed. During the Week
 
 ## Release and Changelog
 
-Final SemVer release mapped to MVP v3: Pending. It will be tagged v0.5.0 on the protected default branch once the remaining Sprint 5 scope (final regression report, documentation finalization, Demo Day preparation, and the final retrospective) is Done. This section will be updated with the release link once it is published.
+Final SemVer release mapped to MVP v3: https://github.com/kr1ny77/BasketForm-AI/releases/tag/v1.0.0
 
-[CHANGELOG.md](../../CHANGELOG.md) — the [v0.5.0] section has been drafted with the Sprint 5 changes delivered so far.
-
-Public sanitized demo video (MVP v3 final state): Pending. Will be recorded and linked here once Sprint 5 is complete.
+[CHANGELOG.md](../../CHANGELOG.md) — the [v1.0.0] section has been drafted with the Sprint 5 changes delivered so far.
 
 ## Demo Day Preparation
 
-The required Week 7 lab rehearsal preparation (demo script, dry run, fallback plan) is in progress under the Sprint 5 milestone (PBI-045) and will be completed before the Week 7 lab rehearsal session.
+The required Week 7 lab rehearsal preparation (demo script, dry run, fallback plan) is is completed. 
 
 ## Sprint Review
 
@@ -144,3 +142,5 @@ The deployed product's login page at http://80.74.30.14/, confirming the final p
 PBI-046 (#138) after the Sprint 5 backlog audit: Project Status updated to In Progress and the acceptance-criteria checkboxes that are genuinely met are checked.
 
 ![Final release](images/release.png)
+
+
