@@ -2,7 +2,7 @@
 
 Web service for analyzing basketball shooting form via video upload, biomechanical keypoint extraction, technique scoring, and personalized AI feedback.
 
-**Live:** http://80.74.30.14/ · [v0.3.0 Release](https://github.com/kr1ny77/BasketForm-AI/releases/tag/v0.3.0) · [Documentation Site](https://kr1ny77.github.io/BasketForm-AI/) · [Customer Handover Guide](docs/customer-handover.md)
+**Live:** http://80.74.30.14/ · [v0.4.0 Release](https://github.com/kr1ny77/BasketForm-AI/releases/tag/v0.4.0) · [Documentation Site](https://kr1ny77.github.io/BasketForm-AI/) · [Customer Handover Guide](docs/customer-handover.md)
 
 ## Project Overview
 
@@ -207,6 +207,7 @@ BasketForm-AI/
 - [ADR-003: JWT Authentication](docs/architecture/adr/ADR-003-jwt-auth.md)
 
 ### Reports
+- [Week 7 Report — MVP v3 (Final)](reports/week7/README.md)
 - [Week 6 Report](reports/week6/README.md)
 - [Week 5 Report](reports/week5/README.md)
 - [Week 4 Report](reports/week4/README.md)

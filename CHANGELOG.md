@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+### Fixed
+- README.md release link updated from v0.3.0 to v0.4.0
+- Added Week 7 report link to README.md Reports section
+
+### Documentation
+- CONTRIBUTING.md: added deployment section referencing `scripts/deploy.sh`
+- AGENTS.md: added `scripts/deploy.sh` to key files table and deployment guidance
+- Added regression report for PBI-043 fixes (`docs/regression-report-pbi-043.md`)
+- Added Should-Have bug triage for PBI-043 (`docs/bug-triage-pbi-043.md`)
+
 ## [v0.4.0] — 2026-07-19
 
 Sprint 4 — Assignment 6: Week 6 trial / handover-candidate release.
