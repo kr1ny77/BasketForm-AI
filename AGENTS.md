@@ -78,6 +78,7 @@ BasketForm-AI/
 | `ML/feedback_generator.py` | LLM scoring via OpenRouter API |
 | `docs/` | All project documentation |
 | `reports/` | Course weekly reports |
+| `scripts/deploy.sh` | Production deployment script (build, upload, restart, smoke test) |
 
 ## Common Tasks
 
@@ -100,6 +101,13 @@ BasketForm-AI/
 1. Keep `docs/` files current with code changes
 2. Update `README.md` if setup or access instructions change
 3. Update `CHANGELOG.md` for user-visible changes
+
+### Deploying to Production
+
+1. Run `./scripts/deploy.sh` from repository root
+2. The script builds a Linux binary, uploads to VM at 80.74.30.14, installs ML deps, restarts the service, and runs a smoke test
+3. Set `SKIP_ML_DEPS=1` to skip ML dependency installation on repeated deploys
+4. Verify deployment at http://80.74.30.14/
 
 ## CI Pipeline
 

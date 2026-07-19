@@ -34,6 +34,16 @@ When opening a PR:
 5. Update CHANGELOG.md if user-visible changes are included
 6. Request review from a different team member
 
+### Deployment
+
+Production deployment uses `scripts/deploy.sh`. Run from repository root:
+
+```bash
+./scripts/deploy.sh
+```
+
+The script builds a Linux binary, uploads it to the VM, installs ML dependencies, restarts the service, and runs a smoke test. Use `SKIP_ML_DEPS=1` to skip ML dependency installation on repeated deploys.
+
 ### Required Reviews
 
 - At least one approval from a different team member is required
