@@ -78,11 +78,9 @@ UAT-009: View Analysis History and Progress Tracking — Passed. During the Week
 
 ## Release and Changelog
 
-Final SemVer release mapped to MVP v3: Pending. It will be tagged v0.5.0 on the protected default branch once the remaining Sprint 5 scope (final regression report, documentation finalization, Demo Day preparation, and the final retrospective) is Done. This section will be updated with the release link once it is published.
+Final SemVer release mapped to MVP v3: https://github.com/kr1ny77/BasketForm-AI/releases/tag/v1.0.0
 
-[CHANGELOG.md](../../CHANGELOG.md) — the [v0.5.0] section has been drafted with the Sprint 5 changes delivered so far.
-
-Public sanitized demo video (MVP v3 final state): Pending. Will be recorded and linked here once Sprint 5 is complete.
+[CHANGELOG.md](../../CHANGELOG.md) — the [v1.0.0] section has been drafted with the Sprint 5 changes delivered so far.
 
 ## Demo Day Preparation
 
