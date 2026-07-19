@@ -143,4 +143,4 @@ The deployed product's login page at http://80.74.30.14/, confirming the final p
 ![Sprint 5 backlog audit example](images/pbi-046-backlog-audit.png)
 PBI-046 (#138) after the Sprint 5 backlog audit: Project Status updated to In Progress and the acceptance-criteria checkboxes that are genuinely met are checked.
 
-The final release screenshot and public demo video will be added once the v0.5.0 release is cut, per the "Release and Changelog" section above.
+![Final release](images/release.png)
