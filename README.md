@@ -2,7 +2,7 @@
 
 Web service for analyzing basketball shooting form via video upload, biomechanical keypoint extraction, technique scoring, and personalized AI feedback.
 
-**Live:** http://80.74.30.14/ · [v0.4.0 Release](https://github.com/kr1ny77/BasketForm-AI/releases/tag/v0.4.0) · [Documentation Site](https://kr1ny77.github.io/BasketForm-AI/) · [Customer Handover Guide](docs/customer-handover.md)
+**Live:** http://80.74.30.14/ · [v1.0.0 Release](https://github.com/kr1ny77/BasketForm-AI/releases/tag/v1.0.0) · [Documentation Site](https://kr1ny77.github.io/BasketForm-AI/) · [Customer Handover Guide](docs/customer-handover.md)
 
 ## Project Overview
 
