@@ -4,17 +4,40 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
-## [Unreleased]
+## [v1.0.0] — 2026-07-19
+
+Sprint 5 — Final Production Release: Stabilization, deployment automation, and MVP v3 delivery.
+
+### Added
+- UAT-009 for analysis history and progress tracking
+- Sprint review transcript for Week 7
+- Final MVP v3 review meeting summary
+- Reflection, retrospective, and LLM usage report for Sprint 5
+- Sprint 5 evidence screenshots
+- Execution results for Sprint 5 UAT
+- Week 7 handover documentation
 
 ### Fixed
-- README.md release link updated from v0.3.0 to v0.4.0
-- Added Week 7 report link to README.md Reports section
+- Data race in GetVideo and ML path resolution
+- Hardcoded ML path — ML runner now uses current working directory, fixing test failures and making the product portable
+- Version conflict between v0.4.0 and v0.5.0 in documentation
+- README.md release link updated to v0.4.0
+- PBI-043 regression issues (data race, hardcoded path, deploy script)
+
+### Changed
+- Deploy script rewritten with ML dependency installation, smoke test, and error handling
+- Processor log initialization removed (was writing to hardcoded path)
+- Updated README.md with Week 7 report link
+- CONTRIBUTING.md and AGENTS.md updated with deployment guidance
 
 ### Documentation
-- CONTRIBUTING.md: added deployment section referencing `scripts/deploy.sh`
-- AGENTS.md: added `scripts/deploy.sh` to key files table and deployment guidance
 - Added regression report for PBI-043 fixes (`docs/regression-report-pbi-043.md`)
 - Added Should-Have bug triage for PBI-043 (`docs/bug-triage-pbi-043.md`)
+- Added Week 7 reflection, retrospective, and LLM usage report
+- Added Sprint 5 evidence screenshots
+- Updated customer handover to Week 7 final state
+- Contribution traceability table rewritten (one row per member)
+- Week 6 screenshots added
 
 ## [v0.4.0] — 2026-07-19
 
