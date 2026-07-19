@@ -108,6 +108,10 @@ Link: [retrospective.md](retrospective.md)
 
 Link: [llm-report.md](llm-report.md)
 
+## Public Sanitized Demo Video
+
+Link: https://youtu.be/s4hl46DU02k
+
 ## Current Product Status
 
 MVP v3 is in final stabilization. The Week 6 trial release (v0.4.0) remains live and stable at http://80.74.30.14/. Sprint 5 has resolved the hardcoded-path and data-race issues found during follow-up testing and rewritten the deployment script. The remaining Sprint 5 scope — a final regression report, documentation finalization, Demo Day rehearsal, and the final retrospective — must be completed to reach MVP v3 and cut the v0.5.0 release.
