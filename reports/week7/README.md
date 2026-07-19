@@ -116,14 +116,14 @@ MVP v3 is in final stabilization. The Week 6 trial release (v0.4.0) remains live
 
 | Team Member | Issues | PRs | Review | Notes |
 |---|---|---|---|---|
-| Koomaz | PBI-043 (#135), PBI-046 (#138, deploy script) | #160, #161 | — | Hardcoded-path fix, deploy script rewrite, data-race fix |
-| romasntlv | PBI-044 (#136) | reviewed #161 | Reviewer of #160, #161 | Documentation finalization (in progress) |
-| gimacorp | PBI-046 (#138, implementer) | — | — | CHANGELOG, roadmap, and customer-handover version-conflict fixes; Week 7 report |
-| kr1ny77 | PBI-043 (#135, reviewer), PBI-047 (#139, reviewer) | — | — | — |
-| mentalafffection | PBI-045 (#137, Demo Day prep) | — | — | — |
-| Customer | — | — | UAT-009 execution | Independent progress-tracking UAT, final feedback |
+| Koomaz | PBI-043 (#135, implementer), PBI-046 (#138, implementer) | #160, #161, #168 | Reviewed and approved by romasntlv | Hardcoded ML path fix, data race fix, deploy script rewrite, plus the PBI-043 regression report and Should-Have bug triage |
+| romasntlv | PBI-043 (#135, reviewer), PBI-046 (#138, reviewer), PBI-047 (#139, implementer) | Reviewed/approved #160, #161, #168; merged #167 | Approved Koomaz's Sprint 5 fixes and regression/triage docs | Also merged PBI-044's final handover PR (#167); PBI-047 (final course retrospective) not yet started (To Do) |
+| gimacorp | PBI-044 (#136, implementer), PBI-042 (#134, reviewer) | #162, #163, #164, #165, #167 | #162 and #163 reviewed by kr1ny77; #167 reviewed and merged by romasntlv | Week 7 report, handover-level update, reflection/retrospective/LLM report, and evidence screenshots; also reviewer on the reopened PBI-042 |
+| kr1ny77 | PBI-042 (#134, implementer, reopened), PBI-044 (#136, reviewer), PBI-047 (#139, reviewer) | — | Approved #162, #163 | Reopened PBI-042 after it was found closed with no linked evidence and is documenting the actual (light) Week 6 feedback triage; reviewer assigned for PBI-047 (not yet started) |
+| mentalafffection | PBI-045 (#137, implementer) | — | — | Demo Day preparation — not yet started (To Do) |
+| Customer | — | — | UAT-009 execution | Independent progress-tracking UAT (Passed), final feedback |
 
-This table will be finalized with full detail once all Sprint 5 PRs are merged and issues closed.
+This table reflects final Sprint 5 attribution, cross-checked against the current Implementer/Reviewer fields on issues #134–#139 and the merged PRs #160, #161, #162, #163, #164, #165, #167, and #168.
 
 ## Screenshots
 
